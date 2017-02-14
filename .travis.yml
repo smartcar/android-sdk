@@ -1,0 +1,34 @@
+language: android
+jdk: oraclejdk8
+
+notifications:
+    #slack: smartcar:PGJmjtKFPytU5E2FwsImdVp8
+
+env:
+    global:
+      - ANDROID_TARGET=android-19
+      - ANDROID_ABI=armeabi-v7a
+      - ADB_INSTALL_TIMEOUT=10
+
+android:
+    update_sdk: true
+    components:
+        - platform-tools
+        - tools
+        - build-tools-25.0.0
+        - android-25
+        - extra-android-m2repository
+        - sys-img-${ANDROID_ABI}-${ANDROID_TARGET}
+
+script:
+    - ./gradlew build jacocoTestReport assembleAndroidTest
+    - echo no | android create avd --force --name test --target $ANDROID_TARGET --abi $ANDROID_ABI
+    - emulator -avd test -no-skin -no-audio -no-window &
+    - android-wait-for-emulator
+    - adb shell setprop dalvik.vm.dexopt-flags v=n,o=v
+    - ./gradlew compositeCoverageReport
+
+after_success:
+    - bash <(curl -s https://codecov.io/bash)
+
+after_failure: "cat $TRAVIS_BUILD_DIR/smartcar/build/outputs/lint-results-debug.xml"
