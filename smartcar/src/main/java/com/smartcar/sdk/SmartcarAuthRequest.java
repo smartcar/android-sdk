@@ -180,8 +180,8 @@ class SmartcarAuthRequest {
      */
     protected String generateAuthRequestUri(OEM oem) {
 
-        String requestUri = "https://" + oem.getAuthName()
-                + ".smartcar.com/oauth/authorize?response_type=" + getResponseType().toString()
+        String requestUri = oem.getAuthUrl()
+                + "/oauth/authorize?response_type=" + getResponseType().toString()
                 + "&client_id=" + getClientId()
                 + "&redirect_uri=" + getRedirectURI() + "&scope=" + getScope()
                 + "&state=" + setState()

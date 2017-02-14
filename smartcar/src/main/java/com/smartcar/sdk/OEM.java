@@ -25,47 +25,50 @@ package com.smartcar.sdk;
  */
 public enum OEM {
 
-    ACURA("Acura", "acura","#020202"),
-    AUDI("Audi", "audi", "#000000"),
-    BMW("BMW", "bmw", "#2E9BDA"),
-    BMW_CONNECTED("BMW Connected", "bmw-connected", "#2E9BDA"),
-    BUICK("Buick", "buick", "#333333"),
-    CADILLAC("cadillac", "cadillac", "#941711"),
-    CHEVROLET("Chevrolet", "chevrolet", "#042F6B"),
-    CHRYSLER("Chrysler", "chrysler", "#231F20"),
-    DODGE("Dodge", "dodge", "#000000"),
-    FORD("Ford", "ford", "#003399"),
-    FIAT("Fiat", "fiat", "#B50536"),
-    GMC("GMC", "gmc", "#CC0033"),
-    HYUNDAI("Hyundai", "hyundai", "#00287A"),
-    INFINITI("Infiniti", "infiniti", "#1F1F1F"),
-    JEEP("Jeep", "jeep", "#374B00"),
-    KIA("KIA", "kia", "#C4172C"),
-    LANDROVER("Land Rover", "landrover", "#005A2B"),
-    LEXUS("Lexus", "lexus", "#5B7F95"),
-    NISSAN("Nissan", "nissan", "#C71444"),
-    NISSANEV("Nissan EV", "nissanev", "#C71444"),
-    RAM("RAM", "ram", "#000000"),
-    TESLA("Tesla", "tesla", "#CC0000"),
-    VOLKSWAGEN("Volkswagen", "volkswagen", "#000000"),
-    VOLVO("Volvo", "volvo", "#000F60"),
-    MERCEDES("Mercedes", "mercedes", "#222222"),
-    MOCK("Mock", "mock", "#495F5D");
+    ACURA("Acura", "acura_logo", "https://acura.smartcar.com","#020202"),
+    AUDI("Audi", "audi_logo", "https://audi.smartcar.com", "#000000"),
+    BMW("BMW", "bmw_logo", "https://bmw.smartcar.com", "#2E9BDA"),
+    BMW_CONNECTED("BMW Connected", "bmw_logo", "https://bmw-connected.smartcar.com", "#2E9BDA"),
+    BUICK("Buick", "buick_logo", "https://buick.smartcar.com", "#333333"),
+    CADILLAC("cadillac", "cadillac_logo", "https://cadillac.smartcar.com", "#941711"),
+    CHEVROLET("Chevrolet", "chevrolet_logo", "https://chevrolet.smartcar.com", "#042F6B"),
+    CHRYSLER("Chrysler", "chrysler_logo", "https://chrysler.smartcar.com", "#231F20"),
+    DODGE("Dodge", "dodge_logo", "https://dodge.smartcar.com", "#000000"),
+    FIAT("Fiat", "fiat_logo", "https://fiat.smartcar.com", "#B50536"),
+    FORD("Ford", "ford_logo", "https://ford.smartcar.com", "#003399"),
+    GMC("GMC", "gmc_logo", "https://gmc.smartcar.com", "#CC0033"),
+    HYUNDAI("Hyundai", "hyundai_logo", "https://hyundai.smartcar.com", "#00287A"),
+    INFINITI("Infiniti", "infiniti_logo", "https://infiniti.smartcar.com", "#1F1F1F"),
+    JEEP("Jeep", "jeep_logo", "https://jeep.smartcar.com", "#374B00"),
+    KIA("KIA", "kia_logo", "https://kia.smartcar.com", "#C4172C"),
+    LANDROVER("Land Rover", "landrover_logo", "https://landrover.smartcar.com", "#005A2B"),
+    LEXUS("Lexus", "lexus_logo", "https://lexus.smartcar.com", "#5B7F95"),
+    MERCEDES("Mercedes", "mercedes_logo", "https://mercedes.smartcar.com", "#222222"),
+    MOCK("Mock", "mock_logo", "https://mock.smartcar.com", "#495F5D"),
+    NISSAN("Nissan", "nissan_logo", "https://nissan.smartcar.com", "#C71444"),
+    NISSANEV("Nissan EV", "nissan_logo", "https://nissanev.smartcar.com", "#C71444"),
+    RAM("RAM", "ram_logo", "https://ram.smartcar.com", "#000000"),
+    TESLA("Tesla", "tesla_logo", "https://tesla.smartcar.com", "#CC0000"),
+    VOLKSWAGEN("Volkswagen", "volkswagen_logo", "https://volkswagen.smartcar.com", "#000000"),
+    VOLVO("Volvo", "volvo_logo", "https://volvo.smartcar.com", "#000F60");
 
     private String displayName;
-    private String authName;
+    private String imageName;
+    private String authUrl;
     private String color;
 
     /**
      * Create a new OEM with the given parameters.
      *
      * @param displayName The name used for display purposes
-     * @param authName    The name used in the authentication URI
+     * @param imageName   The name of the image used for display purposes
+     * @param authUrl     The URL used for authentication
      * @param color       The background color specific to the OEM
      */
-    OEM(String displayName, String authName, String color) {
+    OEM(String displayName, String imageName, String authUrl, String color) {
         this.displayName = displayName;
-        this.authName = authName;
+        this.imageName = imageName;
+        this.authUrl = authUrl;
         this.color = color;
     }
 
@@ -79,11 +82,17 @@ public enum OEM {
     }
 
     /**
-     * Gets the OEM's name for use in the authentication URI.
+     * Gets the OEM's image name.
      *
-     * @return The OEM's name used in the authentication URI
+     * @return The OEM's image name
      */
-    protected String getAuthName() { return authName; }
+    protected String getImageName() { return imageName; }
+    /**
+     * Gets the OEM's authentication URL.
+     *
+     * @return The OEM's authentication URL
+     */
+    protected String getAuthUrl() { return authUrl; }
 
     /**
      * Gets the OEM's defined color.

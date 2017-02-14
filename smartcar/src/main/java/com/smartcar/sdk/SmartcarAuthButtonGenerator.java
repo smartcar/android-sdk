@@ -49,17 +49,16 @@ class SmartcarAuthButtonGenerator {
                                            SmartcarAuthRequest smartcarAuthRequest,
                                            OEM oem,
                                            LinearLayout.LayoutParams layoutParams) {
+        String buttonText = String.format(context.getResources().getString(R.string.button_prefix), oem.getDisplayName());
         Button b = new Button(context);
         b.setTransformationMethod(null);
         b.setTextColor(Color.parseColor("#FFFFFF"));
-        b.setText("Login with " + oem.getDisplayName());
+        b.setText(buttonText);
         b.setBackgroundColor(Color.parseColor(oem.getColor()));
         b.setTextSize(30);
-        //b.setHeight(100);
-        String imageName = oem.name().toLowerCase() + "_logo";
-        int image = context.getResources().getIdentifier(imageName, "drawable", context.getPackageName());
+        int image = context.getResources().getIdentifier(oem.getImageName(), "drawable", context.getPackageName());
         Drawable logo = ContextCompat.getDrawable(context, image);
-        logo.setBounds(0, 0, 60, 60);
+        logo.setBounds(0, 0, 120, 120);
         b.setCompoundDrawables(logo, null, null, null);
         b.setTag(image);
         b.setLayoutParams(layoutParams);

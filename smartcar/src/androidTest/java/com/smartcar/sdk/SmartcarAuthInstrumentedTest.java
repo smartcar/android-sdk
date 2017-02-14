@@ -31,6 +31,8 @@ import android.widget.LinearLayout;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.Locale;
+
 import static org.junit.Assert.*;
 
 /**
@@ -64,7 +66,7 @@ public class SmartcarAuthInstrumentedTest {
         int buttonTextColor = Color.parseColor("#FFFFFF");
         int actualButtonTextColor = ((ColorDrawable) b.getBackground()).getColor();
 
-        String imageName = oem.name().toLowerCase() + "_logo";
+        String imageName = oem.getImageName();
         int image = context.getResources().getIdentifier(imageName, "drawable", context.getPackageName());
 
         assertEquals(b.getText(), buttonText);

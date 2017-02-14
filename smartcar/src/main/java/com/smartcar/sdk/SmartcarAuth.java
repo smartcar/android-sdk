@@ -29,7 +29,7 @@ import android.widget.LinearLayout;
  * Main class that provides SDK access methods.
  */
 public class SmartcarAuth {
-    private static Context context;
+    private Context context;
     protected static SmartcarAuthRequest smartcarAuthRequest;
     private static SmartcarCallback callback;
 
@@ -233,12 +233,12 @@ public class SmartcarAuth {
      * @return      The flattened string
      */
     protected static String arrayToString(String[] array) {
-        StringBuffer stringBuffer = new StringBuffer();
+        StringBuilder stringBuilder = new StringBuilder();
         for(int i = 0; i < array.length; i++) {
-            if (i > 0) stringBuffer.append(" ");
-            stringBuffer.append(array[i]);
+            if (i > 0) stringBuilder.append(" ");
+            stringBuilder.append(array[i]);
         }
-        String retString = stringBuffer.toString();
+        String retString = stringBuilder.toString();
         return retString;
     }
 }
