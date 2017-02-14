@@ -52,7 +52,7 @@ class SmartcarAuthButtonGenerator {
         String buttonText = String.format(context.getResources().getString(R.string.button_prefix), oem.getDisplayName());
         Button b = new Button(context);
         b.setTransformationMethod(null);
-        b.setTextColor(Color.parseColor("#FFFFFF"));
+        b.setTextColor(Color.parseColor(context.getResources().getString(R.string.text_color)));
         b.setText(buttonText);
         b.setBackgroundColor(Color.parseColor(oem.getColor()));
         b.setTextSize(30);
