@@ -13,9 +13,10 @@ env:
 android:
     update_sdk: true
     components:
+        - tools
         - platform-tools
         - tools
-        - build-tools-25.0.0
+        - build-tools-25.0.2
         - android-25
         - extra-android-m2repository
         - sys-img-${ANDROID_ABI}-${ANDROID_TARGET}
@@ -32,6 +33,6 @@ script:
     - ./gradlew compositeCoverageReport
 
 after_success:
-    - bash <(curl -s https://codecov.io/bash)
+    - bash <(curl -s https://codecov.io/bash) -t $CODECOV_TOKEN
 
 after_failure: "cat $TRAVIS_BUILD_DIR/smartcar/build/outputs/lint-results-debug.xml"
