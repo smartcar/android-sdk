@@ -1,27 +1,32 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.smartcar.example">
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.smartcar.example">
+
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-      android:allowBackup="true"
-      android:icon="@mipmap/ic_launcher"
-      android:label="@string/app_name"
-      android:supportsRtl="true"
-      android:theme="@style/AppTheme">
-      <activity android:name="com.smartcar.example.MainActivity">
-          <intent-filter>
-              <action android:name="android.intent.action.MAIN" />
-              <category android:name="android.intent.category.LAUNCHER" />
-          </intent-filter>
-      </activity>
-      <activity android:name="com.smartcar.sdk.SmartcarCodeReceiver">
-          <intent-filter>
-              <action android:name="android.intent.action.VIEW" />
-              <category android:name="android.intent.category.DEFAULT" />
-              <category android:name="android.intent.category.BROWSABLE" />
-              <data
-                  android:scheme="@string/smartcar_auth_scheme"
-                  android:host="@string/smartcar_auth_host" />
-          </intent-filter >
-      </activity>
-  </application>
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name="com.smartcar.sdk.SmartcarCodeReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:host="@string/smartcar_auth_host"
+                    android:scheme="@string/smartcar_auth_scheme" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".DisplayCodeActivity"></activity>
+    </application>
 
 </manifest>

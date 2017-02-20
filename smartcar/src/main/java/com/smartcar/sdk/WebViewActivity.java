@@ -20,24 +20,46 @@
 
 package com.smartcar.sdk;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.webkit.CookieManager;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebStorage;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 /**
- * Activity that receives the response sent to the custom URL scheme defined by the application.
+ * Activity that sets up a WebView and manages the URL loading.
  */
-@SuppressLint("Registered")
-public class SmartcarCodeReceiver extends AppCompatActivity {
+public class WebViewActivity extends AppCompatActivity {
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_web_view);
+
+        final WebView webView = (WebView) findViewById(R.id.login_web_view);
+        WebStorage.getInstance().deleteAllData();
         Intent intent = getIntent();
-        Uri uri = intent.getData();
-        Log.d("SmartcarCodeReceiver ", uri.toString());
-        SmartcarAuth.receiveResponse(uri);
-        finish();
+        String uri = intent.getStringExtra("URI");
+        webView.clearCache(true);
+        CookieManager.getInstance().removeAllCookies(null);
+        webView.loadUrl(uri);
+        webView.setWebViewClient(new WebViewClient() {
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                if(request.getUrl().getHost().endsWith("smartcar.com")) {
+                    return false;
+                }
+                if(request.getUrl().getScheme().startsWith("sc")) {
+                    Intent smartcarCodeReceiver = new Intent(Intent.ACTION_VIEW, request.getUrl());
+                    startActivity(smartcarCodeReceiver);
+                    webView.destroy();
+                    return true;
+                }
+                return true;
+            }
+        });
     }
 }

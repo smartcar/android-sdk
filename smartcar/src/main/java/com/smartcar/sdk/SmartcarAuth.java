@@ -1,14 +1,14 @@
 /**
  * Copyright (c) 2017-present, Smartcar, Inc. All rights reserved.
 
- * You are hereby granted a non-exclusive, worldwide, royalty-free license to use,
- * copy, modify, and distribute this software in source code or binary form for use
- * in connection with the web services and APIs provided by Smartcar.
+ * You are hereby granted a limted, non-exclusive, worldwide, royalty-free
+ * license to use, copy, modify, and distribute this software in source code or
+ * binary form, for the limited purpose of this software's use in connection
+ * with the web services and APIs provided by Smartcar.
  *
  * As with any software that integrates with the Smartcar platform, your use of
- * this software is subject to the Smartcar Developer Agreement
- * [https://developer.smartcar.com/agreement/]. This copyright notice shall be
- * included in all copies or substantial portions of the software.
+ * this software is subject to the Smartcar Developer Agreement. This copyright
+ * notice shall be included in all copies or substantial portions of the software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
@@ -24,6 +24,10 @@ import android.content.Context;
 import android.net.Uri;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Main class that provides SDK access methods.
@@ -192,6 +196,42 @@ public class SmartcarAuth {
     }
 
     /**
+     * Generates a spinner containing the entire list of OEMs as items.
+     * Will not include MOCK as a vehicle option.
+     *
+     * @return             The generated Spinner
+     */
+    public Spinner generateSpinner() {
+        return generateSpinner(false);
+    }
+
+    /**
+     * Generates a spinner containing the entire list of OEMs as items.
+     *
+     * @param devMode      Boolean used to indicate whether to list MOCK as an option or not
+     * @return             The generated Spinner
+     */
+    public Spinner generateSpinner(Boolean devMode) {
+        ArrayList<OEM> list = new ArrayList<OEM>(Arrays.asList(OEM.values()));
+        if (!devMode) {
+            list.remove(OEM.MOCK);
+        }
+        OEM[] oemList = list.toArray(new OEM[list.size()]);
+        return generateSpinner(oemList);
+    }
+
+    /**
+     * Generates a spinner containing the given list of OEMs as items.
+     *
+     * @param oemList      The list of OEMs to include as items in the spinner
+     * @return             The generated Spinner
+     */
+    public Spinner generateSpinner(OEM[] oemList) {
+        Spinner spinner = SmartcarAuthSpinnerGenerator.generateSpinner(context, smartcarAuthRequest, oemList);
+        return spinner;
+    }
+
+    /**
      * Receives the response for the authorization request and sends it back to the calling function
      * via the callback method. The code is packed in a Bundle with the key "code".
      *
@@ -206,7 +246,8 @@ public class SmartcarAuth {
 
             if (stateReturned.equals(SmartcarAuth.smartcarAuthRequest.getState())) {
                 code = uri.getQueryParameter("code");
-                if (code == null) {
+                message = uri.getQueryParameter("error_description");
+                if (code == null && message == null) {
                     message = "Unable to fetch code. Please try again";
                 }
 
