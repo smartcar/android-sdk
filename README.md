@@ -14,15 +14,19 @@ the flow into your application.
 The SDK provides a library for authenticating the vehicle-owner and fetching the authorization code
 that can be used to fetch an access token using a separate request.
 
-To add this library to your project,
+To add this library to your project, edit your app's `build.gradle` to include the following:
 
-1. Copy the `smartcar-auth-*.aar` file from the
-[Smartcar Android Auth SDK repo](https://github.com/smartcar/android-sdk) to the `libs` folder
-in your app project
-2. Add a reference in your app's `build.gradle` file under the `dependencies` block.
+1. Add a reference to the repository where this library's is available.
+```
+repositories {
+    jcenter()
+}
+```
+
+2. Add a reference under the `dependencies` block.
 For version `1.0.0` it would be:
 ```
-compile `com.smartcar.sdk:smartcar-auth-1.0.0@aar`
+compile 'com.smartcar.sdk:smartcar-auth:1.0.0'
 ```
 
 ## Configuration Settings
