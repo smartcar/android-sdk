@@ -1,6 +1,6 @@
 Copyright (c) 2017-present, Smartcar, Inc. All rights reserved.
 
-You are hereby granted a limted, non-exclusive, worldwide, royalty-free
+You are hereby granted a limited, non-exclusive, worldwide, royalty-free
 license to use, copy, modify, and distribute this software in source code or
 binary form, for the limited purpose of this software's use in connection
 with the web services and APIs provided by Smartcar.
