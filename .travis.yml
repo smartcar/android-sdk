@@ -18,7 +18,8 @@ android:
         - tools
         - build-tools-25.0.2
         - android-25
-        - extra-android-m2repository
+        - android-22
+	- extra-android-m2repository
         - sys-img-${ANDROID_ABI}-${ANDROID_TARGET}
 
 before_script:
