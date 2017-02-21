@@ -4,6 +4,9 @@ apply plugin: 'jacoco-android'
 buildscript {
     repositories {
         jcenter()
+        flatDir {
+            dirs 'libs'
+        }
     }
     dependencies {
         classpath 'com.dicedmelon.gradle:jacoco-android:0.1.1'
@@ -13,7 +16,7 @@ android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
     defaultConfig {
-        minSdkVersion 21
+        minSdkVersion 24
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
