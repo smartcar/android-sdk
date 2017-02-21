@@ -7,6 +7,7 @@ notifications:
 env:
     global:
       - ANDROID_TARGET=android-25
+      - EMULATOR_TARGET=android-24
       - ANDROID_ABI=armeabi-v7a
       - ADB_INSTALL_TIMEOUT=10
 
@@ -14,12 +15,14 @@ android:
     update_sdk: true
     components:
         - tools
+        - platform-tools
         - tools
         - build-tools-25.0.2
         - android-25
         - android-24
         - extra-android-m2repository
         - sys-img-${ANDROID_ABI}-${ANDROID_TARGET}
+        - sys-img-${ANDROID_ABI}-${EMULATOR_TARGET}
     licenses:
         - 'android-sdk-license-.+'
         - 'android-sdk-preview-license-.+'
@@ -29,7 +32,7 @@ before_script:
 
 script:
     - ./gradlew build jacocoTestReport assembleAndroidTest
-    - echo no | android create avd --force --name test --target android-24 --abi $ANDROID_ABI
+    - echo no | android create avd --force --name test --target $EMULATOR_TARGET --abi $ANDROID_ABI
     - emulator -avd test -no-skin -no-audio -no-window &
     - android-wait-for-emulator
     - adb shell input keyevent 82 &
