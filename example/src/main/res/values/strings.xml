@@ -1,8 +1,9 @@
 <resources>
     <string name="app_name">example</string>
     <string name="client_id">7cc72cc2-6464-4245-9fed-b971361a820e</string>
-    <string name="redirect_uri">sc7cc72cc2-6464-4245-9fed-b971361a820e://page</string>
+    <string name="redirect_uri">sc7cc72cc2-6464-4245-9fed-b971361a820e://page.com/test</string>
     <string name="scope">read_vin read_odometer</string>
     <string name="smartcar_auth_scheme">sc7cc72cc2-6464-4245-9fed-b971361a820e</string>
-    <string name="smartcar_auth_host">page</string>
+    <string name="smartcar_auth_host">page.com</string>
+    <string name="smartcar_auth_path">/test</string>
 </resources>

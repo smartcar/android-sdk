@@ -39,8 +39,6 @@ format of `"sc" + clientId + "://" + hostname`. This URI must also be registered
 in [Smartcar's developer portal](https://developer.smartcar.com) for your app.
 You may append an optional path component or TLD (e.g. `sc4a1b01e5-0497-417c-a30e-6df6ba33ba46://oauth2redirect.com/page`).
 
-More information on [configuration of custom scheme] (http://www.idev101.com/code/Objective-C/custom_url_schemes.html).
-
 `scope`
 
 Permissions requested from the user for specific grant. See the [Smartcar developer documentation](https://developer.smartcar.com/docs)
@@ -81,6 +79,8 @@ For a redirectURI `sc4a1b01e5-0497-417c-a30e-6df6ba33ba46://oauth2redirect.com/p
             </intent-filter>
         </activity>
 ```
+
+More information on [data element] (https://developer.android.com/guide/topics/manifest/data-element.html).
 
 ## Handling the response from Smartcar Auth library
 

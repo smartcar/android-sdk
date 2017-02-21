@@ -23,7 +23,8 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data
                     android:host="@string/smartcar_auth_host"
-                    android:scheme="@string/smartcar_auth_scheme" />
+                    android:scheme="@string/smartcar_auth_scheme"
+                    android:path="@string/smartcar_auth_path" />
             </intent-filter>
         </activity>
         <activity android:name=".DisplayCodeActivity"></activity>
