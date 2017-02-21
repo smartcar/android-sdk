@@ -29,16 +29,17 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
-public class SmartcarAuthSpinnerGenerator {
+class SmartcarAuthSpinnerGenerator {
 
     private static SparseArray<String> itemMap;
-    protected static Spinner generateSpinner(
+
+    static Spinner generateSpinner(
             Context context,
             SmartcarAuthRequest smartcarAuthRequest,
             OEM[] oemList) {
         // Using a SparseArray to maintain a mapping between OEM displayName and name so its easy
         //  to identify the OEM for setting up the request URI
-        itemMap = new SparseArray<String>();
+        itemMap = new SparseArray<>();
         String[] itemList = new String[oemList.length+1];
         itemMap.put(0, null);
         // Create a placeholder text for the first item in the spinner
@@ -47,7 +48,7 @@ public class SmartcarAuthSpinnerGenerator {
             itemMap.put(i+1, oemList[i].name());
             itemList[i+1] = oemList[i].getDisplayName();
         }
-        ArrayAdapter<String> adapter = new ArrayAdapter(context, android.R.layout.simple_spinner_item, itemList);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, itemList);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         Spinner spinner = new Spinner(context);
         spinner.setAdapter(adapter);
@@ -55,7 +56,7 @@ public class SmartcarAuthSpinnerGenerator {
         return spinner;
     }
 
-    protected static AdapterView.OnItemSelectedListener handleOnItemSelected(
+    private static AdapterView.OnItemSelectedListener handleOnItemSelected(
             final Context context,
             final SmartcarAuthRequest smartcarAuthRequest) {
         return new AdapterView.OnItemSelectedListener() {
@@ -67,11 +68,11 @@ public class SmartcarAuthSpinnerGenerator {
                 Intent intent = new Intent(context, com.smartcar.sdk.WebViewActivity.class);
                 intent.putExtra("URI", requestUri);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);
             }
 
             public void onNothingSelected(AdapterView<?> arg) {
-                return;
             }
         };
     }

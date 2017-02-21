@@ -21,10 +21,10 @@
 package com.smartcar.sdk;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.webkit.CookieManager;
-import android.webkit.WebResourceRequest;
 import android.webkit.WebStorage;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -48,12 +48,14 @@ public class WebViewActivity extends AppCompatActivity {
         webView.loadUrl(uri);
         webView.setWebViewClient(new WebViewClient() {
             @Override
-            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-                if(request.getUrl().getHost().endsWith("smartcar.com")) {
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                Uri uri = Uri.parse(url);
+
+                if(uri.getHost().endsWith("smartcar.com")) {
                     return false;
                 }
-                if(request.getUrl().getScheme().startsWith("sc")) {
-                    Intent smartcarCodeReceiver = new Intent(Intent.ACTION_VIEW, request.getUrl());
+                if(uri.getScheme().startsWith("sc")) {
+                    Intent smartcarCodeReceiver = new Intent(Intent.ACTION_VIEW, uri);
                     startActivity(smartcarCodeReceiver);
                     webView.destroy();
                     return true;

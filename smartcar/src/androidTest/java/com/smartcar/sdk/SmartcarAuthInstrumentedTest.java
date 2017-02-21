@@ -23,6 +23,7 @@ package com.smartcar.sdk;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Looper;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 import android.widget.Button;
@@ -87,6 +88,7 @@ public class SmartcarAuthInstrumentedTest {
 
         OEM[] oemList = {OEM.AUDI, OEM.BUICK, OEM.DODGE, OEM.GMC, OEM.FIAT, OEM.NISSANEV};
 
+        Looper.prepare(); // Create the message queue
         Spinner s = smartcarAuth.generateSpinner(oemList);
         assertEquals(s.getAdapter().getCount(), oemList.length+1);
         assertEquals(s.getAdapter().getItem(1).toString(), OEM.AUDI.getDisplayName());

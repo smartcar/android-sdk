@@ -45,10 +45,10 @@ class SmartcarAuthButtonGenerator {
      * @param layoutParams        The Layout Params for the button
      * @return                    The generated Button
      */
-    protected static Button generateButton(Context context,
-                                           SmartcarAuthRequest smartcarAuthRequest,
-                                           OEM oem,
-                                           LinearLayout.LayoutParams layoutParams) {
+    static Button generateButton(Context context,
+                                 SmartcarAuthRequest smartcarAuthRequest,
+                                 OEM oem,
+                                 LinearLayout.LayoutParams layoutParams) {
         String buttonText = String.format(context.getResources().getString(R.string.button_prefix), oem.getDisplayName());
         Button b = new Button(context);
         // To turn off upper case text
@@ -77,9 +77,9 @@ class SmartcarAuthButtonGenerator {
      * @param oem                 The OEM linked to the Button
      * @return                    The callback to be invoked when the Button is clicked
      */
-    protected static View.OnClickListener handleOnClick(final Context context,
-                                                        final SmartcarAuthRequest smartcarAuthRequest,
-                                                        final OEM oem) {
+    private static View.OnClickListener handleOnClick(final Context context,
+                                                      final SmartcarAuthRequest smartcarAuthRequest,
+                                                      final OEM oem) {
         return new View.OnClickListener() {
             public void onClick(View v) {
                 String requestUri = smartcarAuthRequest.generateAuthRequestUri(oem);
@@ -89,6 +89,7 @@ class SmartcarAuthButtonGenerator {
                 intent.putExtra("URI", requestUri);
                 // The new activity (web view) will not be in the history stack
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);
             }
         };
