@@ -48,7 +48,7 @@ class SmartcarAuthSpinnerGenerator {
             itemMap.put(i+1, oemList[i].name());
             itemList[i+1] = oemList[i].getDisplayName();
         }
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, itemList);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(context, R.layout.simple_spinner_item, itemList);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         Spinner spinner = new Spinner(context);
         spinner.setAdapter(adapter);
