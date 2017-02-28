@@ -22,7 +22,7 @@ package com.smartcar.sdk;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.PaintDrawable;
 import android.os.Looper;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
@@ -66,7 +66,7 @@ public class SmartcarAuthInstrumentedTest {
         String buttonText = "Login with " + oem.getDisplayName();
         int buttonBgColor = Color.parseColor(oem.getColor());
         int buttonTextColor = Color.parseColor("#FFFFFF");
-        int actualButtonBgColor = ((ColorDrawable) b.getBackground()).getColor();
+        int actualButtonBgColor = ((PaintDrawable) b.getBackground()).getPaint().getColor();
 
         String imageName = oem.getImageName();
         int image = context.getResources().getIdentifier(imageName, "drawable", context.getPackageName());

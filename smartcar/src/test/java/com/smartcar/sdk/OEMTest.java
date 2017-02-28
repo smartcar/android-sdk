@@ -30,7 +30,7 @@ public class OEMTest {
     @Test
     public void oemTest_all() throws Exception {
         OEM oem = OEM.CADILLAC;
-        assertEquals(oem.getDisplayName(), "cadillac");
+        assertEquals(oem.getDisplayName(), "Cadillac");
         assertEquals(oem.getImageName(), "cadillac_logo");
         assertEquals(oem.getAuthUrl(), "https://cadillac.smartcar.com");
         assertEquals(oem.getColor(), "#941711");
