@@ -25,6 +25,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Gravity;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
@@ -35,9 +36,11 @@ import com.smartcar.sdk.SmartcarAuth;
 import com.smartcar.sdk.SmartcarCallback;
 import com.smartcar.sdk.SmartcarResponse;
 
+/** A simple Activity showcasing the two ways to add buttons using the Smartcar Auth SDK.
+ */
 public class MainActivity extends AppCompatActivity {
 
-    private static String LOGTAG = "ExampleApp";
+    private static String LOGTAG = "SmartDeliveryService";
     private static String CLIENT_ID;
     private static String REDIRECT_URI;
     private static String SCOPE;
@@ -54,33 +57,28 @@ public class MainActivity extends AppCompatActivity {
         REDIRECT_URI = getString(R.string.redirect_uri);
         SCOPE = getString(R.string.scope);
 
+        // Step 1. Always create a SmartcarCallback object, and a SmartcarAuth object
         MyCallback callback = new MyCallback();
-
-        LinearLayout linear = (LinearLayout) findViewById(R.id.activity_main);
-        LayoutParams param = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, 1.0f);
-
         smartcarAuth = new SmartcarAuth(appContext, callback, CLIENT_ID, REDIRECT_URI, SCOPE);
 
-        // Add buttons
-        Button mockButton = smartcarAuth.generateButton(OEM.MOCK, param);
-        linear.addView(mockButton);
+        // Step 2. Create button - option 1: using XML. Need to explicitly set the onClickListener
+        Button xmlButton = (Button) findViewById(R.id.audi_button);
+        xmlButton.setOnClickListener(smartcarAuth.setOnClickHandler());
 
-        Button audiButton = smartcarAuth.generateButton(OEM.AUDI, param);
-        linear.addView(audiButton);
+        // Step 2. Create button - option 2: using SDK code. Requires layout setting programmatically
+        LinearLayout linear = (LinearLayout) findViewById(R.id.activity_main);
+        LayoutParams param = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+        param.gravity = Gravity.CENTER_HORIZONTAL;
+        param.topMargin = 10;
+        param.bottomMargin = 10;
 
-        Button acuraButton = smartcarAuth.generateButton(OEM.ACURA, param);
-        linear.addView(acuraButton);
-
-        Button bmwConnected = smartcarAuth.generateButton(OEM.BMW_CONNECTED, param);
+        Button bmwConnected = smartcarAuth.generateButton(OEM.BMW, param);
         linear.addView(bmwConnected);
 
-        Button volvoButton = smartcarAuth.generateButton(OEM.VOLVO, param);
-        linear.addView(volvoButton);
-
+        // Optional step: To create a spinner instead of the buttons
         //OEM[] oemList = {OEM.BMW, OEM.MOCK, OEM.VOLVO, OEM.VOLKSWAGEN};
         //Spinner oemSpinner = smartcarAuth.generateSpinner(oemList);
-        Spinner oemSpinner = smartcarAuth.generateSpinner();
-        linear.addView(oemSpinner);
+        //linear.addView(oemSpinner);
     }
 
     /**

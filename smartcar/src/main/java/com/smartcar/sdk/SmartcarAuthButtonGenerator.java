@@ -24,6 +24,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.PaintDrawable;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.util.TypedValue;
@@ -49,24 +50,11 @@ class SmartcarAuthButtonGenerator {
                                  SmartcarAuthRequest smartcarAuthRequest,
                                  OEM oem,
                                  LinearLayout.LayoutParams layoutParams) {
-        String buttonText = String.format(context.getResources().getString(R.string.button_prefix), oem.getDisplayName());
-        Button b = new Button(context);
-        // To turn off upper case text
-        b.setTransformationMethod(null);
-        b.setTextColor(Color.parseColor(context.getResources().getString(R.string.button_text_color)));
-        b.setText(buttonText);
-        b.setBackgroundColor(Color.parseColor(oem.getColor()));
-        b.setTextSize(TypedValue.COMPLEX_UNIT_SP, Float.parseFloat(context.getResources().getString(R.string.button_text_size)));
-        int image = context.getResources().getIdentifier(oem.getImageName(), "drawable", context.getPackageName());
-        Drawable logo = ContextCompat.getDrawable(context, image);
-        logo.setBounds(0, 0, logo.getIntrinsicWidth(), logo.getIntrinsicHeight());
-        b.setCompoundDrawables(logo, null, null, null);
-        // Setting tag as a means for testing the image
-        b.setTag(image);
-        b.setLayoutParams(layoutParams);
-
-        b.setOnClickListener(handleOnClick(context, smartcarAuthRequest, oem));
-        return b;
+        Button button = new Button(context);
+        setButtonParameters(context, button, oem);
+        button.setLayoutParams(layoutParams);
+        button.setOnClickListener(handleOnClick(context, smartcarAuthRequest, oem));
+        return button;
     }
 
     /**
@@ -82,16 +70,75 @@ class SmartcarAuthButtonGenerator {
                                                       final OEM oem) {
         return new View.OnClickListener() {
             public void onClick(View v) {
-                String requestUri = smartcarAuthRequest.generateAuthRequestUri(oem);
-
-                Log.d("Auth request URI ", requestUri);
-                Intent intent = new Intent(context, com.smartcar.sdk.WebViewActivity.class);
-                intent.putExtra("URI", requestUri);
-                // The new activity (web view) will not be in the history stack
-                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(intent);
+                startActivity(context, smartcarAuthRequest, oem);
             }
         };
+    }
+
+    /**
+     * OnClick event handler.
+     *
+     * @param smartcarAuth The SmartcarAuth object
+     * @return             The callback to be invoked when the event occurs
+     */
+    protected static View.OnClickListener handleOnClick(final SmartcarAuth smartcarAuth) {
+        return new View.OnClickListener() {
+            public void onClick(View v) {
+                SmartcarAuthRequest smartcarAuthRequest = smartcarAuth.smartcarAuthRequest;
+                OemLoginButton button = (OemLoginButton)v;
+                OEM oem = button.getOem();
+                Context context = smartcarAuth.getContext();
+
+                startActivity(context, smartcarAuthRequest, oem);
+            }
+        };
+    }
+
+    /**
+     * Helper method and starts the WebView as a new Activity.
+     *
+     * @param context             The application's context
+     * @param smartcarAuthRequest The SmartcarAuthRequest object
+     * @param oem                 The OEM that the authentication is being processed for
+     */
+    private static void startActivity(Context context, SmartcarAuthRequest smartcarAuthRequest, OEM oem) {
+        String requestUri = smartcarAuthRequest.generateAuthRequestUri(oem);
+
+        Log.d("Auth request URI ", requestUri);
+        Intent intent = new Intent(context, com.smartcar.sdk.WebViewActivity.class);
+        intent.putExtra("URI", requestUri);
+        intent.putExtra("OEM", oem.name());
+        // The new activity (web view) will not be in the history stack
+        intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
+    }
+
+    /**
+     * Method to abstract out the Button image, text and background color settings.
+     *
+     * @param context The application's context
+     * @param button  The Button object
+     * @param oem     The OEM linked to the Button
+     */
+    protected static void setButtonParameters(Context context, Button button, OEM oem) {
+        String buttonText = String.format(context.getResources().getString(R.string.button_prefix), oem.getDisplayName());
+        // To turn off upper case text
+        button.setTransformationMethod(null);
+        button.setTextColor(Color.parseColor(context.getResources().getString(R.string.button_text_color)));
+        button.setText(buttonText);
+        Float textSize = Float.parseFloat(context.getResources().getString(R.string.button_text_size));
+        PaintDrawable shape = new PaintDrawable(Color.parseColor(oem.getColor()));
+        shape.setCornerRadius((float) (textSize));
+        button.setBackground(shape);
+        button.setPadding(10, 10, 10, 10);
+        button.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSize);
+        int image = context.getResources().getIdentifier(oem.getImageName(), "drawable", context.getPackageName());
+        Drawable logo = ContextCompat.getDrawable(context, image);
+        logo.setBounds(0, 0, logo.getIntrinsicWidth(), logo.getIntrinsicHeight());
+        button.setCompoundDrawablePadding(5);
+        button.setCompoundDrawables(logo, null, null, null);
+        // Setting tag as a means for testing the image
+        button.setTag(image);
     }
 }

@@ -48,6 +48,7 @@ public class WebViewActivity extends AppCompatActivity {
         WebStorage.getInstance().deleteAllData();
         Intent intent = getIntent();
         String uri = intent.getStringExtra("URI");
+        final OEM oem = OEM.valueOf(intent.getStringExtra("OEM"));
         webView.clearCache(true);
         CookieManager.getInstance().removeAllCookies(null);
         webView.loadUrl(uri);
@@ -56,7 +57,8 @@ public class WebViewActivity extends AppCompatActivity {
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 Uri uri = Uri.parse(url);
 
-                if(uri.getHost().endsWith("smartcar.com")) {
+                Uri oemAuthUri = Uri.parse(oem.getAuthUrl());
+                if(uri.getHost().endsWith(oemAuthUri.getHost())) {
                     return false;
                 }
                 if(uri.getScheme().startsWith("sc")) {

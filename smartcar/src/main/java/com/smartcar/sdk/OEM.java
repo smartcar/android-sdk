@@ -30,7 +30,7 @@ public enum OEM {
     BMW("BMW", "bmw_logo", "https://bmw.smartcar.com", "#2E9BDA"),
     BMW_CONNECTED("BMW Connected", "bmw_logo", "https://bmw-connected.smartcar.com", "#2E9BDA"),
     BUICK("Buick", "buick_logo", "https://buick.smartcar.com", "#333333"),
-    CADILLAC("cadillac", "cadillac_logo", "https://cadillac.smartcar.com", "#941711"),
+    CADILLAC("Cadillac", "cadillac_logo", "https://cadillac.smartcar.com", "#941711"),
     CHEVROLET("Chevrolet", "chevrolet_logo", "https://chevrolet.smartcar.com", "#042F6B"),
     CHRYSLER("Chrysler", "chrysler_logo", "https://chrysler.smartcar.com", "#231F20"),
     DODGE("Dodge", "dodge_logo", "https://dodge.smartcar.com", "#000000"),

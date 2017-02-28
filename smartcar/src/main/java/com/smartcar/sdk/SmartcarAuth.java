@@ -22,6 +22,7 @@ package com.smartcar.sdk;
 
 import android.content.Context;
 import android.net.Uri;
+import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -196,6 +197,15 @@ public class SmartcarAuth {
     }
 
     /**
+     * Generates a click event listener for a given SmartcarAuth object.
+     *
+     * @return The OnClickListener object
+     */
+    public View.OnClickListener setOnClickHandler() {
+        return SmartcarAuthButtonGenerator.handleOnClick(this);
+    }
+
+    /**
      * Generates a spinner containing the entire list of OEMs as items.
      * Will not include MOCK as a vehicle option.
      *
@@ -281,5 +291,14 @@ public class SmartcarAuth {
         }
         String retString = stringBuilder.toString();
         return retString;
+    }
+
+    /**
+     * Getter method for Context.
+     *
+     * @return The Context member variable
+     */
+    protected Context getContext() {
+        return context;
     }
 }
