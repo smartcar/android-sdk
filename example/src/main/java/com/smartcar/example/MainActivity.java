@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Step 2. Create button - option 1: using XML. Need to explicitly set the onClickListener
         Button xmlButton = (Button) findViewById(R.id.audi_button);
-        xmlButton.setOnClickListener(smartcarAuth.getOnClickHandler());
+        xmlButton.setOnClickListener(smartcarAuth.getOnClickListener());
 
         // Step 2. Create button - option 2: using SDK code. Requires layout setting programmatically
         LinearLayout linear = (LinearLayout) findViewById(R.id.activity_main);

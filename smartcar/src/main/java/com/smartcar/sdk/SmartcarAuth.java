@@ -201,7 +201,7 @@ public class SmartcarAuth {
      *
      * @return The OnClickListener object
      */
-    public View.OnClickListener getOnClickHandler() {
+    public View.OnClickListener getOnClickListener() {
         return SmartcarAuthButtonGenerator.handleOnClick(this);
     }
 
