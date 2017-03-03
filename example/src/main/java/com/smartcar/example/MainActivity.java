@@ -76,9 +76,9 @@ public class MainActivity extends AppCompatActivity {
         linear.addView(bmwConnected);
 
         // Optional step: To create a spinner instead of the buttons
-        //OEM[] oemList = {OEM.BMW, OEM.MOCK, OEM.VOLVO, OEM.VOLKSWAGEN};
-        //Spinner oemSpinner = smartcarAuth.generateSpinner(oemList);
-        //linear.addView(oemSpinner);
+        OEM[] oemList = {OEM.BMW, OEM.MOCK, OEM.VOLVO, OEM.VOLKSWAGEN};
+        Spinner oemSpinner = smartcarAuth.generateSpinner(oemList);
+        linear.addView(oemSpinner);
     }
 
     /**

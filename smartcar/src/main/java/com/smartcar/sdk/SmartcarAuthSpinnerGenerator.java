@@ -21,18 +21,27 @@
 package com.smartcar.sdk;
 
 import android.content.Context;
-import android.content.Intent;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
+/**
+ * Provides methods to create a spinner, and attach a click handler to it.
+ */
 class SmartcarAuthSpinnerGenerator {
 
     private static SparseArray<String> itemMap;
 
+    /**
+     * Generates a spinner with the given list of OEM names and attaches a click listener.
+     *
+     * @param context             The application's context
+     * @param smartcarAuthRequest The SmartcarAuthRequest object
+     * @param oemList             A list of OEMs to include in the spinner
+     * @return                    The generated spinner
+     */
     static Spinner generateSpinner(
             Context context,
             SmartcarAuthRequest smartcarAuthRequest,
@@ -56,20 +65,20 @@ class SmartcarAuthSpinnerGenerator {
         return spinner;
     }
 
+    /**
+     * OnItemSelected event listener.
+     *
+     * @param context             The application's context
+     * @param smartcarAuthRequest The SmartcarAuthRequest object
+     * @return                    The callback to be invoked when an item is selected
+     */
     private static AdapterView.OnItemSelectedListener handleOnItemSelected(
             final Context context,
             final SmartcarAuthRequest smartcarAuthRequest) {
         return new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
                 if (pos == 0) return;
-                String requestUri = smartcarAuthRequest.generateAuthRequestUri(OEM.valueOf(itemMap.get(pos)));
-
-                Log.d("Auth request URI ", requestUri);
-                Intent intent = new Intent(context, com.smartcar.sdk.WebViewActivity.class);
-                intent.putExtra("URI", requestUri);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(intent);
+                Helper.startActivity(context, smartcarAuthRequest, OEM.valueOf(itemMap.get(pos)));
             }
 
             public void onNothingSelected(AdapterView<?> arg) {

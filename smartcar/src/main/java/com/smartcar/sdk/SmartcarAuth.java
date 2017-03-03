@@ -67,7 +67,7 @@ public class SmartcarAuth {
                         String[] scope) {
         this.context = context;
         this.callback = callback;
-        String scopeStr = arrayToString(scope);
+        String scopeStr = Helper.arrayToString(scope);
         this.smartcarAuthRequest = new SmartcarAuthRequest(clientId, redirectUri, scopeStr);
     }
 
@@ -102,7 +102,7 @@ public class SmartcarAuth {
                         String redirectUri, String[] scope, SmartcarAuthRequest.ResponseType responseType) {
         this.context = context;
         this.callback = callback;
-        String scopeStr = arrayToString(scope);
+        String scopeStr = Helper.arrayToString(scope);
         this.smartcarAuthRequest = new SmartcarAuthRequest(clientId, redirectUri, scopeStr, responseType);
     }
 
@@ -138,7 +138,7 @@ public class SmartcarAuth {
                         String[] scope, SmartcarAuthRequest.ApprovalPrompt approvalPrompt) {
         this.context = context;
         this.callback = callback;
-        String scopeStr = arrayToString(scope);
+        String scopeStr = Helper.arrayToString(scope);
         this.smartcarAuthRequest = new SmartcarAuthRequest(clientId, redirectUri, scopeStr, approvalPrompt);
     }
 
@@ -179,7 +179,7 @@ public class SmartcarAuth {
                         SmartcarAuthRequest.ApprovalPrompt approvalPrompt) {
         this.context = context;
         this.callback = callback;
-        String scopeStr = arrayToString(scope);
+        String scopeStr = Helper.arrayToString(scope);
         this.smartcarAuthRequest = new SmartcarAuthRequest(clientId, redirectUri, scopeStr, responseType, approvalPrompt);
     }
 
@@ -251,7 +251,7 @@ public class SmartcarAuth {
         String code = null;
         String message = null;
 
-        if (uri != null && matchesRedirectUri(uri.toString())) {
+        if (uri != null && Helper.matchesRedirectUri(uri.toString())) {
             String stateReturned = uri.getQueryParameter("state");
 
             if (stateReturned.equals(SmartcarAuth.smartcarAuthRequest.getState())) {
@@ -265,32 +265,6 @@ public class SmartcarAuth {
                 callback.handleResponse(smartcarResponse);
             }
         }
-    }
-
-    /**
-     * Helper method to check if a String starts with the intended redirect URI.
-     *
-     * @param response The String to check against the redirect URI
-     * @return         True if the String matched. False otherwise
-     */
-    protected static Boolean matchesRedirectUri(String response) {
-        return (response.startsWith(SmartcarAuth.smartcarAuthRequest.getRedirectURI())) ? true : false;
-    }
-
-    /**
-     * Helper method to convert an array of Strings to a space-separated string
-     *
-     * @param array The array of Strings to flatten
-     * @return      The flattened string
-     */
-    protected static String arrayToString(String[] array) {
-        StringBuilder stringBuilder = new StringBuilder();
-        for(int i = 0; i < array.length; i++) {
-            if (i > 0) stringBuilder.append(" ");
-            stringBuilder.append(array[i]);
-        }
-        String retString = stringBuilder.toString();
-        return retString;
     }
 
     /**

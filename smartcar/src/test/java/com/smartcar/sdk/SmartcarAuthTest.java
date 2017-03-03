@@ -144,18 +144,6 @@ public class SmartcarAuthTest {
     }
 
     @Test
-    public void smartcarAuth_matchesRedirectUri() throws Exception {
-        String clientId = "client123";
-        String redirectUri = "scclient123://test";
-        String scope = "read_odometer read_vin";
-        String matchedResponse = "scclient123://test?code=democode456&state=demostate789";
-        String unmatchedResponse = "sctestclient123://test?code=democode456&state=demostate789";
-        SmartcarAuth smartcarAuth = new SmartcarAuth(null, null, clientId, redirectUri, scope);
-        assertEquals(SmartcarAuth.matchesRedirectUri(matchedResponse), true);
-        assertEquals(SmartcarAuth.matchesRedirectUri(unmatchedResponse), false);
-    }
-
-    @Test
     public void smartcarAuth_receiveResponse() throws Exception {
         String clientId = "client123";
         String redirectUri = "scclient123://test";

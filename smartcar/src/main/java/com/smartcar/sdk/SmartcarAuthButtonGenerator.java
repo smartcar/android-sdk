@@ -21,12 +21,10 @@
 package com.smartcar.sdk;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.PaintDrawable;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.Button;
@@ -70,7 +68,7 @@ class SmartcarAuthButtonGenerator {
                                                       final OEM oem) {
         return new View.OnClickListener() {
             public void onClick(View v) {
-                startActivity(context, smartcarAuthRequest, oem);
+                Helper.startActivity(context, smartcarAuthRequest, oem);
             }
         };
     }
@@ -89,29 +87,9 @@ class SmartcarAuthButtonGenerator {
                 OEM oem = button.getOem();
                 Context context = smartcarAuth.getContext();
 
-                startActivity(context, smartcarAuthRequest, oem);
+                Helper.startActivity(context, smartcarAuthRequest, oem);
             }
         };
-    }
-
-    /**
-     * Helper method and starts the WebView as a new Activity.
-     *
-     * @param context             The application's context
-     * @param smartcarAuthRequest The SmartcarAuthRequest object
-     * @param oem                 The OEM that the authentication is being processed for
-     */
-    private static void startActivity(Context context, SmartcarAuthRequest smartcarAuthRequest, OEM oem) {
-        String requestUri = smartcarAuthRequest.generateAuthRequestUri(oem);
-
-        Log.d("Auth request URI ", requestUri);
-        Intent intent = new Intent(context, com.smartcar.sdk.WebViewActivity.class);
-        intent.putExtra("URI", requestUri);
-        intent.putExtra("OEM", oem.name());
-        // The new activity (web view) will not be in the history stack
-        intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.startActivity(intent);
     }
 
     /**
