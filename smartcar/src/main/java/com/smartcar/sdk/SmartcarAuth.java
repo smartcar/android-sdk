@@ -1,14 +1,14 @@
 /**
  * Copyright (c) 2017-present, Smartcar, Inc. All rights reserved.
 
- * You are hereby granted a non-exclusive, worldwide, royalty-free license to use,
- * copy, modify, and distribute this software in source code or binary form for use
- * in connection with the web services and APIs provided by Smartcar.
+ * You are hereby granted a limited, non-exclusive, worldwide, royalty-free
+ * license to use, copy, modify, and distribute this software in source code or
+ * binary form, for the limited purpose of this software's use in connection
+ * with the web services and APIs provided by Smartcar.
  *
  * As with any software that integrates with the Smartcar platform, your use of
- * this software is subject to the Smartcar Developer Agreement
- * [https://developer.smartcar.com/agreement/]. This copyright notice shall be
- * included in all copies or substantial portions of the software.
+ * this software is subject to the Smartcar Developer Agreement. This copyright
+ * notice shall be included in all copies or substantial portions of the software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
@@ -22,8 +22,13 @@ package com.smartcar.sdk;
 
 import android.content.Context;
 import android.net.Uri;
+import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Main class that provides SDK access methods.
@@ -62,7 +67,7 @@ public class SmartcarAuth {
                         String[] scope) {
         this.context = context;
         this.callback = callback;
-        String scopeStr = arrayToString(scope);
+        String scopeStr = Helper.arrayToString(scope);
         this.smartcarAuthRequest = new SmartcarAuthRequest(clientId, redirectUri, scopeStr);
     }
 
@@ -97,7 +102,7 @@ public class SmartcarAuth {
                         String redirectUri, String[] scope, SmartcarAuthRequest.ResponseType responseType) {
         this.context = context;
         this.callback = callback;
-        String scopeStr = arrayToString(scope);
+        String scopeStr = Helper.arrayToString(scope);
         this.smartcarAuthRequest = new SmartcarAuthRequest(clientId, redirectUri, scopeStr, responseType);
     }
 
@@ -133,7 +138,7 @@ public class SmartcarAuth {
                         String[] scope, SmartcarAuthRequest.ApprovalPrompt approvalPrompt) {
         this.context = context;
         this.callback = callback;
-        String scopeStr = arrayToString(scope);
+        String scopeStr = Helper.arrayToString(scope);
         this.smartcarAuthRequest = new SmartcarAuthRequest(clientId, redirectUri, scopeStr, approvalPrompt);
     }
 
@@ -174,7 +179,7 @@ public class SmartcarAuth {
                         SmartcarAuthRequest.ApprovalPrompt approvalPrompt) {
         this.context = context;
         this.callback = callback;
-        String scopeStr = arrayToString(scope);
+        String scopeStr = Helper.arrayToString(scope);
         this.smartcarAuthRequest = new SmartcarAuthRequest(clientId, redirectUri, scopeStr, responseType, approvalPrompt);
     }
 
@@ -192,6 +197,51 @@ public class SmartcarAuth {
     }
 
     /**
+     * Generates a click event listener for a given SmartcarAuth object.
+     *
+     * @return The OnClickListener object
+     */
+    public View.OnClickListener getOnClickListener() {
+        return SmartcarAuthButtonGenerator.handleOnClick(this);
+    }
+
+    /**
+     * Generates a spinner containing the entire list of OEMs as items.
+     * Will not include MOCK as a vehicle option.
+     *
+     * @return             The generated Spinner
+     */
+    public Spinner generateSpinner() {
+        return generateSpinner(false);
+    }
+
+    /**
+     * Generates a spinner containing the entire list of OEMs as items.
+     *
+     * @param devMode      Boolean used to indicate whether to list MOCK as an option or not
+     * @return             The generated Spinner
+     */
+    public Spinner generateSpinner(Boolean devMode) {
+        ArrayList<OEM> list = new ArrayList<OEM>(Arrays.asList(OEM.values()));
+        if (!devMode) {
+            list.remove(OEM.MOCK);
+        }
+        OEM[] oemList = list.toArray(new OEM[list.size()]);
+        return generateSpinner(oemList);
+    }
+
+    /**
+     * Generates a spinner containing the given list of OEMs as items.
+     *
+     * @param oemList      The list of OEMs to include as items in the spinner
+     * @return             The generated Spinner
+     */
+    public Spinner generateSpinner(OEM[] oemList) {
+        Spinner spinner = SmartcarAuthSpinnerGenerator.generateSpinner(context, smartcarAuthRequest, oemList);
+        return spinner;
+    }
+
+    /**
      * Receives the response for the authorization request and sends it back to the calling function
      * via the callback method. The code is packed in a Bundle with the key "code".
      *
@@ -201,12 +251,13 @@ public class SmartcarAuth {
         String code = null;
         String message = null;
 
-        if (uri != null && matchesRedirectUri(uri.toString())) {
+        if (uri != null && Helper.matchesRedirectUri(uri.toString())) {
             String stateReturned = uri.getQueryParameter("state");
 
             if (stateReturned.equals(SmartcarAuth.smartcarAuthRequest.getState())) {
                 code = uri.getQueryParameter("code");
-                if (code == null) {
+                message = uri.getQueryParameter("error_description");
+                if (code == null && message == null) {
                     message = "Unable to fetch code. Please try again";
                 }
 
@@ -217,28 +268,11 @@ public class SmartcarAuth {
     }
 
     /**
-     * Helper method to check if a String starts with the intended redirect URI.
+     * Getter method for Context.
      *
-     * @param response The String to check against the redirect URI
-     * @return         True if the String matched. False otherwise
+     * @return The Context member variable
      */
-    protected static Boolean matchesRedirectUri(String response) {
-        return (response.startsWith(SmartcarAuth.smartcarAuthRequest.getRedirectURI())) ? true : false;
-    }
-
-    /**
-     * Helper method to convert an array of Strings to a space-separated string
-     *
-     * @param array The array of Strings to flatten
-     * @return      The flattened string
-     */
-    protected static String arrayToString(String[] array) {
-        StringBuilder stringBuilder = new StringBuilder();
-        for(int i = 0; i < array.length; i++) {
-            if (i > 0) stringBuilder.append(" ");
-            stringBuilder.append(array[i]);
-        }
-        String retString = stringBuilder.toString();
-        return retString;
+    protected Context getContext() {
+        return context;
     }
 }

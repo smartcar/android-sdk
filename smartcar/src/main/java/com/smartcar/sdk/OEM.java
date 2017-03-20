@@ -1,14 +1,14 @@
 /**
  * Copyright (c) 2017-present, Smartcar, Inc. All rights reserved.
 
- * You are hereby granted a non-exclusive, worldwide, royalty-free license to use,
- * copy, modify, and distribute this software in source code or binary form for use
- * in connection with the web services and APIs provided by Smartcar.
+ * You are hereby granted a limited, non-exclusive, worldwide, royalty-free
+ * license to use, copy, modify, and distribute this software in source code or
+ * binary form, for the limited purpose of this software's use in connection
+ * with the web services and APIs provided by Smartcar.
  *
  * As with any software that integrates with the Smartcar platform, your use of
- * this software is subject to the Smartcar Developer Agreement
- * [https://developer.smartcar.com/agreement/]. This copyright notice shall be
- * included in all copies or substantial portions of the software.
+ * this software is subject to the Smartcar Developer Agreement. This copyright
+ * notice shall be included in all copies or substantial portions of the software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
@@ -30,7 +30,7 @@ public enum OEM {
     BMW("BMW", "bmw_logo", "https://bmw.smartcar.com", "#2E9BDA"),
     BMW_CONNECTED("BMW Connected", "bmw_logo", "https://bmw-connected.smartcar.com", "#2E9BDA"),
     BUICK("Buick", "buick_logo", "https://buick.smartcar.com", "#333333"),
-    CADILLAC("cadillac", "cadillac_logo", "https://cadillac.smartcar.com", "#941711"),
+    CADILLAC("Cadillac", "cadillac_logo", "https://cadillac.smartcar.com", "#941711"),
     CHEVROLET("Chevrolet", "chevrolet_logo", "https://chevrolet.smartcar.com", "#042F6B"),
     CHRYSLER("Chrysler", "chrysler_logo", "https://chrysler.smartcar.com", "#231F20"),
     DODGE("Dodge", "dodge_logo", "https://dodge.smartcar.com", "#000000"),

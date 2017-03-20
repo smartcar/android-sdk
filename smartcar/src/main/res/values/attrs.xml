@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="OemLoginButton">
+        <attr name="OEM" format="enum">
+            <enum name="ACURA" value="0"/>
+            <enum name="AUDI" value="1"/>
+            <enum name="BMW" value="2"/>
+            <enum name="BMW_CONNECTED" value="3" />
+            <enum name="BUICK" value="4"/>
+            <enum name="CADILLAC" value="5"/>
+            <enum name="CHEVROLET" value="6"/>
+            <enum name="CHRYSLER" value="7"/>
+            <enum name="DODGE" value="8"/>
+            <enum name="FIAT" value="9"/>
+            <enum name="FORD" value="10"/>
+            <enum name="GMC" value="11"/>
+            <enum name="HYUNDAI" value="12"/>
+            <enum name="INFINITI" value="13"/>
+            <enum name="JEEP" value="14"/>
+            <enum name="KIA" value="15"/>
+            <enum name="LANDROVER" value="16"/>
+            <enum name="LEXUS" value="17"/>
+            <enum name="MERCEDES" value="18"/>
+            <enum name="MOCK" value="19"/>
+            <enum name="NISSAN" value="20"/>
+            <enum name="NISSANEV" value="21"/>
+            <enum name="RAM" value="22"/>
+            <enum name="TESLA" value="23"/>
+            <enum name="VOLKSWAGEN" value="24"/>
+            <enum name="VOLVO" value="25"/>
+        </attr>
+    </declare-styleable>
+</resources>

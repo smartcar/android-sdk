@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="button_prefix">Login with %s</string>
-    <string name="text_color">#FFFFFF</string>
+    <string name="button_text_color">#FFFFFF</string>
+    <string name="button_text_size">20</string>
+    <string name="spinner_item_0">Select your make</string>
 </resources>

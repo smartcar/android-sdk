@@ -2,4 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.smartcar.sdk">
 
+    <application>
+        <activity android:name=".WebViewActivity"></activity>
+    </application>
+
 </manifest>

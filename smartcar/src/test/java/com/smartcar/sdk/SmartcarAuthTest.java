@@ -1,14 +1,14 @@
 /**
  * Copyright (c) 2017-present, Smartcar, Inc. All rights reserved.
 
- * You are hereby granted a non-exclusive, worldwide, royalty-free license to use,
- * copy, modify, and distribute this software in source code or binary form for use
- * in connection with the web services and APIs provided by Smartcar.
+ * You are hereby granted a limited, non-exclusive, worldwide, royalty-free
+ * license to use, copy, modify, and distribute this software in source code or
+ * binary form, for the limited purpose of this software's use in connection
+ * with the web services and APIs provided by Smartcar.
  *
  * As with any software that integrates with the Smartcar platform, your use of
- * this software is subject to the Smartcar Developer Agreement
- * [https://developer.smartcar.com/agreement/]. This copyright notice shall be
- * included in all copies or substantial portions of the software.
+ * this software is subject to the Smartcar Developer Agreement. This copyright
+ * notice shall be included in all copies or substantial portions of the software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
@@ -17,14 +17,13 @@
  * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+
 package com.smartcar.sdk;
 
 import android.net.Uri;
-import android.util.Log;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.robolectric.RobolectricTestRunner;
 
 import static org.junit.Assert.assertEquals;
@@ -142,18 +141,6 @@ public class SmartcarAuthTest {
         assertEquals(SmartcarAuth.smartcarAuthRequest.getScope(), "read_odometer read_vin");
         assertEquals(SmartcarAuth.smartcarAuthRequest.getResponseType(), SmartcarAuthRequest.ResponseType.token);
         assertEquals(SmartcarAuth.smartcarAuthRequest.getApprovalPrompt(), SmartcarAuthRequest.ApprovalPrompt.force);
-    }
-
-    @Test
-    public void smartcarAuth_matchesRedirectUri() throws Exception {
-        String clientId = "client123";
-        String redirectUri = "scclient123://test";
-        String scope = "read_odometer read_vin";
-        String matchedResponse = "scclient123://test?code=democode456&state=demostate789";
-        String unmatchedResponse = "sctestclient123://test?code=democode456&state=demostate789";
-        SmartcarAuth smartcarAuth = new SmartcarAuth(null, null, clientId, redirectUri, scope);
-        assertEquals(SmartcarAuth.matchesRedirectUri(matchedResponse), true);
-        assertEquals(SmartcarAuth.matchesRedirectUri(unmatchedResponse), false);
     }
 
     @Test
