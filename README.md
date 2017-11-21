@@ -24,7 +24,7 @@ repositories {
 ```
 
 2. Add a reference under the `dependencies` block.
-For version `1.0.1` it would be:
+For version `1.0.3` it would be:
 ```
 compile 'com.smartcar.sdk:smartcar-auth:1.0.3@aar'
 ```
