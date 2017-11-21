@@ -14,20 +14,21 @@
             <enum name="FIAT" value="9"/>
             <enum name="FORD" value="10"/>
             <enum name="GMC" value="11"/>
-            <enum name="HYUNDAI" value="12"/>
-            <enum name="INFINITI" value="13"/>
-            <enum name="JEEP" value="14"/>
-            <enum name="KIA" value="15"/>
-            <enum name="LANDROVER" value="16"/>
-            <enum name="LEXUS" value="17"/>
-            <enum name="MERCEDES" value="18"/>
-            <enum name="MOCK" value="19"/>
-            <enum name="NISSAN" value="20"/>
-            <enum name="NISSANEV" value="21"/>
-            <enum name="RAM" value="22"/>
-            <enum name="TESLA" value="23"/>
-            <enum name="VOLKSWAGEN" value="24"/>
-            <enum name="VOLVO" value="25"/>
+            <enum name="HONDA" value="12"/>
+            <enum name="HYUNDAI" value="13"/>
+            <enum name="INFINITI" value="14"/>
+            <enum name="JEEP" value="15"/>
+            <enum name="KIA" value="16"/>
+            <enum name="LANDROVER" value="17"/>
+            <enum name="LEXUS" value="18"/>
+            <enum name="MERCEDES" value="19"/>
+            <enum name="MOCK" value="20"/>
+            <enum name="NISSAN" value="21"/>
+            <enum name="NISSANEV" value="22"/>
+            <enum name="RAM" value="23"/>
+            <enum name="TESLA" value="24"/>
+            <enum name="VOLKSWAGEN" value="25"/>
+            <enum name="VOLVO" value="26"/>
         </attr>
     </declare-styleable>
 </resources>
