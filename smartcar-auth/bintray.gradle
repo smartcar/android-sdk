@@ -39,7 +39,7 @@ bintray {
         publish = true
         publicDownloadNumbers = true
         version {
-            name = "1.0.0"
+            name = libraryVersion
             desc = libraryDescription
         }
     }
