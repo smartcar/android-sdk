@@ -35,7 +35,7 @@ public class OEMTest {
         assertEquals(oem.getAuthUrl(), "https://cadillac.smartcar.com");
         assertEquals(oem.getColor(), "#941711");
 
-        assertEquals(OEM.values().length, 26);
+        assertEquals(OEM.values().length, 27);
         assertEquals(OEM.valueOf("ACURA"), OEM.ACURA);
     }
 }

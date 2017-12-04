@@ -59,8 +59,8 @@ public class OemLoginButton extends Button {
         if (attrs != null) {
             TypedArray a = context.getTheme().obtainStyledAttributes(attrs, R.styleable.OemLoginButton, 0, 0);
             try {
-                // Setting default OEM value to 19 ==> OEM.MOCK
-                OEM oem = OEM.values()[a.getInt(R.styleable.OemLoginButton_OEM, 19)];
+                // Setting default OEM value to 20 ==> OEM.MOCK
+                OEM oem = OEM.values()[a.getInt(R.styleable.OemLoginButton_OEM, 20)];
                 this.oem = oem;
                 SmartcarAuthButtonGenerator.setButtonParameters(context, this, oem);
             } finally {

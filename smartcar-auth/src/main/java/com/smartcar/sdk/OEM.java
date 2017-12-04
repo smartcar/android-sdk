@@ -37,6 +37,7 @@ public enum OEM {
     FIAT("Fiat", "fiat_logo", "https://fiat.smartcar.com", "#B50536"),
     FORD("Ford", "ford_logo", "https://ford.smartcar.com", "#003399"),
     GMC("GMC", "gmc_logo", "https://gmc.smartcar.com", "#CC0033"),
+    HONDA("Honda", "honda_logo", "https://honda.smartcar.com", "#DA251D"),
     HYUNDAI("Hyundai", "hyundai_logo", "https://hyundai.smartcar.com", "#00287A"),
     INFINITI("Infiniti", "infiniti_logo", "https://infiniti.smartcar.com", "#1F1F1F"),
     JEEP("Jeep", "jeep_logo", "https://jeep.smartcar.com", "#374B00"),

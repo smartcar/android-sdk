@@ -1,0 +1,52 @@
+apply plugin: 'com.github.dcendents.android-maven'
+
+ext {
+    allLicenses = ['Apache-2.0']
+    bintrayName = 'smartcar-auth'
+    bintrayOrg = 'smartcar'
+    bintrayRepo = 'library'
+    developerEmail = 'support@smartcar.com'
+    developerName = 'Smartcar'
+    gitUrl = 'https://github.com/smartcar/android-sdk.git'
+    groupIdentifier = 'com.smartcar.sdk'
+    libraryDescription = 'SDK to handle OAUTH to Smartcar from Android devices.'
+    libraryVersion = '1.0.3'
+    licenseName = 'The Apache Software License, Version 2.0'
+    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+    siteUrl = 'https://github.com/smartcar/android-sdk'
+}
+
+group = groupIdentifier
+version = libraryVersion
+
+install {
+    repositories.mavenInstaller {
+        pom.project {
+            name bintrayName
+            description libraryDescription
+            url siteUrl
+
+            packaging 'aar'
+            groupId groupIdentifier
+            artifactId bintrayName
+            version libraryVersion
+
+            licenses {
+                license {
+                    name licenseName
+                    url licenseUrl
+                }
+            }
+            scm {
+                connection gitUrl
+                url siteUrl
+            }
+            developers {
+                developer {
+                    name developerName
+                    email developerEmail
+                }
+            }
+        }
+    }
+}

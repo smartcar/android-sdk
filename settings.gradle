@@ -1,1 +1,1 @@
-include ':smartcar', ':example'
+include ':smartcar-auth', ':example'
