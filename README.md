@@ -1,8 +1,7 @@
-# Smartcar Android Auth SDK [![Build Status][ci-image]][ci-url] [![Coverage][coverage-image]][coverage-url]
+# Smartcar Android Auth SDK [![Build Status][ci-image]][ci-url] [![Coverage][coverage-image]][coverage-url] [![Download][bintray-image]][bintray-url]
 
 The Smartcar Android Auth SDK makes it easy to handle the Smartcar OAuth flow from
-Android devices. In addition, it provides UI elements (buttons, picker) to easily integrate
-the flow into your application.
+Android devices.
 
 ## Getting Started
 
@@ -112,3 +111,6 @@ Sample code:
 
 [coverage-image]: https://codecov.io/gh/smartcar/android-sdk/branch/master/graph/badge.svg?token=RhacvrisiW
 [coverage-url]: https://codecov.io/gh/smartcar/android-sdk
+
+[bintray-image]: https://api.bintray.com/packages/smartcar/library/smartcar-auth/images/download.svg
+[bintray-url]: https://bintray.com/smartcar/library/smartcar-auth/_latestVersion

@@ -22,14 +22,14 @@
             android:src="@drawable/stock_logo"
             />
 
-        <com.smartcar.sdk.OemLoginButton
-            android:id="@+id/audi_button"
+        <Button
+            android:id="@+id/connect_button"
+            android:text="@string/button_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            custom:OEM="MOCK" />
+            android:layout_marginBottom="10dp" />
 
     </LinearLayout>
     </ScrollView>

@@ -23,12 +23,6 @@ package com.smartcar.sdk;
 import android.content.Context;
 import android.net.Uri;
 import android.view.View;
-import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.Spinner;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * Main class that provides SDK access methods.
@@ -37,6 +31,7 @@ public class SmartcarAuth {
     private Context context;
     protected static SmartcarAuthRequest smartcarAuthRequest;
     private static SmartcarCallback callback;
+    private View.OnClickListener listener;
 
     /**
      * Constructs an instance with the given parameters.
@@ -49,8 +44,7 @@ public class SmartcarAuth {
      */
     public SmartcarAuth(Context context, SmartcarCallback callback, String clientId, String redirectUri,
                         String scope) {
-        this.context = context;
-        this.callback = callback;
+        this(context, callback);
         this.smartcarAuthRequest = new SmartcarAuthRequest(clientId, redirectUri, scope);
     }
 
@@ -65,45 +59,9 @@ public class SmartcarAuth {
      */
     public SmartcarAuth(Context context, SmartcarCallback callback, String clientId, String redirectUri,
                         String[] scope) {
-        this.context = context;
-        this.callback = callback;
+        this(context, callback);
         String scopeStr = Helper.arrayToString(scope);
         this.smartcarAuthRequest = new SmartcarAuthRequest(clientId, redirectUri, scopeStr);
-    }
-
-    /**
-     * Constructs an instance with the given parameters.
-     *
-     * @param context      The application's context
-     * @param callback     Handler to a Callback for receiving the authentication response
-     * @param clientId     The client's ID
-     * @param redirectUri  The client's redirect URI
-     * @param scope        A space-separated list of authentication scopes
-     * @param responseType The required response type. One of ResponseType.code or ResponseType.token
-     */
-    public SmartcarAuth(Context context, SmartcarCallback callback, String clientId,
-                        String redirectUri, String scope, SmartcarAuthRequest.ResponseType responseType) {
-        this.context = context;
-        this.callback = callback;
-        this.smartcarAuthRequest = new SmartcarAuthRequest(clientId, redirectUri, scope, responseType);
-    }
-
-    /**
-     * Constructs an instance with the given parameters.
-     *
-     * @param context      The application's context
-     * @param callback     Handler to a Callback for receiving the authentication response
-     * @param clientId     The client's ID
-     * @param redirectUri  The client's redirect URI
-     * @param scope        An array of authentication scopes
-     * @param responseType The required response type. One of ResponseType.code or ResponseType.token
-     */
-    public SmartcarAuth(Context context, SmartcarCallback callback, String clientId,
-                        String redirectUri, String[] scope, SmartcarAuthRequest.ResponseType responseType) {
-        this.context = context;
-        this.callback = callback;
-        String scopeStr = Helper.arrayToString(scope);
-        this.smartcarAuthRequest = new SmartcarAuthRequest(clientId, redirectUri, scopeStr, responseType);
     }
 
     /**
@@ -118,9 +76,8 @@ public class SmartcarAuth {
      *                       ApprovalPrompt.force to force the approval UI to show
      */
     public SmartcarAuth(Context context, SmartcarCallback callback, String clientId, String redirectUri,
-                        String scope, SmartcarAuthRequest.ApprovalPrompt approvalPrompt) {
-        this.context = context;
-        this.callback = callback;
+                        String scope, ApprovalPrompt approvalPrompt) {
+        this(context, callback);
         this.smartcarAuthRequest = new SmartcarAuthRequest(clientId, redirectUri, scope, approvalPrompt);
     }
     /**
@@ -135,11 +92,43 @@ public class SmartcarAuth {
      *                       ApprovalPrompt.force to force the approval UI to show
      */
     public SmartcarAuth(Context context, SmartcarCallback callback, String clientId, String redirectUri,
-                        String[] scope, SmartcarAuthRequest.ApprovalPrompt approvalPrompt) {
-        this.context = context;
-        this.callback = callback;
+                        String[] scope, ApprovalPrompt approvalPrompt) {
+        this(context, callback);
         String scopeStr = Helper.arrayToString(scope);
         this.smartcarAuthRequest = new SmartcarAuthRequest(clientId, redirectUri, scopeStr, approvalPrompt);
+    }
+
+    /**
+     * Constructs an instance with the given parameters.
+     *
+     * @param context     The application's context
+     * @param callback    Handler to a Callback for receiving the authentication response
+     * @param clientId    The client's ID
+     * @param redirectUri The client's redirect URI
+     * @param scope       An array of authentication scopes
+     * @param development Whether to display the MOCK vehicle brand or not
+     */
+    public SmartcarAuth(Context context, SmartcarCallback callback, String clientId, String redirectUri,
+                        String scope, Boolean development) {
+        this(context, callback);
+        this.smartcarAuthRequest = new SmartcarAuthRequest(clientId, redirectUri, scope, development);
+    }
+
+    /**
+     * Constructs an instance with the given parameters.
+     *
+     * @param context     The application's context
+     * @param callback    Handler to a Callback for receiving the authentication response
+     * @param clientId    The client's ID
+     * @param redirectUri The client's redirect URI
+     * @param scope       An array of authentication scopes
+     * @param development Whether to display the MOCK vehicle brand or not
+     */
+    public SmartcarAuth(Context context, SmartcarCallback callback, String clientId, String redirectUri,
+                        String[] scope, Boolean development) {
+        this(context, callback);
+        String scopeStr = Helper.arrayToString(scope);
+        this.smartcarAuthRequest = new SmartcarAuthRequest(clientId, redirectUri, scopeStr, development);
     }
 
     /**
@@ -150,16 +139,14 @@ public class SmartcarAuth {
      * @param clientId       The client's ID
      * @param redirectUri    The client's redirect URI
      * @param scope          A space-separated list of authentication scopes
-     * @param responseType   The required response type. One of ResponseType.code or ResponseType.token
      * @param approvalPrompt ApprovalPrompt type. ApprovalPrompt.auto to request auto-approval.
      *                       ApprovalPrompt.force to force the approval UI to show
+     * @param development    Whether to display the MOCK vehicle brand or not
      */
     public SmartcarAuth(Context context, SmartcarCallback callback, String clientId, String redirectUri,
-                        String scope, SmartcarAuthRequest.ResponseType responseType,
-                        SmartcarAuthRequest.ApprovalPrompt approvalPrompt) {
-        this.context = context;
-        this.callback = callback;
-        this.smartcarAuthRequest = new SmartcarAuthRequest(clientId, redirectUri, scope, responseType, approvalPrompt);
+                        String scope, ApprovalPrompt approvalPrompt, Boolean development) {
+        this(context, callback);
+        this.smartcarAuthRequest = new SmartcarAuthRequest(clientId, redirectUri, scope, approvalPrompt, development);
     }
 
     /**
@@ -170,75 +157,34 @@ public class SmartcarAuth {
      * @param clientId       The client's ID
      * @param redirectUri    The client's redirect URI
      * @param scope          An array of authentication scopes
-     * @param responseType   The required response type. One of ResponseType.code or ResponseType.token
      * @param approvalPrompt ApprovalPrompt type. ApprovalPrompt.auto to request auto-approval.
      *                       ApprovalPrompt.force to force the approval UI to show
+     * @param development    Whether to display the MOCK vehicle brand or not
      */
     public SmartcarAuth(Context context, SmartcarCallback callback, String clientId, String redirectUri,
-                        String[] scope, SmartcarAuthRequest.ResponseType responseType,
-                        SmartcarAuthRequest.ApprovalPrompt approvalPrompt) {
+                        String[] scope, ApprovalPrompt approvalPrompt, Boolean development) {
+        this(context, callback);
+        String scopeStr = Helper.arrayToString(scope);
+        this.smartcarAuthRequest = new SmartcarAuthRequest(clientId, redirectUri, scopeStr, approvalPrompt, development);
+    }
+
+    private SmartcarAuth(final Context context, SmartcarCallback callback) {
         this.context = context;
         this.callback = callback;
-        String scopeStr = Helper.arrayToString(scope);
-        this.smartcarAuthRequest = new SmartcarAuthRequest(clientId, redirectUri, scopeStr, responseType, approvalPrompt);
+        this.listener = new View.OnClickListener() {
+            public void onClick(View v) {
+                Helper.startActivity(context, smartcarAuthRequest);
+            }
+        };
     }
-
     /**
-     * Generates a button with the appropriate background color and padding, and attaches a click
-     * listener, for a given OEM.
+     * Generates a click event listener for managing the Smartcar Auth flow, and attaches
+     *  it to the input View.
      *
-     * @param oem          The OEM to generate the button for
-     * @param layoutParams The Layout Params for the button
-     * @return             The generated Button
+     * @param view The View to attach the Smartcar Auth flow launch to
      */
-    public Button generateButton(OEM oem, LinearLayout.LayoutParams layoutParams) {
-        Button button = SmartcarAuthButtonGenerator.generateButton(context, smartcarAuthRequest, oem, layoutParams);
-        return button;
-    }
-
-    /**
-     * Generates a click event listener for a given SmartcarAuth object.
-     *
-     * @return The OnClickListener object
-     */
-    public View.OnClickListener getOnClickListener() {
-        return SmartcarAuthButtonGenerator.handleOnClick(this);
-    }
-
-    /**
-     * Generates a spinner containing the entire list of OEMs as items.
-     * Will not include MOCK as a vehicle option.
-     *
-     * @return             The generated Spinner
-     */
-    public Spinner generateSpinner() {
-        return generateSpinner(false);
-    }
-
-    /**
-     * Generates a spinner containing the entire list of OEMs as items.
-     *
-     * @param devMode      Boolean used to indicate whether to list MOCK as an option or not
-     * @return             The generated Spinner
-     */
-    public Spinner generateSpinner(Boolean devMode) {
-        ArrayList<OEM> list = new ArrayList<OEM>(Arrays.asList(OEM.values()));
-        if (!devMode) {
-            list.remove(OEM.MOCK);
-        }
-        OEM[] oemList = list.toArray(new OEM[list.size()]);
-        return generateSpinner(oemList);
-    }
-
-    /**
-     * Generates a spinner containing the given list of OEMs as items.
-     *
-     * @param oemList      The list of OEMs to include as items in the spinner
-     * @return             The generated Spinner
-     */
-    public Spinner generateSpinner(OEM[] oemList) {
-        Spinner spinner = SmartcarAuthSpinnerGenerator.generateSpinner(context, smartcarAuthRequest, oemList);
-        return spinner;
+    public void addClickHandler(View view) {
+        view.setOnClickListener(listener);
     }
 
     /**
@@ -248,8 +194,8 @@ public class SmartcarAuth {
      * @param uri The response data as a Uri
      */
     protected static void receiveResponse(Uri uri) {
-        String code = null;
-        String message = null;
+        String code;
+        String message;
 
         if (uri != null && Helper.matchesRedirectUri(uri.toString())) {
             String stateReturned = uri.getQueryParameter("state");
@@ -265,14 +211,5 @@ public class SmartcarAuth {
                 callback.handleResponse(smartcarResponse);
             }
         }
-    }
-
-    /**
-     * Getter method for Context.
-     *
-     * @return The Context member variable
-     */
-    protected Context getContext() {
-        return context;
     }
 }

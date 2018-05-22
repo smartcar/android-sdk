@@ -20,22 +20,10 @@
 
 package com.smartcar.sdk;
 
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-
-
-public class OEMTest {
-
-    @Test
-    public void oemTest_all() throws Exception {
-        OEM oem = OEM.CADILLAC;
-        assertEquals(oem.getDisplayName(), "Cadillac");
-        assertEquals(oem.getImageName(), "cadillac_logo");
-        assertEquals(oem.getAuthUrl(), "https://cadillac.smartcar.com");
-        assertEquals(oem.getColor(), "#941711");
-
-        assertEquals(OEM.values().length, 27);
-        assertEquals(OEM.valueOf("ACURA"), OEM.ACURA);
-    }
+/**
+ * Enum that defines the response types.
+ * Not currently exposed outside the package.
+ */
+enum ResponseType {
+    code, token
 }

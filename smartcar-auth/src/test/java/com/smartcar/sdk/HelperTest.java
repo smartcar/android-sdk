@@ -23,6 +23,8 @@ package com.smartcar.sdk;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class HelperTest {
 
@@ -34,8 +36,8 @@ public class HelperTest {
         String matchedResponse = "scclient123://test?code=democode456&state=demostate789";
         String unmatchedResponse = "sctestclient123://test?code=democode456&state=demostate789";
         SmartcarAuth smartcarAuth = new SmartcarAuth(null, null, clientId, redirectUri, scope);
-        assertEquals(Helper.matchesRedirectUri(matchedResponse), true);
-        assertEquals(Helper.matchesRedirectUri(unmatchedResponse), false);
+        assertTrue(Helper.matchesRedirectUri(matchedResponse));
+        assertFalse(Helper.matchesRedirectUri(unmatchedResponse));
     }
 
     @Test

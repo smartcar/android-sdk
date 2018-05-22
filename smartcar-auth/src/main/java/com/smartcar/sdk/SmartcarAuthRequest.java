@@ -33,19 +33,27 @@ class SmartcarAuthRequest {
     private String state;
     private ResponseType responseType;
     private ApprovalPrompt approvalPrompt;
+    private Boolean development;
 
     /**
-     * Enum that defines the approval prompt types.
+     * Constructs an instance with the given parameters.
+     *
+     * @param clientId       The client's ID
+     * @param redirectURI    The client's redirect URI
+     * @param scope          A space-separated list of authentication scopes
+     * @param approvalPrompt ApprovalPrompt type. ApprovalPrompt.auto to request auto-approval.
+     *                       ApprovalPrompt.force to force the approval UI to show
+     * @param development    Whether to display the MOCK vehicle brand or not
      */
-    protected enum ApprovalPrompt {
-        force, auto
-    }
-
-    /**
-     * Enum that defines the response types.
-     */
-    protected enum ResponseType {
-        code, token
+    protected SmartcarAuthRequest(String clientId, String redirectURI,
+                        String scope, ApprovalPrompt approvalPrompt, Boolean development) {
+        this.clientId = clientId;
+        this.redirectURI = redirectURI;
+        this.scope = scope;
+        this.approvalPrompt = approvalPrompt;
+        this.development = development;
+        this.state = UUID.randomUUID().toString();
+        this.responseType = ResponseType.code;
     }
 
     /**
@@ -54,19 +62,12 @@ class SmartcarAuthRequest {
      * @param clientId       The client's ID
      * @param redirectURI    The client's redirect URI
      * @param scope          A space-separated list of authentication scopes
-     * @param responseType   The required response type. One of ResponseType.code or ResponseType.token
      * @param approvalPrompt ApprovalPrompt type. ApprovalPrompt.auto to request auto-approval.
      *                       ApprovalPrompt.force to force the approval UI to show
      */
     protected SmartcarAuthRequest(String clientId, String redirectURI,
-                        String scope, ResponseType responseType,
-                               ApprovalPrompt approvalPrompt) {
-        this.clientId = clientId;
-        this.redirectURI = redirectURI;
-        this.scope = scope;
-        this.state = UUID.randomUUID().toString();
-        this.responseType = responseType;
-        this.approvalPrompt = approvalPrompt;
+                                  String scope, ApprovalPrompt approvalPrompt) {
+        this(clientId, redirectURI, scope, approvalPrompt, false);
     }
 
     /**
@@ -75,25 +76,10 @@ class SmartcarAuthRequest {
      * @param clientId     The client's ID
      * @param redirectURI  The client's redirect URI
      * @param scope        A space-separated list of authentication scopes
-     * @param responseType The required response type. One of ResponseType.code or ResponseType.token
      */
     protected SmartcarAuthRequest(String clientId, String redirectURI,
-                        String scope, ResponseType responseType) {
-        this(clientId, redirectURI, scope, responseType, ApprovalPrompt.auto);
-    }
-
-    /**
-     * Constructs an instance with the given parameters.
-     *
-     * @param clientId       The client's ID
-     * @param redirectURI    The client's redirect URI
-     * @param scope          A space-separated list of authentication scopes
-     * @param approvalPrompt ApprovalPrompt type. ApprovalPrompt.auto to request auto-approval.
-     *                       ApprovalPrompt.force to force the approval UI to show
-     */
-    protected SmartcarAuthRequest(String clientId, String redirectURI,
-                        String scope, ApprovalPrompt approvalPrompt) {
-        this(clientId, redirectURI, scope, ResponseType.code, approvalPrompt);
+                        String scope, Boolean development) {
+        this(clientId, redirectURI, scope, ApprovalPrompt.auto, development);
     }
 
     /**
@@ -105,7 +91,7 @@ class SmartcarAuthRequest {
      */
     protected SmartcarAuthRequest(String clientId, String redirectURI,
                                String scope) {
-        this(clientId, redirectURI, scope, ResponseType.code, ApprovalPrompt.auto);
+        this(clientId, redirectURI, scope, ApprovalPrompt.auto, false);
     }
 
     /**
@@ -118,7 +104,7 @@ class SmartcarAuthRequest {
     }
 
     /**
-     * Gets teh client's redirect URI.
+     * Gets the client's redirect URI.
      *
      * @return The client's redirect URI
      */
@@ -163,6 +149,15 @@ class SmartcarAuthRequest {
     }
 
     /**
+     * Gets the setting that indicates whether MOCK vehicle brand should be displayed or not.
+     *
+     * @return The Boolean value
+     */
+    protected Boolean getDevelopment() {
+        return development;
+    }
+
+    /**
      * Sets the state to a random UUID value.
      *
      * @return String The state
@@ -173,19 +168,20 @@ class SmartcarAuthRequest {
     }
 
     /**
-     * Generates the authorization request URI for a given OEM.
+     * Generates the authorization request URI.
      *
-     * @param oem The OEM to generate the authorization request URI for
      * @return The authorization request URI
      */
-    protected String generateAuthRequestUri(OEM oem) {
+    protected String generateAuthRequestUri() {
 
-        String requestUri = oem.getAuthUrl()
-                + "/oauth/authorize?response_type=" + getResponseType().toString()
+        String requestUri = "https://connect.smartcar.com/oauth/authorize?response_type="
+                + getResponseType().toString()
                 + "&client_id=" + getClientId()
-                + "&redirect_uri=" + getRedirectURI() + "&scope=" + getScope()
+                + "&redirect_uri=" + getRedirectURI()
+                + "&scope=" + getScope()
                 + "&state=" + setState()
-                + "&approval_prompt=" + getApprovalPrompt().toString();
+                + "&approval_prompt=" + getApprovalPrompt().toString()
+                +"&mock=" + getDevelopment();
 
         return requestUri;
     }

@@ -25,18 +25,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.Gravity;
 import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.LinearLayout.LayoutParams;
-import android.widget.Spinner;
 
-import com.smartcar.sdk.OEM;
+import com.smartcar.sdk.ApprovalPrompt;
 import com.smartcar.sdk.SmartcarAuth;
 import com.smartcar.sdk.SmartcarCallback;
 import com.smartcar.sdk.SmartcarResponse;
 
-/** A simple Activity showcasing the two ways to add buttons using the Smartcar Auth SDK.
+/** A simple Activity to showcase the Smartcar Auth SDK.
  */
 public class MainActivity extends AppCompatActivity {
 
@@ -59,30 +55,19 @@ public class MainActivity extends AppCompatActivity {
 
         // Step 1. Always create a SmartcarCallback object, and a SmartcarAuth object
         MyCallback callback = new MyCallback();
-        smartcarAuth = new SmartcarAuth(appContext, callback, CLIENT_ID, REDIRECT_URI, SCOPE);
+        smartcarAuth = new SmartcarAuth(appContext, callback, CLIENT_ID, REDIRECT_URI, SCOPE,
+                ApprovalPrompt.force,true);
 
-        // Step 2. Create button - option 1: using XML. Need to explicitly set the onClickListener
-        Button xmlButton = (Button) findViewById(R.id.audi_button);
-        xmlButton.setOnClickListener(smartcarAuth.getOnClickListener());
+        // Step 2. Add a button - A click event on this button will launch the Smartcar Auth flow
+        Button xmlButton = (Button) findViewById(R.id.connect_button);
 
-        // Step 2. Create button - option 2: using SDK code. Requires layout setting programmatically
-        LinearLayout linear = (LinearLayout) findViewById(R.id.activity_main);
-        LayoutParams param = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-        param.gravity = Gravity.CENTER_HORIZONTAL;
-        param.topMargin = 10;
-        param.bottomMargin = 10;
+        // Step 3. Attach the click handler provided by the SDK, as shown below
+        smartcarAuth.addClickHandler(xmlButton);
 
-        Button bmwConnected = smartcarAuth.generateButton(OEM.BMW, param);
-        linear.addView(bmwConnected);
-
-        // Optional step: To create a spinner instead of the buttons
-        OEM[] oemList = {OEM.BMW, OEM.MOCK, OEM.VOLVO, OEM.VOLKSWAGEN};
-        Spinner oemSpinner = smartcarAuth.generateSpinner(oemList);
-        linear.addView(oemSpinner);
     }
 
     /**
-     * Process the callback from Smartcar SDK
+     * Process the callback from the Smartcar SDK
      */
     class MyCallback implements SmartcarCallback {
         public void handleResponse(SmartcarResponse smartcarResponse) {
