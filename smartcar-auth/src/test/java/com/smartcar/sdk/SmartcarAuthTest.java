@@ -37,7 +37,7 @@ public class SmartcarAuthTest {
         String clientId = "client123";
         String redirectUri = "scclient123://test";
         String scope = "read_odometer read_vin";
-        SmartcarAuth smartcarAuth = new SmartcarAuth(null, null, clientId, redirectUri, scope);
+        SmartcarAuth smartcarAuth = new SmartcarAuth(null, clientId, redirectUri, scope);
         assertEquals(SmartcarAuth.smartcarAuthRequest.getClientId(), clientId);
         assertEquals(SmartcarAuth.smartcarAuthRequest.getRedirectURI(), redirectUri);
         assertEquals(SmartcarAuth.smartcarAuthRequest.getScope(), scope);
@@ -50,7 +50,7 @@ public class SmartcarAuthTest {
         String clientId = "client123";
         String redirectUri = "scclient123://test";
         String[] scope = {"read_odometer", "read_vin"};
-        SmartcarAuth smartcarAuth = new SmartcarAuth(null, null, clientId, redirectUri, scope);
+        SmartcarAuth smartcarAuth = new SmartcarAuth(null, clientId, redirectUri, scope);
         assertEquals(SmartcarAuth.smartcarAuthRequest.getClientId(), clientId);
         assertEquals(SmartcarAuth.smartcarAuthRequest.getRedirectURI(), redirectUri);
         assertEquals(SmartcarAuth.smartcarAuthRequest.getScope(), "read_odometer read_vin");
@@ -63,7 +63,7 @@ public class SmartcarAuthTest {
         String clientId = "client123";
         String redirectUri = "scclient123://test";
         String scope = "read_odometer read_vin";
-        SmartcarAuth smartcarAuth = new SmartcarAuth(null, null, clientId, redirectUri, scope);
+        SmartcarAuth smartcarAuth = new SmartcarAuth(null, clientId, redirectUri, scope);
         assertEquals(SmartcarAuth.smartcarAuthRequest.getClientId(), clientId);
         assertEquals(SmartcarAuth.smartcarAuthRequest.getRedirectURI(), redirectUri);
         assertEquals(SmartcarAuth.smartcarAuthRequest.getScope(), scope);
@@ -76,7 +76,7 @@ public class SmartcarAuthTest {
         String clientId = "client123";
         String redirectUri = "scclient123://test";
         String[] scope = {"read_odometer", "read_vin"};
-        SmartcarAuth smartcarAuth = new SmartcarAuth(null, null, clientId, redirectUri, scope);
+        SmartcarAuth smartcarAuth = new SmartcarAuth(null, clientId, redirectUri, scope);
         assertEquals(SmartcarAuth.smartcarAuthRequest.getClientId(), clientId);
         assertEquals(SmartcarAuth.smartcarAuthRequest.getRedirectURI(), redirectUri);
         assertEquals(SmartcarAuth.smartcarAuthRequest.getScope(), "read_odometer read_vin");
@@ -90,7 +90,7 @@ public class SmartcarAuthTest {
         String redirectUri = "scclient123://test";
         String scope = "read_odometer read_vin";
         ApprovalPrompt approvalPrompt = ApprovalPrompt.force;
-        SmartcarAuth smartcarAuth = new SmartcarAuth(null, null, clientId, redirectUri, scope, approvalPrompt);
+        SmartcarAuth smartcarAuth = new SmartcarAuth(null, clientId, redirectUri, scope, approvalPrompt);
         assertEquals(SmartcarAuth.smartcarAuthRequest.getClientId(), clientId);
         assertEquals(SmartcarAuth.smartcarAuthRequest.getRedirectURI(), redirectUri);
         assertEquals(SmartcarAuth.smartcarAuthRequest.getScope(), scope);
@@ -104,7 +104,7 @@ public class SmartcarAuthTest {
         String redirectUri = "scclient123://test";
         String[] scope = {"read_odometer", "read_vin"};
         ApprovalPrompt approvalPrompt = ApprovalPrompt.force;
-        SmartcarAuth smartcarAuth = new SmartcarAuth(null, null, clientId, redirectUri, scope, approvalPrompt);
+        SmartcarAuth smartcarAuth = new SmartcarAuth(null, clientId, redirectUri, scope, approvalPrompt);
         assertEquals(SmartcarAuth.smartcarAuthRequest.getClientId(), clientId);
         assertEquals(SmartcarAuth.smartcarAuthRequest.getRedirectURI(), redirectUri);
         assertEquals(SmartcarAuth.smartcarAuthRequest.getScope(), "read_odometer read_vin");
@@ -118,7 +118,7 @@ public class SmartcarAuthTest {
         String redirectUri = "scclient123://test";
         String scope = "read_odometer read_vin";
         ApprovalPrompt approvalPrompt = ApprovalPrompt.force;
-        SmartcarAuth smartcarAuth = new SmartcarAuth(null, null, clientId, redirectUri, scope, true);
+        SmartcarAuth smartcarAuth = new SmartcarAuth(null, clientId, redirectUri, scope, true);
         assertEquals(SmartcarAuth.smartcarAuthRequest.getClientId(), clientId);
         assertEquals(SmartcarAuth.smartcarAuthRequest.getRedirectURI(), redirectUri);
         assertEquals(SmartcarAuth.smartcarAuthRequest.getScope(), scope);
@@ -133,7 +133,7 @@ public class SmartcarAuthTest {
         String redirectUri = "scclient123://test";
         String[] scope = {"read_odometer", "read_vin"};
         ApprovalPrompt approvalPrompt = ApprovalPrompt.force;
-        SmartcarAuth smartcarAuth = new SmartcarAuth(null, null, clientId, redirectUri, scope, true);
+        SmartcarAuth smartcarAuth = new SmartcarAuth(null, clientId, redirectUri, scope, true);
         assertEquals(SmartcarAuth.smartcarAuthRequest.getClientId(), clientId);
         assertEquals(SmartcarAuth.smartcarAuthRequest.getRedirectURI(), redirectUri);
         assertEquals(SmartcarAuth.smartcarAuthRequest.getScope(), "read_odometer read_vin");
@@ -148,7 +148,7 @@ public class SmartcarAuthTest {
         String redirectUri = "scclient123://test";
         String scope = "read_odometer read_vin";
         ApprovalPrompt approvalPrompt = ApprovalPrompt.force;
-        SmartcarAuth smartcarAuth = new SmartcarAuth(null, null, clientId, redirectUri, scope, approvalPrompt, true);
+        SmartcarAuth smartcarAuth = new SmartcarAuth(null, clientId, redirectUri, scope, approvalPrompt, true);
         assertEquals(SmartcarAuth.smartcarAuthRequest.getClientId(), clientId);
         assertEquals(SmartcarAuth.smartcarAuthRequest.getRedirectURI(), redirectUri);
         assertEquals(SmartcarAuth.smartcarAuthRequest.getScope(), scope);
@@ -163,7 +163,7 @@ public class SmartcarAuthTest {
         String redirectUri = "scclient123://test";
         String[] scope = {"read_odometer", "read_vin"};
         ApprovalPrompt approvalPrompt = ApprovalPrompt.force;
-        SmartcarAuth smartcarAuth = new SmartcarAuth(null, null, clientId, redirectUri, scope, approvalPrompt, false);
+        SmartcarAuth smartcarAuth = new SmartcarAuth(null, clientId, redirectUri, scope, approvalPrompt, false);
         assertEquals(SmartcarAuth.smartcarAuthRequest.getClientId(), clientId);
         assertEquals(SmartcarAuth.smartcarAuthRequest.getRedirectURI(), redirectUri);
         assertEquals(SmartcarAuth.smartcarAuthRequest.getScope(), "read_odometer read_vin");
@@ -184,7 +184,7 @@ public class SmartcarAuthTest {
         }
         MyCallback callback = new MyCallback();
 
-        SmartcarAuth smartcarAuth = new SmartcarAuth(null, callback, clientId, redirectUri, scope);
+        SmartcarAuth smartcarAuth = new SmartcarAuth(callback, clientId, redirectUri, scope);
         String state = smartcarAuth.smartcarAuthRequest.getState();
         Uri uri = Uri.parse(redirectUri + "?code=testcode123&state=" + state);
 
@@ -205,7 +205,7 @@ public class SmartcarAuthTest {
         MyCallback callback = new MyCallback();
 
         String wrongRedirectUri = "wrongscheme://test";
-        SmartcarAuth smartcarAuth = new SmartcarAuth(null, callback, clientId, redirectUri, scope);
+        SmartcarAuth smartcarAuth = new SmartcarAuth(callback, clientId, redirectUri, scope);
         String state = smartcarAuth.smartcarAuthRequest.getState();
         Uri uri = Uri.parse(wrongRedirectUri + "?code=testcode123&state=" + state);
 
@@ -225,7 +225,7 @@ public class SmartcarAuthTest {
         }
         MyCallback callback = new MyCallback();
 
-        SmartcarAuth smartcarAuth = new SmartcarAuth(null, callback, clientId, redirectUri, scope);
+        SmartcarAuth smartcarAuth = new SmartcarAuth(callback, clientId, redirectUri, scope);
         Uri uri = null;
 
         SmartcarAuth.receiveResponse(uri);
@@ -244,7 +244,7 @@ public class SmartcarAuthTest {
         }
         MyCallback callback = new MyCallback();
 
-        SmartcarAuth smartcarAuth = new SmartcarAuth(null, callback, clientId, redirectUri, scope);
+        SmartcarAuth smartcarAuth = new SmartcarAuth(callback, clientId, redirectUri, scope);
         String state = "wrongstate";
         Uri uri = Uri.parse(redirectUri + "?code=testcode123&state=" + state);
 
@@ -264,7 +264,7 @@ public class SmartcarAuthTest {
         }
         MyCallback callback = new MyCallback();
 
-        SmartcarAuth smartcarAuth = new SmartcarAuth(null, callback, clientId, redirectUri, scope);
+        SmartcarAuth smartcarAuth = new SmartcarAuth(callback, clientId, redirectUri, scope);
         String state = smartcarAuth.smartcarAuthRequest.getState();
         Uri uri = Uri.parse(redirectUri + "?state=" + state);
 
@@ -284,7 +284,7 @@ public class SmartcarAuthTest {
         }
         MyCallback callback = new MyCallback();
 
-        SmartcarAuth smartcarAuth = new SmartcarAuth(null, callback, clientId, redirectUri, scope);
+        SmartcarAuth smartcarAuth = new SmartcarAuth(callback, clientId, redirectUri, scope);
         String state = smartcarAuth.smartcarAuthRequest.getState();
         Uri uri = Uri.parse(redirectUri + "?error_description=error&state=" + state);
 

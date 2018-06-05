@@ -25,6 +25,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.Button;
 
 import com.smartcar.sdk.ApprovalPrompt;
@@ -55,15 +57,37 @@ public class MainActivity extends AppCompatActivity {
 
         // Step 1. Always create a SmartcarCallback object, and a SmartcarAuth object
         MyCallback callback = new MyCallback();
-        smartcarAuth = new SmartcarAuth(appContext, callback, CLIENT_ID, REDIRECT_URI, SCOPE,
+        smartcarAuth = new SmartcarAuth(callback, CLIENT_ID, REDIRECT_URI, SCOPE,
                 ApprovalPrompt.force,true);
 
         // Step 2. Add a button - A click event on this button will launch the Smartcar Auth flow
-        Button xmlButton = (Button) findViewById(R.id.connect_button);
+        Button connectButton = (Button) findViewById(R.id.connect_button);
 
         // Step 3. Attach the click handler provided by the SDK, as shown below
-        smartcarAuth.addClickHandler(xmlButton);
+        smartcarAuth.addClickHandler(appContext, connectButton);
 
+        // Alternate to Steps 2 & 3
+        // Attach a gesture listener to a button and use the Smartcar launchAuthFlow() method
+        Button altButton = (Button) findViewById(R.id.alt_button);
+
+        altButton.setOnTouchListener(new OnSwipeTouchListener(appContext) {
+            public void onSwipeTop() {
+                smartcarAuth.launchAuthFlow(appContext);
+            }
+            public void onSwipeRight() {
+                smartcarAuth.launchAuthFlow(appContext);
+            }
+            public void onSwipeLeft() {
+                smartcarAuth.launchAuthFlow(appContext);
+            }
+            public void onSwipeBottom() {
+                smartcarAuth.launchAuthFlow(appContext);
+            }
+
+            public boolean onTouch(View v, MotionEvent event) {
+                return gestureDetector.onTouchEvent(event);
+            }
+        });
     }
 
     /**

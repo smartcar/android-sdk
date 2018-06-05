@@ -24,7 +24,16 @@
 
         <Button
             android:id="@+id/connect_button"
-            android:text="@string/button_text"
+            android:text="@string/connect_button_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp" />
+
+        <Button
+            android:id="@+id/alt_button"
+            android:text="@string/alt_button_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"

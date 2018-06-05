@@ -35,7 +35,7 @@ public class HelperTest {
         String scope = "read_odometer read_vin";
         String matchedResponse = "scclient123://test?code=democode456&state=demostate789";
         String unmatchedResponse = "sctestclient123://test?code=democode456&state=demostate789";
-        SmartcarAuth smartcarAuth = new SmartcarAuth(null, null, clientId, redirectUri, scope);
+        SmartcarAuth smartcarAuth = new SmartcarAuth(null, clientId, redirectUri, scope);
         assertTrue(Helper.matchesRedirectUri(matchedResponse));
         assertFalse(Helper.matchesRedirectUri(unmatchedResponse));
     }
