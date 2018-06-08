@@ -140,7 +140,7 @@ For a redirectURI `sc4a1b01e5-0497-417c-a30e-6df6ba33ba46://oauth2redirect.com/p
         </activity>
 ```
 
-More information on [data element] (https://developer.android.com/guide/topics/manifest/data-element.html).
+More information on [data element](https://developer.android.com/guide/topics/manifest/data-element.html).
 
 
 [ci-image]: https://travis-ci.com/smartcar/android-sdk.svg?token=6Yrkze1DNb8WHnHxrCy6&branch=master
