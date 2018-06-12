@@ -28,15 +28,13 @@ class Helper {
     /**
      * Helper method that starts the WebView as a new Activity.
      *
-     * @param context             The application's context
-     * @param smartcarAuthRequest The SmartcarAuthRequest object
+     * @param context The application's context
+     * @param url     The Smartcar Auth url
      */
-    protected static void startActivity(Context context, SmartcarAuthRequest smartcarAuthRequest) {
-        String requestUri = smartcarAuthRequest.generateAuthRequestUri();
-
-        Log.d("Auth request URI ", requestUri);
+    protected static void startActivity(Context context, String url) {
+        Log.d("Auth request URI ", url);
         Intent intent = new Intent(context, com.smartcar.sdk.WebViewActivity.class);
-        intent.putExtra("URI", requestUri);
+        intent.putExtra("URI", url);
         // The new activity (web view) will not be in the history stack
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
