@@ -23,6 +23,6 @@ package com.smartcar.sdk;
 /**
  * Enum that defines the approval prompt types.
  */
-public enum ApprovalPrompt {
+enum ApprovalPrompt {
     force, auto
 }

@@ -28,139 +28,127 @@ import android.view.View;
  * Main class that provides SDK access methods.
  */
 public class SmartcarAuth {
-    protected static SmartcarAuthRequest smartcarAuthRequest;
-    private static SmartcarCallback callback;
-    private View.OnClickListener listener;
+    protected SmartcarAuthRequest smartcarAuthRequest;
+    private SmartcarCallback callback;
 
     /**
      * Constructs an instance with the given parameters.
      *
-     * @param callback    Handler to a Callback for receiving the authentication response
      * @param clientId    The client's ID
      * @param redirectUri The client's redirect URI
      * @param scope       A space-separated list of authentication scopes
-     */
-    public SmartcarAuth(SmartcarCallback callback, String clientId, String redirectUri,
-                        String scope) {
-        this(callback);
-        this.smartcarAuthRequest = new SmartcarAuthRequest(clientId, redirectUri, scope);
-    }
-
-    /**
-     * Constructs an instance with the given parameters.
-     *
      * @param callback    Handler to a Callback for receiving the authentication response
-     * @param clientId    The client's ID
-     * @param redirectUri The client's redirect URI
-     * @param scope       An array of authentication scopes
      */
-    public SmartcarAuth(SmartcarCallback callback, String clientId, String redirectUri,
-                        String[] scope) {
-        this(callback);
-        String scopeStr = Helper.arrayToString(scope);
-        this.smartcarAuthRequest = new SmartcarAuthRequest(clientId, redirectUri, scopeStr);
-    }
-
-    /**
-     * Constructs an instance with the given parameters.
-     *
-     * @param callback       Handler to a Callback for receiving the authentication response
-     * @param clientId       The client's ID
-     * @param redirectUri    The client's redirect URI
-     * @param scope          A space-separated list of authentication scopes
-     * @param approvalPrompt ApprovalPrompt type. ApprovalPrompt.auto to request auto-approval.
-     *                       ApprovalPrompt.force to force the approval UI to show
-     */
-    public SmartcarAuth(SmartcarCallback callback, String clientId, String redirectUri,
-                        String scope, ApprovalPrompt approvalPrompt) {
-        this(callback);
-        this.smartcarAuthRequest = new SmartcarAuthRequest(clientId, redirectUri, scope, approvalPrompt);
-    }
-    /**
-     * Constructs an instance with the given parameters.
-     *
-     * @param callback       Handler to a Callback for receiving the authentication response
-     * @param clientId       The client's ID
-     * @param redirectUri    The client's redirect URI
-     * @param scope          An array of authentication scopes
-     * @param approvalPrompt ApprovalPrompt type. ApprovalPrompt.auto to request auto-approval.
-     *                       ApprovalPrompt.force to force the approval UI to show
-     */
-    public SmartcarAuth(SmartcarCallback callback, String clientId, String redirectUri,
-                        String[] scope, ApprovalPrompt approvalPrompt) {
-        this(callback);
-        String scopeStr = Helper.arrayToString(scope);
-        this.smartcarAuthRequest = new SmartcarAuthRequest(clientId, redirectUri, scopeStr, approvalPrompt);
-    }
-
-    /**
-     * Constructs an instance with the given parameters.
-     *
-     * @param callback    Handler to a Callback for receiving the authentication response
-     * @param clientId    The client's ID
-     * @param redirectUri The client's redirect URI
-     * @param scope       An array of authentication scopes
-     * @param development Whether to display the MOCK vehicle brand or not
-     */
-    public SmartcarAuth(SmartcarCallback callback, String clientId, String redirectUri,
-                        String scope, Boolean development) {
-        this(callback);
-        this.smartcarAuthRequest = new SmartcarAuthRequest(clientId, redirectUri, scope, development);
-    }
-
-    /**
-     * Constructs an instance with the given parameters.
-     *
-     * @param callback    Handler to a Callback for receiving the authentication response
-     * @param clientId    The client's ID
-     * @param redirectUri The client's redirect URI
-     * @param scope       An array of authentication scopes
-     * @param development Whether to display the MOCK vehicle brand or not
-     */
-    public SmartcarAuth(SmartcarCallback callback, String clientId, String redirectUri,
-                        String[] scope, Boolean development) {
-        this(callback);
-        String scopeStr = Helper.arrayToString(scope);
-        this.smartcarAuthRequest = new SmartcarAuthRequest(clientId, redirectUri, scopeStr, development);
-    }
-
-    /**
-     * Constructs an instance with the given parameters.
-     *
-     * @param callback       Handler to a Callback for receiving the authentication response
-     * @param clientId       The client's ID
-     * @param redirectUri    The client's redirect URI
-     * @param scope          A space-separated list of authentication scopes
-     * @param approvalPrompt ApprovalPrompt type. ApprovalPrompt.auto to request auto-approval.
-     *                       ApprovalPrompt.force to force the approval UI to show
-     * @param development    Whether to display the MOCK vehicle brand or not
-     */
-    public SmartcarAuth(SmartcarCallback callback, String clientId, String redirectUri,
-                        String scope, ApprovalPrompt approvalPrompt, Boolean development) {
-        this(callback);
-        this.smartcarAuthRequest = new SmartcarAuthRequest(clientId, redirectUri, scope, approvalPrompt, development);
-    }
-
-    /**
-     * Constructs an instance with the given parameters.
-     *
-     * @param callback       Handler to a Callback for receiving the authentication response
-     * @param clientId       The client's ID
-     * @param redirectUri    The client's redirect URI
-     * @param scope          An array of authentication scopes
-     * @param approvalPrompt ApprovalPrompt type. ApprovalPrompt.auto to request auto-approval.
-     *                       ApprovalPrompt.force to force the approval UI to show
-     * @param development    Whether to display the MOCK vehicle brand or not
-     */
-    public SmartcarAuth(SmartcarCallback callback, String clientId, String redirectUri,
-                        String[] scope, ApprovalPrompt approvalPrompt, Boolean development) {
-        this(callback);
-        String scopeStr = Helper.arrayToString(scope);
-        this.smartcarAuthRequest = new SmartcarAuthRequest(clientId, redirectUri, scopeStr, approvalPrompt, development);
-    }
-
-    private SmartcarAuth(SmartcarCallback callback) {
+    public SmartcarAuth(String clientId, String redirectUri, String scope,
+                        SmartcarCallback callback) {
+        smartcarAuthRequest = new SmartcarAuthRequest(clientId, redirectUri, scope);
         this.callback = callback;
+    }
+
+    /**
+     * Constructs an instance with the given parameters.
+     *
+     * @param clientId    The client's ID
+     * @param redirectUri The client's redirect URI
+     * @param scope       An array of authentication scopes
+     * @param callback    Handler to a Callback for receiving the authentication response
+     */
+    public SmartcarAuth(String clientId, String redirectUri, String[] scope,
+                        SmartcarCallback callback) {
+        String scopeStr = Helper.arrayToString(scope);
+        smartcarAuthRequest = new SmartcarAuthRequest(clientId, redirectUri, scopeStr);
+        this.callback = callback;
+    }
+
+    /**
+     * Constructs an instance with the given parameters.
+     *
+     * @param clientId    The client's ID
+     * @param redirectUri The client's redirect URI
+     * @param scope       An array of authentication scopes
+     * @param development Whether to display the MOCK vehicle brand or not
+     * @param callback    Handler to a Callback for receiving the authentication response
+     */
+    public SmartcarAuth(String clientId, String redirectUri, String scope, boolean development,
+                        SmartcarCallback callback) {
+        smartcarAuthRequest = new SmartcarAuthRequest(clientId, redirectUri, scope, development);
+        this.callback = callback;
+    }
+
+    /**
+     * Constructs an instance with the given parameters.
+     *
+     * @param clientId    The client's ID
+     * @param redirectUri The client's redirect URI
+     * @param scope       An array of authentication scopes
+     * @param development Whether to display the MOCK vehicle brand or not
+     * @param callback    Handler to a Callback for receiving the authentication response
+     */
+    public SmartcarAuth(String clientId, String redirectUri, String[] scope, boolean development,
+                        SmartcarCallback callback) {
+        String scopeStr = Helper.arrayToString(scope);
+        smartcarAuthRequest = new SmartcarAuthRequest(clientId, redirectUri, scopeStr, development);
+        this.callback = callback;
+    }
+
+    /**
+     * Generates the authorization request URI.
+     *
+     * @param state optional OAuth state to be returned on redirect
+     * @param forcePrompt force permissions prompt to display on redirect (default: false)
+     * @return The authorization request URI
+     */
+   public String generateUrl(String state, boolean forcePrompt) {
+
+        String stateQuery = "";
+        if (state != null) {
+            stateQuery = "&state=" + state;
+        }
+
+        String approvalPromptQuery = ApprovalPrompt.auto.toString();
+        if (forcePrompt) {
+            approvalPromptQuery = ApprovalPrompt.force.toString();
+        }
+
+        String requestUri = "https://connect.smartcar.com/oauth/authorize?response_type="
+                + smartcarAuthRequest.getResponseType().toString()
+                + "&client_id=" + smartcarAuthRequest.getClientId()
+                + "&redirect_uri=" + smartcarAuthRequest.getRedirectURI()
+                + "&scope=" + smartcarAuthRequest.getScope()
+                + stateQuery
+                + approvalPromptQuery
+                + "&mock=" + smartcarAuthRequest.getDevelopment();
+
+        return requestUri;
+    }
+
+    /**
+     * Generates the authorization URI.
+     *
+     * @param state optional OAuth state to be returned on redirect
+     * @return The authorization request URI
+     */
+    public String generateUrl(String state) {
+        return generateUrl(state, false);
+    }
+
+    /**
+     * Generates the authorization URI.
+     *
+     * @param forcePrompt force permissions prompt to display on redirect (default false)
+     * @return The authorization request URI
+     */
+    public String generateUrl(boolean forcePrompt) {
+        return generateUrl(null, forcePrompt);
+    }
+
+    /**
+     * Generates the authorization URI
+     *
+     * @return The authorization request URI
+     */
+    public String generateUrl() {
+        return generateUrl(null, false);
     }
 
     /**
@@ -198,20 +186,19 @@ public class SmartcarAuth {
     protected static void receiveResponse(Uri uri) {
         String code;
         String message;
+        String state;
 
         if (uri != null && Helper.matchesRedirectUri(uri.toString())) {
-            String stateReturned = uri.getQueryParameter("state");
+            state = uri.getQueryParameter("state");
 
-            if (stateReturned.equals(SmartcarAuth.smartcarAuthRequest.getState())) {
-                code = uri.getQueryParameter("code");
-                message = uri.getQueryParameter("error_description");
-                if (code == null && message == null) {
-                    message = "Unable to fetch code. Please try again";
-                }
-
-                SmartcarResponse smartcarResponse = new SmartcarResponse(code, message);
-                callback.handleResponse(smartcarResponse);
+            code = uri.getQueryParameter("code");
+            message = uri.getQueryParameter("error_description");
+            if (code == null && message == null) {
+                message = "Unable to fetch code. Please try again";
             }
+
+            SmartcarResponse smartcarResponse = new SmartcarResponse(code, message, state);
+            callback.handleResponse(smartcarResponse);
         }
     }
 }

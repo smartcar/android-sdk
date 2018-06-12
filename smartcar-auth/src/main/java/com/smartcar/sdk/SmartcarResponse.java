@@ -26,10 +26,12 @@ package com.smartcar.sdk;
 public class SmartcarResponse {
     private String code;
     private String message;
+    private String state;
 
-    public SmartcarResponse(String code, String message) {
+    public SmartcarResponse(String code, String message, String state) {
         this.code = code;
         this.message = message;
+        this.state = state;
     }
 
     public String getCode() {
@@ -38,5 +40,9 @@ public class SmartcarResponse {
 
     public String getMessage() {
         return message;
+    }
+
+    public String getState() {
+        return state;
     }
 }
