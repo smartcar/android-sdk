@@ -29,7 +29,7 @@ import static org.junit.Assert.assertTrue;
 public class HelperTest {
 
     @Test
-    public void helper_matchesRedirectUri() throws Exception {
+    public void helper_matchesRedirectUri() {
         String clientId = "client123";
         String redirectUri = "scclient123://test";
         String scope = "read_odometer read_vin";
@@ -41,7 +41,7 @@ public class HelperTest {
     }
 
     @Test
-    public void helper_arrayToString_success() throws Exception {
+    public void helper_arrayToString_success() {
         String[] inputArray = {"string1", "string2", "string3"};
         String expectedString = "string1 string2 string3";
         String retString = Helper.arrayToString(inputArray);
@@ -49,7 +49,7 @@ public class HelperTest {
     }
 
     @Test
-    public void helper_arrayToString_noData() throws Exception {
+    public void helper_arrayToString_noData() {
         String[] inputArray = {};
         String expectedString = "";
         String retString = Helper.arrayToString(inputArray);

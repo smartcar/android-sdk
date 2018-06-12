@@ -27,19 +27,19 @@ import static org.junit.Assert.assertTrue;
 public class SmartcarAuthRequestTest {
 
     @Test
-    public void smartcarAuthRequest_ApprovalPrompt() throws Exception {
+    public void smartcarAuthRequest_ApprovalPrompt() {
         assertEquals(ApprovalPrompt.values().length, 2);
         assertEquals(ApprovalPrompt.valueOf("auto"), ApprovalPrompt.auto);
     }
 
     @Test
-    public void smartcarAuthRequest_ResponseType() throws Exception {
+    public void smartcarAuthRequest_ResponseType() {
         assertEquals(ResponseType.values().length, 2);
         assertEquals(ResponseType.valueOf("token"), ResponseType.token);
     }
 
     @Test
-    public void smartcarAuthRequest_default() throws Exception {
+    public void smartcarAuthRequest_default() {
         String clientId = "client123";
         String redirectUri = "scclient123://test";
         String scope = "read_odometer read_vin";
@@ -48,7 +48,7 @@ public class SmartcarAuthRequestTest {
     }
 
     @Test
-    public void smartcarAuthRequest_includeDevelopment() throws Exception {
+    public void smartcarAuthRequest_includeDevelopment() {
         String clientId = "client123";
         String redirectUri = "scclient123://test";
         String scope = "read_odometer read_vin";

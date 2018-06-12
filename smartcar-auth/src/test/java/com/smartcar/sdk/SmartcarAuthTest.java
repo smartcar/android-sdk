@@ -32,7 +32,7 @@ import static org.junit.Assert.assertEquals;
 public class SmartcarAuthTest {
 
     @Test
-    public void smartcarAuth_generateUrl() throws Exception {
+    public void smartcarAuth_generateUrl() {
         String clientId = "client123";
         String redirectUri = "scclient123://test";
         String scope = "read_odometer read_vin";
@@ -47,7 +47,7 @@ public class SmartcarAuthTest {
     }
 
     @Test
-    public void smartcarAuth_generateUrl_forcePrompt() throws Exception {
+    public void smartcarAuth_generateUrl_forcePrompt() {
         String clientId = "client123";
         String redirectUri = "scclient123://test";
         String scope = "read_odometer read_vin";
@@ -62,7 +62,7 @@ public class SmartcarAuthTest {
     }
 
     @Test
-    public void smartcarAuth_generateUrl_state() throws Exception {
+    public void smartcarAuth_generateUrl_state() {
         String clientId = "client123";
         String redirectUri = "scclient123://test";
         String scope = "read_odometer read_vin";
@@ -77,7 +77,7 @@ public class SmartcarAuthTest {
     }
 
     @Test
-    public void smartcarAuth_generateUrl_stateAndForcePrompt() throws Exception {
+    public void smartcarAuth_generateUrl_stateAndForcePrompt() {
         String clientId = "client123";
         String redirectUri = "scclient123://test";
         String scope = "read_odometer read_vin";
@@ -92,7 +92,7 @@ public class SmartcarAuthTest {
     }
 
     @Test
-    public void smartcarAuth_receiveResponse() throws Exception {
+    public void smartcarAuth_receiveResponse() {
         String clientId = "client123";
         String redirectUri = "scclient123://test";
         String scope = "read_odometer read_vin";
@@ -108,7 +108,7 @@ public class SmartcarAuthTest {
     }
 
     @Test
-    public void smartcarAuth_receiveResponse_mismatchRedirectUri() throws Exception {
+    public void smartcarAuth_receiveResponse_mismatchRedirectUri() {
         String clientId = "client123";
         String redirectUri = "scclient123://test";
         String scope = "read_odometer read_vin";
@@ -125,7 +125,7 @@ public class SmartcarAuthTest {
     }
 
     @Test
-    public void smartcarAuth_receiveResponse_nullUri() throws Exception {
+    public void smartcarAuth_receiveResponse_nullUri() {
         String clientId = "client123";
         String redirectUri = "scclient123://test";
         String scope = "read_odometer read_vin";
@@ -141,7 +141,7 @@ public class SmartcarAuthTest {
     }
 
     @Test
-    public void smartcarAuth_receiveResponse_nullCode() throws Exception {
+    public void smartcarAuth_receiveResponse_nullCode() {
         String clientId = "client123";
         String redirectUri = "scclient123://test";
         String scope = "read_odometer read_vin";
@@ -157,7 +157,7 @@ public class SmartcarAuthTest {
     }
 
     @Test
-    public void smartcarAuth_receiveResponse_nullCodeWithMessage() throws Exception {
+    public void smartcarAuth_receiveResponse_nullCodeWithMessage() {
         String clientId = "client123";
         String redirectUri = "scclient123://test";
         String scope = "read_odometer read_vin";
@@ -173,7 +173,7 @@ public class SmartcarAuthTest {
     }
 
     @Test
-    public void smartcarAuth_receiveResponse_codeWithState() throws Exception {
+    public void smartcarAuth_receiveResponse_codeWithState() {
         String clientId = "client123";
         String redirectUri = "scclient123://test";
         String scope = "read_odometer read_vin";

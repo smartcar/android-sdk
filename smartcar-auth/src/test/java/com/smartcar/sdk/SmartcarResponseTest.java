@@ -27,7 +27,7 @@ import static org.junit.Assert.assertEquals;
 public class SmartcarResponseTest {
 
     @Test
-    public void SmartcarResponseTest_all() throws Exception {
+    public void SmartcarResponseTest_all() {
         SmartcarResponse smartcarResponse = new SmartcarResponse(
                 "testcode", "Just a testmessage", "teststate");
 
