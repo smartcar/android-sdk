@@ -47,7 +47,7 @@ public class SmartcarAuthTest {
     }
 
     @Test
-    public void smartcarAuth_generateUrlForcePrompt() throws Exception {
+    public void smartcarAuth_generateUrl_forcePrompt() throws Exception {
         String clientId = "client123";
         String redirectUri = "scclient123://test";
         String scope = "read_odometer read_vin";
@@ -62,7 +62,7 @@ public class SmartcarAuthTest {
     }
 
     @Test
-    public void smartcarAuth_generateUrlState() throws Exception {
+    public void smartcarAuth_generateUrl_state() throws Exception {
         String clientId = "client123";
         String redirectUri = "scclient123://test";
         String scope = "read_odometer read_vin";
@@ -77,21 +77,34 @@ public class SmartcarAuthTest {
     }
 
     @Test
+    public void smartcarAuth_generateUrl_stateAndForcePrompt() throws Exception {
+        String clientId = "client123";
+        String redirectUri = "scclient123://test";
+        String scope = "read_odometer read_vin";
+        SmartcarAuth smartcarAuth = new SmartcarAuth(clientId, redirectUri, scope, null);
+
+        String requestUri = smartcarAuth.generateUrl("somestring", true);
+        String expectedUri = "https://connect.smartcar.com/oauth/authorize?response_type=code&client_id="
+                + clientId + "&redirect_uri=" + redirectUri + "&scope=" + scope +
+                "&state=somestring&approval_prompt=force&mock=false";
+
+        assertEquals(expectedUri, requestUri);
+    }
+
+    @Test
     public void smartcarAuth_receiveResponse() throws Exception {
         String clientId = "client123";
         String redirectUri = "scclient123://test";
         String scope = "read_odometer read_vin";
 
-        class MyCallback implements SmartcarCallback {
+        new SmartcarAuth(clientId, redirectUri, scope, new SmartcarCallback() {
+            @Override
             public void handleResponse(SmartcarResponse smartcarResponse) {
                 assertEquals(smartcarResponse.getCode(), "testcode123");
             }
-        }
-        MyCallback callback = new MyCallback();
+        });
 
-        SmartcarAuth smartcarAuth = new SmartcarAuth(clientId, redirectUri, scope, callback);
-
-        SmartcarAuth.receiveResponse(uri);
+        SmartcarAuth.receiveResponse(Uri.parse(redirectUri + "?code=testcode123"));
     }
 
     @Test
@@ -99,20 +112,16 @@ public class SmartcarAuthTest {
         String clientId = "client123";
         String redirectUri = "scclient123://test";
         String scope = "read_odometer read_vin";
+        String wrongRedirectUri = "wrongscheme://test";
 
-        class MyCallback implements SmartcarCallback {
+        new SmartcarAuth(clientId, redirectUri, scope, new SmartcarCallback() {
+            @Override
             public void handleResponse(SmartcarResponse smartcarResponse) {
                 throw new AssertionError("Response should not be received.");
             }
-        }
-        MyCallback callback = new MyCallback();
+        });
 
-        String wrongRedirectUri = "wrongscheme://test";
-        SmartcarAuth smartcarAuth = new SmartcarAuth(clientId, redirectUri, scope, callback);
-        String state = smartcarAuth.smartcarAuthRequest.getState();
-        Uri uri = Uri.parse(wrongRedirectUri + "?code=testcode123&state=" + state);
-
-        SmartcarAuth.receiveResponse(uri);
+        SmartcarAuth.receiveResponse(Uri.parse(wrongRedirectUri));
     }
 
     @Test
@@ -121,37 +130,14 @@ public class SmartcarAuthTest {
         String redirectUri = "scclient123://test";
         String scope = "read_odometer read_vin";
 
-        class MyCallback implements SmartcarCallback {
+        new SmartcarAuth(clientId, redirectUri, scope, new SmartcarCallback() {
+            @Override
             public void handleResponse(SmartcarResponse smartcarResponse) {
                 throw new AssertionError("Response should not be received.");
             }
-        }
-        MyCallback callback = new MyCallback();
+        });
 
-        SmartcarAuth smartcarAuth = new SmartcarAuth(callback, clientId, redirectUri, scope);
-        Uri uri = null;
-
-        SmartcarAuth.receiveResponse(uri);
-    }
-
-    @Test
-    public void smartcarAuth_receiveResponse_mismatchedState() throws Exception {
-        String clientId = "client123";
-        String redirectUri = "scclient123://test";
-        String scope = "read_odometer read_vin";
-
-        class MyCallback implements SmartcarCallback {
-            public void handleResponse(SmartcarResponse smartcarResponse) {
-                throw new AssertionError("Response should not be received.");
-            }
-        }
-        MyCallback callback = new MyCallback();
-
-        SmartcarAuth smartcarAuth = new SmartcarAuth(callback, clientId, redirectUri, scope);
-        String state = "wrongstate";
-        Uri uri = Uri.parse(redirectUri + "?code=testcode123&state=" + state);
-
-        SmartcarAuth.receiveResponse(uri);
+        SmartcarAuth.receiveResponse(null);
     }
 
     @Test
@@ -160,18 +146,14 @@ public class SmartcarAuthTest {
         String redirectUri = "scclient123://test";
         String scope = "read_odometer read_vin";
 
-        class MyCallback implements SmartcarCallback {
+        new SmartcarAuth(clientId, redirectUri, scope, new SmartcarCallback() {
+            @Override
             public void handleResponse(SmartcarResponse smartcarResponse) {
                 assertEquals(smartcarResponse.getMessage(), "Unable to fetch code. Please try again");
             }
-        }
-        MyCallback callback = new MyCallback();
+        });
 
-        SmartcarAuth smartcarAuth = new SmartcarAuth(callback, clientId, redirectUri, scope);
-        String state = smartcarAuth.smartcarAuthRequest.getState();
-        Uri uri = Uri.parse(redirectUri + "?state=" + state);
-
-        SmartcarAuth.receiveResponse(uri);
+        SmartcarAuth.receiveResponse(Uri.parse(redirectUri));
     }
 
     @Test
@@ -180,17 +162,30 @@ public class SmartcarAuthTest {
         String redirectUri = "scclient123://test";
         String scope = "read_odometer read_vin";
 
-        class MyCallback implements SmartcarCallback {
+        new SmartcarAuth(clientId, redirectUri, scope, new SmartcarCallback() {
+            @Override
             public void handleResponse(SmartcarResponse smartcarResponse) {
                 assertEquals(smartcarResponse.getMessage(), "error");
             }
-        }
-        MyCallback callback = new MyCallback();
+        });
 
-        SmartcarAuth smartcarAuth = new SmartcarAuth(callback, clientId, redirectUri, scope);
-        String state = smartcarAuth.smartcarAuthRequest.getState();
-        Uri uri = Uri.parse(redirectUri + "?error_description=error&state=" + state);
+        SmartcarAuth.receiveResponse(Uri.parse(redirectUri + "?error_description=error"));
+    }
 
-        SmartcarAuth.receiveResponse(uri);
+    @Test
+    public void smartcarAuth_receiveResponse_codeWithState() throws Exception {
+        String clientId = "client123";
+        String redirectUri = "scclient123://test";
+        String scope = "read_odometer read_vin";
+
+        new SmartcarAuth(clientId, redirectUri, scope, new SmartcarCallback() {
+            @Override
+            public void handleResponse(SmartcarResponse smartcarResponse) {
+                assertEquals(smartcarResponse.getCode(), "testCode");
+                assertEquals(smartcarResponse.getState(), "testState");
+            }
+        });
+
+        SmartcarAuth.receiveResponse(Uri.parse(redirectUri + "?code=testCode&state=testState"));
     }
 }
