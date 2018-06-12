@@ -105,9 +105,9 @@ public class SmartcarAuth {
             stateQuery = "&state=" + state;
         }
 
-        String approvalPromptQuery = ApprovalPrompt.auto.toString();
+        String approvalPrompt= ApprovalPrompt.auto.toString();
         if (forcePrompt) {
-            approvalPromptQuery = ApprovalPrompt.force.toString();
+            approvalPrompt= ApprovalPrompt.force.toString();
         }
 
         String requestUri = "https://connect.smartcar.com/oauth/authorize?response_type="
@@ -116,7 +116,7 @@ public class SmartcarAuth {
                 + "&redirect_uri=" + smartcarAuthRequest.getRedirectURI()
                 + "&scope=" + smartcarAuthRequest.getScope()
                 + stateQuery
-                + approvalPromptQuery
+                + "&approval_prompt=" + approvalPrompt
                 + "&mock=" + smartcarAuthRequest.getDevelopment();
 
         return requestUri;
