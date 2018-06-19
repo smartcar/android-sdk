@@ -1,6 +1,7 @@
 apply plugin: 'com.android.library'
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'jacoco-android'
+apply plugin: 'com.github.dcendents.android-maven'
 
 buildscript {
     repositories {
@@ -10,6 +11,8 @@ buildscript {
         }
     }
     dependencies {
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'
         classpath 'com.dicedmelon.gradle:jacoco-android:0.1.1'
     }
 }
@@ -19,8 +22,7 @@ android {
     defaultConfig {
         minSdkVersion 21
         targetSdkVersion 25
-        versionCode 1
-        versionName "1.0"
+
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     lintOptions {
@@ -74,5 +76,91 @@ dependencies {
     testImplementation 'org.robolectric:robolectric:3.2.2'
 }
 
-apply from: 'install.gradle'
-apply from: 'bintray.gradle'
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
+
+artifacts {
+    archives javadocJar
+    archives sourcesJar
+}
+ext {
+    allLicenses = ['MIT']
+    bintrayName = 'smartcar-auth'
+    bintrayOrg = 'smartcar'
+    bintrayRepo = 'library'
+    developerEmail = 'support@smartcar.com'
+    developerName = 'Smartcar'
+    gitUrl = 'https://github.com/smartcar/android-sdk.git'
+    groupIdentifier = 'com.smartcar.sdk'
+    libraryDescription = 'SDK to handle OAUTH to Smartcar from Android devices.'
+    libraryVersion = '1.0.4'
+    licenseName = 'MIT License'
+    licenseUrl = 'https://github.com/smartcar/android-sdk/blob/master/LICENSE.md'
+    siteUrl = 'https://github.com/smartcar/android-sdk'
+}
+
+install {
+    repositories.mavenInstaller {
+        pom.project {
+            name bintrayName
+            description libraryDescription
+            url siteUrl
+
+            packaging 'aar'
+            groupId groupIdentifier
+            artifactId bintrayName
+            version libraryVersion
+
+            licenses {
+                license {
+                    name licenseName
+                    url licenseUrl
+                }
+            }
+            scm {
+                connection gitUrl
+                url siteUrl
+            }
+            developers {
+                developer {
+                    name developerName
+                    email developerEmail
+                }
+            }
+        }
+    }
+}
+
+bintray {
+    user = bintrayUser
+    key = bintrayKey
+
+    configurations = ['archives']
+    pkg {
+        repo = bintrayRepo
+        name = bintrayName
+        userOrg = bintrayOrg
+        desc = libraryDescription
+        websiteUrl = siteUrl
+        vcsUrl = gitUrl
+        licenses = allLicenses
+        publish = true
+        publicDownloadNumbers = true
+        version {
+            name = libraryVersion
+            desc = libraryDescription
+        }
+    }
+}
