@@ -18,28 +18,12 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.smartcar.example;
+package com.smartcar.sdk;
 
-import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.view.ViewGroup;
-import android.widget.TextView;
-
-public class DisplayCodeActivity extends AppCompatActivity {
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_display_code);
-
-        Intent intent = getIntent();
-        String response = intent.getStringExtra("RESPONSE");
-        TextView textView = new TextView(this);
-        textView.setTextSize(30);
-        textView.setText(response);
-
-        ViewGroup layout = (ViewGroup) findViewById(R.id.activity_display_code);
-        layout.addView(textView);
-    }
+/**
+ * Enum that defines the response types.
+ * Not currently exposed outside the package.
+ */
+enum ResponseType {
+    code, token
 }

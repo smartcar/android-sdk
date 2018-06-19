@@ -1,9 +1,0 @@
-<resources>
-    <string name="app_name">Smart Delivery Service</string>
-    <string name="client_id">4003f24e-1b4d-4e26-af1e-1f90445a17ba</string>
-    <string name="redirect_uri">sc4003f24e-1b4d-4e26-af1e-1f90445a17ba://page.com/test</string>
-    <string name="scope">read_vin read_odometer</string>
-    <string name="smartcar_auth_scheme">sc4003f24e-1b4d-4e26-af1e-1f90445a17ba</string>
-    <string name="smartcar_auth_host">page.com</string>
-    <string name="smartcar_auth_path">/test</string>
-</resources>

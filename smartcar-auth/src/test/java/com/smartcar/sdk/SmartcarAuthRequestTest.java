@@ -22,77 +22,38 @@ package com.smartcar.sdk;
 
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class SmartcarAuthRequestTest {
 
     @Test
-    public void smartcarAuthRequest_ApprovalPrompt() throws Exception {
-        assertEquals(SmartcarAuthRequest.ApprovalPrompt.values().length, 2);
-        assertEquals(SmartcarAuthRequest.ApprovalPrompt.valueOf("auto"), SmartcarAuthRequest.ApprovalPrompt.auto);
+    public void smartcarAuthRequest_ApprovalPrompt() {
+        assertEquals(ApprovalPrompt.values().length, 2);
+        assertEquals(ApprovalPrompt.valueOf("auto"), ApprovalPrompt.auto);
     }
 
     @Test
-    public void smartcarAuthRequest_ResponseType() throws Exception {
-        assertEquals(SmartcarAuthRequest.ResponseType.values().length, 2);
-        assertEquals(SmartcarAuthRequest.ResponseType.valueOf("token"), SmartcarAuthRequest.ResponseType.token);
+    public void smartcarAuthRequest_ResponseType() {
+        assertEquals(ResponseType.values().length, 2);
+        assertEquals(ResponseType.valueOf("token"), ResponseType.token);
     }
 
     @Test
-    public void smartcarAuthRequest_default() throws Exception {
+    public void smartcarAuthRequest_default() {
         String clientId = "client123";
         String redirectUri = "scclient123://test";
         String scope = "read_odometer read_vin";
         SmartcarAuthRequest smartcarAuthRequest = new SmartcarAuthRequest(clientId, redirectUri, scope);
-        assertEquals(smartcarAuthRequest.getResponseType(), SmartcarAuthRequest.ResponseType.code);
-        assertEquals(smartcarAuthRequest.getApprovalPrompt(), SmartcarAuthRequest.ApprovalPrompt.auto);
+        assertEquals(smartcarAuthRequest.getResponseType(), ResponseType.code);
     }
 
     @Test
-    public void smartcarAuthRequest_includeResponseType() throws Exception {
+    public void smartcarAuthRequest_includeDevelopment() {
         String clientId = "client123";
         String redirectUri = "scclient123://test";
         String scope = "read_odometer read_vin";
-        SmartcarAuthRequest.ResponseType responseType = SmartcarAuthRequest.ResponseType.token;
-        SmartcarAuthRequest smartcarAuthRequest = new SmartcarAuthRequest(clientId, redirectUri, scope, responseType);
-        assertEquals(smartcarAuthRequest.getResponseType(), SmartcarAuthRequest.ResponseType.token);
-        assertEquals(smartcarAuthRequest.getApprovalPrompt(), SmartcarAuthRequest.ApprovalPrompt.auto);
-    }
-
-    @Test
-    public void smartcarAuthRequest_includeApprovalPrompt() throws Exception {
-        String clientId = "client123";
-        String redirectUri = "scclient123://test";
-        String scope = "read_odometer read_vin";
-        SmartcarAuthRequest.ApprovalPrompt approvalPrompt = SmartcarAuthRequest.ApprovalPrompt.force;
-        SmartcarAuthRequest smartcarAuthRequest = new SmartcarAuthRequest(clientId, redirectUri, scope, approvalPrompt);
-        assertEquals(smartcarAuthRequest.getResponseType(), SmartcarAuthRequest.ResponseType.code);
-        assertEquals(smartcarAuthRequest.getApprovalPrompt(), SmartcarAuthRequest.ApprovalPrompt.force);
-    }
-
-    @Test
-    public void smartcarAuthRequest_noDefaults() throws Exception {
-        String clientId = "client123";
-        String redirectUri = "scclient123://test";
-        String scope = "read_odometer read_vin";
-        SmartcarAuthRequest.ResponseType responseType = SmartcarAuthRequest.ResponseType.token;
-        SmartcarAuthRequest.ApprovalPrompt approvalPrompt = SmartcarAuthRequest.ApprovalPrompt.force;
-        SmartcarAuthRequest smartcarAuthRequest = new SmartcarAuthRequest(clientId, redirectUri, scope, responseType, approvalPrompt);
-        assertEquals(smartcarAuthRequest.getResponseType(), SmartcarAuthRequest.ResponseType.token);
-        assertEquals(smartcarAuthRequest.getApprovalPrompt(), SmartcarAuthRequest.ApprovalPrompt.force);
-    }
-
-    @Test
-    public void smartcarAuthRequest_generateAuthRequestUri() throws Exception {
-        String clientId = "client123";
-        String redirectUri = "scclient123://test";
-        String scope = "read_odometer read_vin";
-        SmartcarAuthRequest smartcarAuthRequest = new SmartcarAuthRequest(clientId, redirectUri, scope);
-
-        String requestUri = smartcarAuthRequest.generateAuthRequestUri(OEM.BMW_CONNECTED);
-        String expectedUri = "https://bmw-connected.smartcar.com/oauth/authorize?response_type=code&client_id="
-                + clientId + "&redirect_uri=" + redirectUri + "&scope=" + scope +
-                "&state=" + smartcarAuthRequest.getState() + "&approval_prompt=auto";
-
-        assertEquals(expectedUri, requestUri);
+        SmartcarAuthRequest smartcarAuthRequest = new SmartcarAuthRequest(clientId, redirectUri, scope, true);
+        assertTrue(smartcarAuthRequest.getDevelopment());
+        assertEquals(smartcarAuthRequest.getResponseType(), ResponseType.code);
     }
 }

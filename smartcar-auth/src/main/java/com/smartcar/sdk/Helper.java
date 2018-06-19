@@ -28,17 +28,13 @@ class Helper {
     /**
      * Helper method that starts the WebView as a new Activity.
      *
-     * @param context             The application's context
-     * @param smartcarAuthRequest The SmartcarAuthRequest object
-     * @param oem                 The OEM that the authentication is being processed for
+     * @param context The application's context
+     * @param url     The Smartcar Auth url
      */
-    protected static void startActivity(Context context, SmartcarAuthRequest smartcarAuthRequest, OEM oem) {
-        String requestUri = smartcarAuthRequest.generateAuthRequestUri(oem);
-
-        Log.d("Auth request URI ", requestUri);
+    protected static void startActivity(Context context, String url) {
+        Log.d("Auth request URI ", url);
         Intent intent = new Intent(context, com.smartcar.sdk.WebViewActivity.class);
-        intent.putExtra("URI", requestUri);
-        intent.putExtra("OEM", oem.name());
+        intent.putExtra("URI", url);
         // The new activity (web view) will not be in the history stack
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -52,7 +48,7 @@ class Helper {
      * @return         True if the String matched. False otherwise
      */
     protected static Boolean matchesRedirectUri(String response) {
-        return (response.startsWith(SmartcarAuth.smartcarAuthRequest.getRedirectURI())) ? true : false;
+        return (response.startsWith(SmartcarAuth.smartcarAuthRequest.getRedirectURI()));
     }
 
     /**
@@ -67,7 +63,6 @@ class Helper {
             if (i > 0) stringBuilder.append(" ");
             stringBuilder.append(array[i]);
         }
-        String retString = stringBuilder.toString();
-        return retString;
+        return stringBuilder.toString();
     }
 }

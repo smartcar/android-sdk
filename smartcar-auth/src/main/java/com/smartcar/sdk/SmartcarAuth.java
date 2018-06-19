@@ -23,222 +23,245 @@ package com.smartcar.sdk;
 import android.content.Context;
 import android.net.Uri;
 import android.view.View;
-import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.Spinner;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * Main class that provides SDK access methods.
  */
 public class SmartcarAuth {
-    private Context context;
     protected static SmartcarAuthRequest smartcarAuthRequest;
     private static SmartcarCallback callback;
 
     /**
      * Constructs an instance with the given parameters.
      *
-     * @param context     The application's context
-     * @param callback    Handler to a Callback for receiving the authentication response
      * @param clientId    The client's ID
      * @param redirectUri The client's redirect URI
      * @param scope       A space-separated list of authentication scopes
+     * @param callback    Handler to a Callback for receiving the authentication response
      */
-    public SmartcarAuth(Context context, SmartcarCallback callback, String clientId, String redirectUri,
-                        String scope) {
-        this.context = context;
+    public SmartcarAuth(String clientId, String redirectUri, String scope,
+                        SmartcarCallback callback) {
+        smartcarAuthRequest = new SmartcarAuthRequest(clientId, redirectUri, scope);
         this.callback = callback;
-        this.smartcarAuthRequest = new SmartcarAuthRequest(clientId, redirectUri, scope);
     }
 
     /**
      * Constructs an instance with the given parameters.
      *
-     * @param context     The application's context
-     * @param callback    Handler to a Callback for receiving the authentication response
      * @param clientId    The client's ID
      * @param redirectUri The client's redirect URI
      * @param scope       An array of authentication scopes
+     * @param callback    Handler to a Callback for receiving the authentication response
      */
-    public SmartcarAuth(Context context, SmartcarCallback callback, String clientId, String redirectUri,
-                        String[] scope) {
-        this.context = context;
-        this.callback = callback;
+    public SmartcarAuth(String clientId, String redirectUri, String[] scope,
+                        SmartcarCallback callback) {
         String scopeStr = Helper.arrayToString(scope);
-        this.smartcarAuthRequest = new SmartcarAuthRequest(clientId, redirectUri, scopeStr);
+        smartcarAuthRequest = new SmartcarAuthRequest(clientId, redirectUri, scopeStr);
+        this.callback = callback;
     }
 
     /**
      * Constructs an instance with the given parameters.
      *
-     * @param context      The application's context
-     * @param callback     Handler to a Callback for receiving the authentication response
-     * @param clientId     The client's ID
-     * @param redirectUri  The client's redirect URI
-     * @param scope        A space-separated list of authentication scopes
-     * @param responseType The required response type. One of ResponseType.code or ResponseType.token
+     * @param clientId    The client's ID
+     * @param redirectUri The client's redirect URI
+     * @param scope       An array of authentication scopes
+     * @param development Whether to display the MOCK vehicle brand or not
+     * @param callback    Handler to a Callback for receiving the authentication response
      */
-    public SmartcarAuth(Context context, SmartcarCallback callback, String clientId,
-                        String redirectUri, String scope, SmartcarAuthRequest.ResponseType responseType) {
-        this.context = context;
+    public SmartcarAuth(String clientId, String redirectUri, String scope, boolean development,
+                        SmartcarCallback callback) {
+        smartcarAuthRequest = new SmartcarAuthRequest(clientId, redirectUri, scope, development);
         this.callback = callback;
-        this.smartcarAuthRequest = new SmartcarAuthRequest(clientId, redirectUri, scope, responseType);
     }
 
     /**
      * Constructs an instance with the given parameters.
      *
-     * @param context      The application's context
-     * @param callback     Handler to a Callback for receiving the authentication response
-     * @param clientId     The client's ID
-     * @param redirectUri  The client's redirect URI
-     * @param scope        An array of authentication scopes
-     * @param responseType The required response type. One of ResponseType.code or ResponseType.token
+     * @param clientId    The client's ID
+     * @param redirectUri The client's redirect URI
+     * @param scope       An array of authentication scopes
+     * @param development Whether to display the MOCK vehicle brand or not
+     * @param callback    Handler to a Callback for receiving the authentication response
      */
-    public SmartcarAuth(Context context, SmartcarCallback callback, String clientId,
-                        String redirectUri, String[] scope, SmartcarAuthRequest.ResponseType responseType) {
-        this.context = context;
-        this.callback = callback;
+    public SmartcarAuth(String clientId, String redirectUri, String[] scope, boolean development,
+                        SmartcarCallback callback) {
         String scopeStr = Helper.arrayToString(scope);
-        this.smartcarAuthRequest = new SmartcarAuthRequest(clientId, redirectUri, scopeStr, responseType);
-    }
-
-    /**
-     * Constructs an instance with the given parameters.
-     *
-     * @param context        The application's context
-     * @param callback       Handler to a Callback for receiving the authentication response
-     * @param clientId       The client's ID
-     * @param redirectUri    The client's redirect URI
-     * @param scope          A space-separated list of authentication scopes
-     * @param approvalPrompt ApprovalPrompt type. ApprovalPrompt.auto to request auto-approval.
-     *                       ApprovalPrompt.force to force the approval UI to show
-     */
-    public SmartcarAuth(Context context, SmartcarCallback callback, String clientId, String redirectUri,
-                        String scope, SmartcarAuthRequest.ApprovalPrompt approvalPrompt) {
-        this.context = context;
+        smartcarAuthRequest = new SmartcarAuthRequest(clientId, redirectUri, scopeStr, development);
         this.callback = callback;
-        this.smartcarAuthRequest = new SmartcarAuthRequest(clientId, redirectUri, scope, approvalPrompt);
-    }
-    /**
-     * Constructs an instance with the given parameters.
-     *
-     * @param context        The application's context
-     * @param callback       Handler to a Callback for receiving the authentication response
-     * @param clientId       The client's ID
-     * @param redirectUri    The client's redirect URI
-     * @param scope          An array of authentication scopes
-     * @param approvalPrompt ApprovalPrompt type. ApprovalPrompt.auto to request auto-approval.
-     *                       ApprovalPrompt.force to force the approval UI to show
-     */
-    public SmartcarAuth(Context context, SmartcarCallback callback, String clientId, String redirectUri,
-                        String[] scope, SmartcarAuthRequest.ApprovalPrompt approvalPrompt) {
-        this.context = context;
-        this.callback = callback;
-        String scopeStr = Helper.arrayToString(scope);
-        this.smartcarAuthRequest = new SmartcarAuthRequest(clientId, redirectUri, scopeStr, approvalPrompt);
     }
 
     /**
-     * Constructs an instance with the given parameters.
+     * Generates the authorization request URI.
      *
-     * @param context        The application's context
-     * @param callback       Handler to a Callback for receiving the authentication response
-     * @param clientId       The client's ID
-     * @param redirectUri    The client's redirect URI
-     * @param scope          A space-separated list of authentication scopes
-     * @param responseType   The required response type. One of ResponseType.code or ResponseType.token
-     * @param approvalPrompt ApprovalPrompt type. ApprovalPrompt.auto to request auto-approval.
-     *                       ApprovalPrompt.force to force the approval UI to show
+     * @param state optional OAuth state to be returned on redirect
+     * @param forcePrompt force permissions prompt to display on redirect (default: false)
+     * @return The authorization request URI
      */
-    public SmartcarAuth(Context context, SmartcarCallback callback, String clientId, String redirectUri,
-                        String scope, SmartcarAuthRequest.ResponseType responseType,
-                        SmartcarAuthRequest.ApprovalPrompt approvalPrompt) {
-        this.context = context;
-        this.callback = callback;
-        this.smartcarAuthRequest = new SmartcarAuthRequest(clientId, redirectUri, scope, responseType, approvalPrompt);
-    }
+   public String generateUrl(String state, boolean forcePrompt) {
 
-    /**
-     * Constructs an instance with the given parameters.
-     *
-     * @param context        The application's context
-     * @param callback       Handler to a Callback for receiving the authentication response
-     * @param clientId       The client's ID
-     * @param redirectUri    The client's redirect URI
-     * @param scope          An array of authentication scopes
-     * @param responseType   The required response type. One of ResponseType.code or ResponseType.token
-     * @param approvalPrompt ApprovalPrompt type. ApprovalPrompt.auto to request auto-approval.
-     *                       ApprovalPrompt.force to force the approval UI to show
-     */
-    public SmartcarAuth(Context context, SmartcarCallback callback, String clientId, String redirectUri,
-                        String[] scope, SmartcarAuthRequest.ResponseType responseType,
-                        SmartcarAuthRequest.ApprovalPrompt approvalPrompt) {
-        this.context = context;
-        this.callback = callback;
-        String scopeStr = Helper.arrayToString(scope);
-        this.smartcarAuthRequest = new SmartcarAuthRequest(clientId, redirectUri, scopeStr, responseType, approvalPrompt);
-    }
-
-    /**
-     * Generates a button with the appropriate background color and padding, and attaches a click
-     * listener, for a given OEM.
-     *
-     * @param oem          The OEM to generate the button for
-     * @param layoutParams The Layout Params for the button
-     * @return             The generated Button
-     */
-    public Button generateButton(OEM oem, LinearLayout.LayoutParams layoutParams) {
-        Button button = SmartcarAuthButtonGenerator.generateButton(context, smartcarAuthRequest, oem, layoutParams);
-        return button;
-    }
-
-    /**
-     * Generates a click event listener for a given SmartcarAuth object.
-     *
-     * @return The OnClickListener object
-     */
-    public View.OnClickListener getOnClickListener() {
-        return SmartcarAuthButtonGenerator.handleOnClick(this);
-    }
-
-    /**
-     * Generates a spinner containing the entire list of OEMs as items.
-     * Will not include MOCK as a vehicle option.
-     *
-     * @return             The generated Spinner
-     */
-    public Spinner generateSpinner() {
-        return generateSpinner(false);
-    }
-
-    /**
-     * Generates a spinner containing the entire list of OEMs as items.
-     *
-     * @param devMode      Boolean used to indicate whether to list MOCK as an option or not
-     * @return             The generated Spinner
-     */
-    public Spinner generateSpinner(Boolean devMode) {
-        ArrayList<OEM> list = new ArrayList<OEM>(Arrays.asList(OEM.values()));
-        if (!devMode) {
-            list.remove(OEM.MOCK);
+        String stateQuery = "";
+        if (state != null) {
+            stateQuery = "&state=" + state;
         }
-        OEM[] oemList = list.toArray(new OEM[list.size()]);
-        return generateSpinner(oemList);
+
+        String approvalPrompt= ApprovalPrompt.auto.toString();
+        if (forcePrompt) {
+            approvalPrompt= ApprovalPrompt.force.toString();
+        }
+
+        String requestUri = "https://connect.smartcar.com/oauth/authorize?response_type="
+                + smartcarAuthRequest.getResponseType().toString()
+                + "&client_id=" + smartcarAuthRequest.getClientId()
+                + "&redirect_uri=" + smartcarAuthRequest.getRedirectURI()
+                + "&scope=" + smartcarAuthRequest.getScope()
+                + stateQuery
+                + "&approval_prompt=" + approvalPrompt
+                + "&mock=" + smartcarAuthRequest.getDevelopment();
+
+        return requestUri;
     }
 
     /**
-     * Generates a spinner containing the given list of OEMs as items.
+     * Generates the authorization URI.
      *
-     * @param oemList      The list of OEMs to include as items in the spinner
-     * @return             The generated Spinner
+     * @param state optional OAuth state to be returned on redirect
+     * @return The authorization request URI
      */
-    public Spinner generateSpinner(OEM[] oemList) {
-        Spinner spinner = SmartcarAuthSpinnerGenerator.generateSpinner(context, smartcarAuthRequest, oemList);
-        return spinner;
+    public String generateUrl(String state) {
+        return generateUrl(state, false);
+    }
+
+    /**
+     * Generates the authorization URI.
+     *
+     * @param forcePrompt force permissions prompt to display on redirect (default false)
+     * @return The authorization request URI
+     */
+    public String generateUrl(boolean forcePrompt) {
+        return generateUrl(null, forcePrompt);
+    }
+
+    /**
+     * Generates the authorization URI
+     *
+     * @return The authorization request URI
+     */
+    public String generateUrl() {
+        return generateUrl(null, false);
+    }
+
+    /**
+     * Generates a click event listener for managing the Smartcar Auth flow, and attaches
+     *  it to the input View.
+     *
+     * @param context The client application's context
+     * @param view The View to attach the Smartcar Auth flow launch to
+     */
+    public void addClickHandler(final Context context, final View view) {
+        final View.OnClickListener listener = new View.OnClickListener() {
+            public void onClick(View v) {
+                launchAuthFlow(context);
+            }
+        };
+        view.setOnClickListener(listener);
+    }
+
+    /**
+     * Generates a click event listener for managing the Smartcar Auth flow, and attaches
+     *  it to the input View.
+     *
+     * @param context The client application's context
+     * @param view The View to attach the Smartcar Auth flow launch to
+     * @param state optional OAuth state to be returned on redirect
+     * @param forcePrompt force permissions prompt to display on redirect (default: false)
+     */
+    public void addClickHandler(final Context context, final View view, final String state,
+                                final boolean forcePrompt) {
+        final View.OnClickListener listener = new View.OnClickListener() {
+            public void onClick(View v) {
+                launchAuthFlow(context, state, forcePrompt);
+            }
+        };
+        view.setOnClickListener(listener);
+    }
+
+    /**
+     * Generates a click event listener for managing the Smartcar Auth flow, and attaches
+     *  it to the input View.
+     *
+     * @param context The client application's context
+     * @param view The View to attach the Smartcar Auth flow launch to
+     * @param state optional OAuth state to be returned on redirect
+     */
+    public void addClickHandler(final Context context, final View view, final String state){
+        final View.OnClickListener listener = new View.OnClickListener() {
+            public void onClick(View v) {
+                launchAuthFlow(context, state);
+            }
+        };
+        view.setOnClickListener(listener);
+    }
+
+    /**
+     * Generates a click event listener for managing the Smartcar Auth flow, and attaches
+     *  it to the input View.
+     *
+     * @param context The client application's context
+     * @param view The View to attach the Smartcar Auth flow launch to
+     * @param forcePrompt force permissions prompt to display on redirect (default: false)
+     */
+    public void addClickHandler(final Context context, final View view, final boolean forcePrompt) {
+        final View.OnClickListener listener = new View.OnClickListener() {
+            public void onClick(View v) {
+                launchAuthFlow(context, forcePrompt);
+            }
+        };
+        view.setOnClickListener(listener);
+    }
+
+    /**
+     * Starts the launch of the Smartcar auth flow. Use this to attach to any event
+     * trigger like a swipe or touch event on the client application.
+     *
+     * @param context The client application's context
+     */
+    public void launchAuthFlow(final Context context) {
+        Helper.startActivity(context, generateUrl());
+    }
+
+    /**
+     * Starts the launch of the Smartcar auth flow. Use this to attach to any event
+     * trigger like a swipe or touch event on the client application.
+     *
+     * @param context The client application's context
+     * @param state optional OAuth state to be returned on redirect
+     * @param forcePrompt force permissions prompt to display on redirect (default: false)
+     */
+    public void launchAuthFlow(final Context context, String state, boolean forcePrompt) {
+        Helper.startActivity(context, generateUrl(state, forcePrompt));
+    }
+
+    /**
+     * Starts the launch of the Smartcar auth flow. Use this to attach to any event
+     * trigger like a swipe or touch event on the client application.
+     *
+     * @param context The client application's context
+     * @param state optional OAuth state to be returned on redirect
+     */
+    public void launchAuthFlow(final Context context, String state) {
+        Helper.startActivity(context, generateUrl(state));
+    }
+
+    /**
+     * Starts the launch of the Smartcar auth flow. Use this to attach to any event
+     * trigger like a swipe or touch event on the client application.
+     *
+     * @param context The client application's context
+     * @param forcePrompt force permissions prompt to display on redirect (default: false)
+     */
+    public void launchAuthFlow(final Context context, boolean forcePrompt) {
+        Helper.startActivity(context, generateUrl(forcePrompt));
     }
 
     /**
@@ -248,31 +271,21 @@ public class SmartcarAuth {
      * @param uri The response data as a Uri
      */
     protected static void receiveResponse(Uri uri) {
-        String code = null;
-        String message = null;
+        String code;
+        String message;
+        String state;
 
         if (uri != null && Helper.matchesRedirectUri(uri.toString())) {
-            String stateReturned = uri.getQueryParameter("state");
+            state = uri.getQueryParameter("state");
 
-            if (stateReturned.equals(SmartcarAuth.smartcarAuthRequest.getState())) {
-                code = uri.getQueryParameter("code");
-                message = uri.getQueryParameter("error_description");
-                if (code == null && message == null) {
-                    message = "Unable to fetch code. Please try again";
-                }
-
-                SmartcarResponse smartcarResponse = new SmartcarResponse(code, message);
-                callback.handleResponse(smartcarResponse);
+            code = uri.getQueryParameter("code");
+            message = uri.getQueryParameter("error_description");
+            if (code == null && message == null) {
+                message = "Unable to fetch code. Please try again";
             }
-        }
-    }
 
-    /**
-     * Getter method for Context.
-     *
-     * @return The Context member variable
-     */
-    protected Context getContext() {
-        return context;
+            SmartcarResponse smartcarResponse = new SmartcarResponse(code, message, state);
+            callback.handleResponse(smartcarResponse);
+        }
     }
 }

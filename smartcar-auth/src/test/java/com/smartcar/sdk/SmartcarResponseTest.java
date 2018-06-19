@@ -27,10 +27,12 @@ import static org.junit.Assert.assertEquals;
 public class SmartcarResponseTest {
 
     @Test
-    public void SmartcarResponseTest_all() throws Exception {
-        SmartcarResponse smartcarResponse = new SmartcarResponse("testcode", "Just a testmessage");
+    public void SmartcarResponseTest_all() {
+        SmartcarResponse smartcarResponse = new SmartcarResponse(
+                "testcode", "Just a testmessage", "teststate");
 
         assertEquals(smartcarResponse.getCode(), "testcode");
         assertEquals(smartcarResponse.getMessage(), "Just a testmessage");
+        assertEquals(smartcarResponse.getState(), "teststate");
     }
 }
