@@ -76,6 +76,9 @@ dependencies {
 task javadoc(type: Javadoc) {
     source = android.sourceSets.main.java.srcDirs
     classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    destinationDir = file('../docs')
+    options.header = project.name
+    options.windowTitle = "${project.name} - ${project.version}"
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
@@ -143,21 +146,23 @@ install {
 bintray {
     user = bintrayUser
     key = bintrayKey
-
+    publish = true
     configurations = ['archives']
     pkg {
         repo = bintrayRepo
         name = bintrayName
         userOrg = bintrayOrg
-        desc = libraryDescription
-        websiteUrl = siteUrl
-        vcsUrl = gitUrl
-        licenses = allLicenses
+        licenses = [licenceId]
+        desc = libDescription
+        websiteUrl = developerWebsite
+        vcsUrl = vcsRepoUrl
         publish = true
         publicDownloadNumbers = true
+        githubRepo = vcsGithubRepo
         version {
-            name = libraryVersion
-            desc = libraryDescription
+            name = libVersion
+            vcsTag = 'v' + libVersion
+            released = new Date()
         }
     }
 }
