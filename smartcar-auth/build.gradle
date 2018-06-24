@@ -152,7 +152,7 @@ bintray {
         repo = bintrayRepo
         name = bintrayName
         userOrg = bintrayOrg
-        licenses = [licenceId]
+        licenses = [licenseId]
         desc = libDescription
         websiteUrl = developerWebsite
         vcsUrl = vcsRepoUrl
