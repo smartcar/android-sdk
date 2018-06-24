@@ -95,49 +95,35 @@ artifacts {
     archives javadocJar
     archives sourcesJar
 }
-ext {
-    allLicenses = ['MIT']
-    bintrayName = 'smartcar-auth'
-    bintrayOrg = 'smartcar'
-    bintrayRepo = 'library'
-    developerEmail = 'support@smartcar.com'
-    developerName = 'Smartcar'
-    gitUrl = 'https://github.com/smartcar/android-sdk.git'
-    groupIdentifier = 'com.smartcar.sdk'
-    libraryDescription = 'SDK to handle OAUTH to Smartcar from Android devices.'
-    libraryVersion = '1.0.4'
-    licenseName = 'MIT License'
-    licenseUrl = 'https://github.com/smartcar/android-sdk/blob/master/LICENSE.md'
-    siteUrl = 'https://github.com/smartcar/android-sdk'
-}
 
 install {
     repositories.mavenInstaller {
         pom.project {
-            name bintrayName
-            description libraryDescription
-            url siteUrl
+            name libName
+            description libDescription
+            url libUrl
 
             packaging 'aar'
-            groupId groupIdentifier
-            artifactId bintrayName
-            version libraryVersion
+            groupId libGroup
+            artifactId libName
+            version libVersion
 
             licenses {
                 license {
                     name licenseName
                     url licenseUrl
+                    distribution 'repo'
                 }
-            }
-            scm {
-                connection gitUrl
-                url siteUrl
             }
             developers {
                 developer {
+                    id developerId
                     name developerName
                     email developerEmail
                 }
+            }
+            scm {
+                url vcsRepoUrl
             }
         }
     }
@@ -150,11 +136,12 @@ bintray {
     configurations = ['archives']
     pkg {
         repo = bintrayRepo
-        name = bintrayName
+        name = libName
         userOrg = bintrayOrg
         licenses = [licenseId]
         desc = libDescription
         websiteUrl = developerWebsite
+        issueTrackerUrl = developerIssues
         vcsUrl = vcsRepoUrl
         publish = true
         publicDownloadNumbers = true
