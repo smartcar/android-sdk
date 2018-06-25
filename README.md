@@ -14,7 +14,7 @@ The recommended method for obtaining the SDK is via Gradle or Maven.
 
 ### Gradle
 ```groovy
-compile "com.smartcar.sdk:smartcar-auth:1.0.4"
+compile "com.smartcar.sdk:smartcar-auth:1.1.0"
 ```
 
 ### Maven
@@ -22,7 +22,7 @@ compile "com.smartcar.sdk:smartcar-auth:1.0.4"
 <dependency>
   <groupId>com.smartcar.sdk</groupId>
   <artifactId>smartcar-auth</artifactId>
-  <version>1.0.4</version>
+  <version>1.1.0</version>
 </dependency>
 ```
 
