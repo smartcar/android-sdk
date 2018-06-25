@@ -1,15 +1,15 @@
 apply plugin: 'com.android.library'
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'jacoco-android'
+apply plugin: 'com.github.dcendents.android-maven'
 
 buildscript {
     repositories {
         jcenter()
-        flatDir {
-            dirs 'libs'
-        }
     }
     dependencies {
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'
         classpath 'com.dicedmelon.gradle:jacoco-android:0.1.1'
     }
 }
@@ -19,8 +19,7 @@ android {
     defaultConfig {
         minSdkVersion 21
         targetSdkVersion 25
-        versionCode 1
-        versionName "1.0"
+
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     lintOptions {
@@ -74,5 +73,83 @@ dependencies {
     testImplementation 'org.robolectric:robolectric:3.2.2'
 }
 
-apply from: 'install.gradle'
-apply from: 'bintray.gradle'
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    destinationDir = file('../docs')
+    options.header = project.name
+    options.windowTitle = "${project.name} - ${project.version}"
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
+
+artifacts {
+    archives javadocJar
+    archives sourcesJar
+}
+
+install {
+    repositories.mavenInstaller {
+        pom.project {
+            name libName
+            description libDescription
+            url libUrl
+
+            packaging 'aar'
+            groupId libGroup
+            artifactId libName
+            version libVersion
+
+            licenses {
+                license {
+                    name licenseName
+                    url licenseUrl
+                    distribution 'repo'
+                }
+            }
+            developers {
+                developer {
+                    id developerId
+                    name developerName
+                    email developerEmail
+                }
+            }
+            scm {
+                url vcsRepoUrl
+            }
+        }
+    }
+}
+
+bintray {
+    user = bintrayUser
+    key = bintrayKey
+    publish = true
+    configurations = ['archives']
+    pkg {
+        repo = bintrayRepo
+        name = libName
+        userOrg = bintrayOrg
+        licenses = [licenseId]
+        desc = libDescription
+        websiteUrl = developerWebsite
+        issueTrackerUrl = developerIssues
+        vcsUrl = vcsRepoUrl
+        publish = true
+        publicDownloadNumbers = true
+        githubRepo = vcsGithubRepo
+        version {
+            name = libVersion
+            vcsTag = 'v' + libVersion
+            released = new Date()
+        }
+    }
+}

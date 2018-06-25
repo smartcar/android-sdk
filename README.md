@@ -1,15 +1,12 @@
 # Smartcar Android Auth SDK [![Build Status][ci-image]][ci-url] [![Coverage][coverage-image]][coverage-url] [![Download][bintray-image]][bintray-url]
 
-The Smartcar Android Auth SDK makes it easy to handle the Smartcar OAuth flow from
-Android devices. It provides a library for authenticating the vehicle-owner and
-fetching the authorization code that can be used to fetch an access token using
-a separate request.
+The SmartcarAuth Android SDK makes it easy to handle the Smartcar authorization flow from Android.
 
 ## Resources
 
 * [Smartcar Developer Dashboard](https://developer.smartcar.com)
 * [Smartcar API Reference](https://smartcar.com/docs)
-* [Sample App](https://github.com/smartcar/android-sdk-example)
+* [Smartcar Android SDK Reference Documentation](https://smartcar.github.io/android-sdk)
 
 ## Installation
 
@@ -29,119 +26,119 @@ compile "com.smartcar.sdk:smartcar-auth:1.0.4"
 </dependency>
 ```
 
-# Usage
+## Getting Started
 
-Refer to the [Sample App](https://github.com/smartcar/android-sdk-example) for a quick review.
-Otherwise, follow these steps:
+### `SmartcarAuth`
 
-1. [Manage your application's configuration settings](#application-configuration-settings)
+`clientId`
 
-2. [Handle the response from the Smartcar Auth library](#handling-the-response-from-smartcar-auth-library)
+Application client ID can be obtained from the [Smartcar Developer Portal](https://developer.smartcar.com).
 
-3. [Handle the redirect from the Smartcar service](#handling-the-redirect)
+`redirectUri`
 
-4. Instantiate a new SmartcarAuth object
-```
-    SmartcarAuth smartcarAuth = new SmartcarAuth(callback, CLIENT_ID, REDIRECT_URI, SCOPE, ApprovalPrompt.force, true);
-```
+Your applciation must register a custom URI scheme in order to recieve the authorization callback. Smartcar requires the custom URI scheme to be in the format of `"sc" + clientId + "://" + hostname`. This URI bust also be registered in [Smartcar's developer portal](https://developer.smartcar.com) for your application. You may append an optional path component or TLD. For example, a redirect uri could be: `sc4a1b01e5-0497-417c-a30e-6df6ba33ba46://myapp.com/callback`.
 
-5. Create a View and attach the Smartcar Auth library's click handler
-```
-    smartcarAuth.addClickHandler(getApplicationContext(), connectButton);
-```
-
-6. Test your Android application. Clicking on the View should trigger open a WebView for
-the vehicle-owner to pick the vehicle brand, input the owner crendentials, and appprove your
-application to access the requested permissions. When this is done, Smartcar's services will
-redirect back to your REDIRECT_URI which will be your Android application. Based on the sample
-code here, the `code` returned by the Smartcar service will be logged by your application.
-You can then use this code to exchange for a Smartcar access_token. For details on the
-exchange, refer to the [Smartcar documentation](https://smartcar.com/docs)
-
-### Application Configuration Settings
-
-`CLIENT_ID`
-
-Application client ID obtained from [Smartcar Developer Portal](https://developer.smartcar.com/).
-
-`REDIRECT_URI`
-
-Your app must register a custom URI scheme with Android in order to receive the
-authorization callback. Smartcar requires the custom URI scheme to be in the
-format of `"sc" + clientId + "://" + hostname`. This URI must also be registered
-in [Smartcar Developer Dashboard](https://developer.smartcar.com) for your app.
-You may append an optional path component or
-TLD (e.g. `sc4a1b01e5-0497-417c-a30e-6df6ba33ba46://oauth2redirect.com/page`).
-
-`SCOPE`
-
-Permissions requested from the user for specific grant.
-See the [Smartcar API reference](https://smartcar.com/docs)
-for permissions required for each API request.
-
-
-### Handling the response from Smartcar Auth library
-
-To receive the response from the Smartcar Auth library, your app must implement the SmartcarCallback interface.
-The interface defines a single method to handle the response. The response is packed into the SmartcarResponse object,
-and include two variables: `code` and `message`. `code` contains the actual authorization code, and `message`
-contains error messages if any.
-
-Sample code:
+You will then need to register the URI in the `AndroidManifest.xml` by inserting a new activity with an intent filter. More information on the [data element](https://developer.android.com/guide/topics/manifest/data-element.html).
 
 ```
-    class MyCallback implements SmartcarCallback {
-        public void handleResponse(SmartcarResponse smartcarResponse) {
-            String code = smartcarResponse.getCode();
-            String message = smartcarResponse.getMessage();
-            String response = (code == null) ? message : code;
-            Log.d(LOGTAG, "Response code " + code);
-            Log.d(LOGTAG, "Response message " + message);
-        }
+<activity android:name="com.smartcar.sdk.SmartcarCodeReceiver">
+    <intent-filter>
+        <action android:name="android.intent.action.VIEW" />
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
+        <data
+            android:scheme="sc4a1b01e5-0497-417c-a30e-6df6ba33ba46"
+            android:host="myapp.com"
+            android:path="/callback" />
+    </intent-filter>
+</activity>
+```
+
+`scope`
+
+Permissions requested of the vehicle owner. See the [Smartcar developer documentation](https://developer.smartcar.com/docs) for a full list of available permsisions.
+
+`development`
+
+Defaults to `false`. Set to `true` to enable to Mock OEM for testing.
+
+`callback`
+
+Callback run when the Authorization Flow returns with a `code` and the `state`. If there is an error, the `code` will be `null` and a `message` will be provided with more details.
+
+
+#### Example
+
+```java
+import com.smartcar.sdk.SmartcarAuth;
+import com.smartcar.sdk.SmartcarCallback;
+
+// Create a new instance of the `SmartcarAuth` class
+SmartcarAuth smartcarAuth = new SmartcarAuth(
+  "your-client-id",
+  "your-redirect-uri",
+  new String[] {"permission1", "permission2"},
+  true, // enable development mode
+
+  // Create a callback to handle the redirect response
+  new SmartcarCallback() {
+    @Override
+    public void handleResponse(SmartcarResponse smartcarResponse) {
+      // Retrieve the authorization code
+      Log.d("SmartcarAuth", "Response code: " smartcarResponse.getCode());
+      Log.d("SmartcarAuth", "Response message: " smartcarResponse.getMessage());
     }
-
-    MyCallback callback = new MyCallback();
+});
 ```
 
+### `launchAuthFlow`
 
-### Handling the Redirect
+Launch the Smartcar authorization flow.
 
-Your app must allow the Smartcar activity to listen for the authorization code that will be returned on the
-app's pre-defined redirectURI as documented above. To do so, include the following code in your app's
-AndroidManifest.xml
+`context`
 
-```
-        <activity android:name="com.smartcar.sdk.SmartcarCodeReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data
-                    android:host="YOUR_REDIRECT_URI_HOSTNAME"
-                    android:scheme="YOUR_REDIRECT_URI_SCHEME"
-                    android:path="YOUR_REDIRECT_URI_PATH" />
-            </intent-filter>
-        </activity>
-```
+The application's Android context.
 
-For a redirectURI `sc4a1b01e5-0497-417c-a30e-6df6ba33ba46://oauth2redirect.com/page`, this would be
+`state` (optional)
 
-```
-        <activity android:name="com.smartcar.sdk.SmartcarCodeReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data
-                    android:host="oauth2redirect.com"
-                    android:scheme="sc4a1b01e5-0497-417c-a30e-6df6ba33ba46"
-                    android:path="/page" />
-            </intent-filter>
-        </activity>
+An opaque value used to mainain state between the request and callback. The authorization server includes this value when redirecting to the client. It can be retrieved from the `SmartcarResponse.getState()` method.
+
+`forcePrompt` (optional)
+
+Defaults to `false`. The `false` option will skip the approval prompt for usres who have already accepted the requested permissions for your application inthe past. Set it to `true` to force a user to see the approval prompt even if they have already accepted the permissions in the past.
+
+#### Example
+
+```java
+smartcarAuth.launchAuthFlow(getApplicationContext());
 ```
 
-More information on [data element](https://developer.android.com/guide/topics/manifest/data-element.html).
+### `addClickHandler`
 
+Add a click event listener to a view.
+
+`context`
+
+The application's Android context.
+
+`view`
+
+The view to attach the click listener to.
+
+`state` (optional)
+
+An opaque value used to mainain state between the request and callback. The authorization server includes this value when redirecting to the client. It can be retrieved from the `SmartcarResponse.getState()` method.
+
+`forcePrompt` (optional)
+
+Defaults to `false`. The `false` option will skip the approval prompt for usres who have already accepted the requested permissions for your application inthe past. Set it to `true` to force a user to see the approval prompt even if they have already accepted the permissions in the past.
+
+#### Example
+
+```java
+Button connectButton = (Button) findViewById(R.id.connect_button);
+smartcarAuth.addClickHandler(getApplicationContext(), connectButton);
+```
 
 [ci-image]: https://travis-ci.com/smartcar/android-sdk.svg?token=6Yrkze1DNb8WHnHxrCy6&branch=master
 [ci-url]: https://travis-ci.com/smartcar/android-sdk
