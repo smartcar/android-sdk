@@ -3,6 +3,9 @@ apply plugin: 'com.jfrog.bintray'
 apply plugin: 'jacoco-android'
 apply plugin: 'com.github.dcendents.android-maven'
 
+group = libGroup
+version = libVersion
+
 buildscript {
     repositories {
         jcenter()

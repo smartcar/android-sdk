@@ -1,5 +1,10 @@
 language: android
 
+branches:
+  except:
+    # Don't run on tag pushes
+    - /^v\d+\.\d+\.\d+$/
+
 env:
   global:
     - ANDROID_TARGET=android-21
