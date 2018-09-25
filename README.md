@@ -58,7 +58,7 @@ You will then need to register the URI in the `AndroidManifest.xml` by inserting
 
 Permissions requested of the vehicle owner. See the [Smartcar developer documentation](https://developer.smartcar.com/docs) for a full list of available permsisions.
 
-`development`
+`testMode`
 
 Defaults to `false`. Set to `true` to enable to Mock OEM for testing.
 
