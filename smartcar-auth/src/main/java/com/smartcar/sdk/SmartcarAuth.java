@@ -66,12 +66,12 @@ public class SmartcarAuth {
      * @param clientId    The client's ID
      * @param redirectUri The client's redirect URI
      * @param scope       An array of authentication scopes
-     * @param development Whether to display the MOCK vehicle brand or not
+     * @param testMode    Whether to display the MOCK vehicle brand or not
      * @param callback    Handler to a Callback for receiving the authentication response
      */
-    public SmartcarAuth(String clientId, String redirectUri, String scope, boolean development,
+    public SmartcarAuth(String clientId, String redirectUri, String scope, boolean testMode,
                         SmartcarCallback callback) {
-        smartcarAuthRequest = new SmartcarAuthRequest(clientId, redirectUri, scope, development);
+        smartcarAuthRequest = new SmartcarAuthRequest(clientId, redirectUri, scope, testMode);
         this.callback = callback;
     }
 
@@ -81,13 +81,13 @@ public class SmartcarAuth {
      * @param clientId    The client's ID
      * @param redirectUri The client's redirect URI
      * @param scope       An array of authentication scopes
-     * @param development Whether to display the MOCK vehicle brand or not
+     * @param testMode    Whether to display the MOCK vehicle brand or not
      * @param callback    Handler to a Callback for receiving the authentication response
      */
-    public SmartcarAuth(String clientId, String redirectUri, String[] scope, boolean development,
+    public SmartcarAuth(String clientId, String redirectUri, String[] scope, boolean testMode,
                         SmartcarCallback callback) {
         String scopeStr = Helper.arrayToString(scope);
-        smartcarAuthRequest = new SmartcarAuthRequest(clientId, redirectUri, scopeStr, development);
+        smartcarAuthRequest = new SmartcarAuthRequest(clientId, redirectUri, scopeStr, testMode);
         this.callback = callback;
     }
 
@@ -117,7 +117,7 @@ public class SmartcarAuth {
                 + "&scope=" + smartcarAuthRequest.getScope()
                 + stateQuery
                 + "&approval_prompt=" + approvalPrompt
-                + "&mock=" + smartcarAuthRequest.getDevelopment();
+                + "&mode=" + (smartcarAuthRequest.getTestMode() ? "test" : "live");
 
         return requestUri;
     }

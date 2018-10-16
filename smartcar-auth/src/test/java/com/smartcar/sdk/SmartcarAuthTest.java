@@ -41,7 +41,7 @@ public class SmartcarAuthTest {
         String requestUri = smartcarAuth.generateUrl();
         String expectedUri = "https://connect.smartcar.com/oauth/authorize?response_type=code&client_id="
                 + clientId + "&redirect_uri=" + redirectUri + "&scope=" + scope +
-                "&approval_prompt=auto&mock=false";
+                "&approval_prompt=auto&mode=live";
 
         assertEquals(expectedUri, requestUri);
     }
@@ -56,7 +56,7 @@ public class SmartcarAuthTest {
         String requestUri = smartcarAuth.generateUrl(true);
         String expectedUri = "https://connect.smartcar.com/oauth/authorize?response_type=code&client_id="
                 + clientId + "&redirect_uri=" + redirectUri + "&scope=" + scope +
-                "&approval_prompt=force&mock=false";
+                "&approval_prompt=force&mode=live";
 
         assertEquals(expectedUri, requestUri);
     }
@@ -71,7 +71,7 @@ public class SmartcarAuthTest {
         String requestUri = smartcarAuth.generateUrl("somestring");
         String expectedUri = "https://connect.smartcar.com/oauth/authorize?response_type=code&client_id="
                 + clientId + "&redirect_uri=" + redirectUri + "&scope=" + scope +
-                "&state=somestring&approval_prompt=auto&mock=false";
+                "&state=somestring&approval_prompt=auto&mode=live";
 
         assertEquals(expectedUri, requestUri);
     }
@@ -86,7 +86,7 @@ public class SmartcarAuthTest {
         String requestUri = smartcarAuth.generateUrl("somestring", true);
         String expectedUri = "https://connect.smartcar.com/oauth/authorize?response_type=code&client_id="
                 + clientId + "&redirect_uri=" + redirectUri + "&scope=" + scope +
-                "&state=somestring&approval_prompt=force&mock=false";
+                "&state=somestring&approval_prompt=force&mode=live";
 
         assertEquals(expectedUri, requestUri);
     }

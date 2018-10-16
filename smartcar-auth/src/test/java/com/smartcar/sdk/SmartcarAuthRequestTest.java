@@ -48,12 +48,12 @@ public class SmartcarAuthRequestTest {
     }
 
     @Test
-    public void smartcarAuthRequest_includeDevelopment() {
+    public void smartcarAuthRequest_includeTestMode() {
         String clientId = "client123";
         String redirectUri = "scclient123://test";
         String scope = "read_odometer read_vin";
         SmartcarAuthRequest smartcarAuthRequest = new SmartcarAuthRequest(clientId, redirectUri, scope, true);
-        assertTrue(smartcarAuthRequest.getDevelopment());
+        assertTrue(smartcarAuthRequest.getTestMode());
         assertEquals(smartcarAuthRequest.getResponseType(), ResponseType.code);
     }
 }

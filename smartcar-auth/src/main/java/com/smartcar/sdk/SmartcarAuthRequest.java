@@ -30,7 +30,7 @@ class SmartcarAuthRequest {
     private String redirectURI;
     private String scope;
     private ResponseType responseType;
-    private Boolean development;
+    private Boolean testMode;
 
     /**
      * Constructs an instance with the given parameters.
@@ -38,14 +38,14 @@ class SmartcarAuthRequest {
      * @param clientId       The client's ID
      * @param redirectURI    The client's redirect URI
      * @param scope          A space-separated list of authentication scopes
-     * @param development    Whether to display the MOCK vehicle brand or not
+     * @param testMode       Whether to display the MOCK vehicle brand or not
      */
     protected SmartcarAuthRequest(String clientId, String redirectURI,
-                        String scope, boolean development) {
+                        String scope, boolean testMode) {
         this.clientId = clientId;
         this.redirectURI = redirectURI;
         this.scope = scope;
-        this.development = development;
+        this.testMode = testMode;
         this.responseType = ResponseType.code;
     }
 
@@ -101,8 +101,8 @@ class SmartcarAuthRequest {
      *
      * @return The Boolean value
      */
-    protected Boolean getDevelopment() {
-        return development;
+    protected Boolean getTestMode() {
+        return testMode;
     }
 
 }
