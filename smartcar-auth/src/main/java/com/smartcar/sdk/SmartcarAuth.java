@@ -65,6 +65,18 @@ public class SmartcarAuth {
      *
      * @param clientId    The client's ID
      * @param redirectUri The client's redirect URI
+     * @param callback    Handler to a Callback for receiving the authentication response
+     */
+    public SmartcarAuth(String clientId, String redirectUri, SmartcarCallback callback) {
+        smartcarAuthRequest = new SmartcarAuthRequest(clientId, redirectUri, null);
+        this.callback = callback;
+    }
+
+    /**
+     * Constructs an instance with the given parameters.
+     *
+     * @param clientId    The client's ID
+     * @param redirectUri The client's redirect URI
      * @param scope       An array of authentication scopes
      * @param testMode    Whether to display the MOCK vehicle brand or not
      * @param callback    Handler to a Callback for receiving the authentication response
@@ -92,6 +104,20 @@ public class SmartcarAuth {
     }
 
     /**
+     * Constructs an instance with the given parameters.
+     *
+     * @param clientId    The client's ID
+     * @param redirectUri The client's redirect URI
+     * @param testMode    Whether to display the MOCK vehicle brand or not
+     * @param callback    Handler to a Callback for receiving the authentication response
+     */
+    public SmartcarAuth(String clientId, String redirectUri, boolean testMode,
+                        SmartcarCallback callback) {
+        smartcarAuthRequest = new SmartcarAuthRequest(clientId, redirectUri, null, testMode);
+        this.callback = callback;
+    }
+
+    /**
      * Generates the authorization request URI.
      *
      * @param state optional OAuth state to be returned on redirect
@@ -105,16 +131,21 @@ public class SmartcarAuth {
             stateQuery = "&state=" + state;
         }
 
-        String approvalPrompt= ApprovalPrompt.auto.toString();
+        String approvalPrompt = ApprovalPrompt.auto.toString();
         if (forcePrompt) {
-            approvalPrompt= ApprovalPrompt.force.toString();
+            approvalPrompt = ApprovalPrompt.force.toString();
+        }
+
+        String scopeQuery = "";
+        if (smartcarAuthRequest.getScope() != null) {
+          scopeQuery = "&scope=" + smartcarAuthRequest.getScope();
         }
 
         String requestUri = "https://connect.smartcar.com/oauth/authorize?response_type="
                 + smartcarAuthRequest.getResponseType().toString()
                 + "&client_id=" + smartcarAuthRequest.getClientId()
                 + "&redirect_uri=" + smartcarAuthRequest.getRedirectURI()
-                + "&scope=" + smartcarAuthRequest.getScope()
+                + scopeQuery
                 + stateQuery
                 + "&approval_prompt=" + approvalPrompt
                 + "&mode=" + (smartcarAuthRequest.getTestMode() ? "test" : "live");
