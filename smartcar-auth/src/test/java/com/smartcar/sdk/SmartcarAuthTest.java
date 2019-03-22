@@ -173,7 +173,7 @@ public class SmartcarAuthTest {
         SmartcarAuth smartcarAuth = new SmartcarAuth(clientId, redirectUri, scope, null);
 
         SmartcarAuth.AuthVehicleInfo.Builder builder = new SmartcarAuth.AuthVehicleInfo.Builder();
-        SmartcarAuth.AuthVehicleInfo vehicleInfo = builder.setMake('TESLA').build();
+        SmartcarAuth.AuthVehicleInfo vehicleInfo = builder.setMake("TESLA").build();
 
         String requestUri = smartcarAuth.generateUrl("somestring", vehicleInfo);
         String expectedUri = "https://connect.smartcar.com/oauth/authorize?response_type=code&client_id="
@@ -191,7 +191,7 @@ public class SmartcarAuthTest {
         SmartcarAuth smartcarAuth = new SmartcarAuth(clientId, redirectUri, scope, null);
 
         SmartcarAuth.AuthVehicleInfo.Builder builder = new SmartcarAuth.AuthVehicleInfo.Builder();
-        SmartcarAuth.AuthVehicleInfo vehicleInfo = builder.setMake('TESLA').build();
+        SmartcarAuth.AuthVehicleInfo vehicleInfo = builder.setMake("TESLA").build();
 
         String requestUri = smartcarAuth.generateUrl(true, vehicleInfo);
         String expectedUri = "https://connect.smartcar.com/oauth/authorize?response_type=code&client_id="
@@ -209,7 +209,7 @@ public class SmartcarAuthTest {
         SmartcarAuth smartcarAuth = new SmartcarAuth(clientId, redirectUri, scope, null);
 
         SmartcarAuth.AuthVehicleInfo.Builder builder = new SmartcarAuth.AuthVehicleInfo.Builder();
-        SmartcarAuth.AuthVehicleInfo vehicleInfo = builder.setMake('TESLA').build();
+        SmartcarAuth.AuthVehicleInfo vehicleInfo = builder.setMake("TESLA").build();
 
         String requestUri = smartcarAuth.generateUrl(true, vehicleInfo);
         String expectedUri = "https://connect.smartcar.com/oauth/authorize?response_type=code&client_id="
