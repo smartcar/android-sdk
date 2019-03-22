@@ -166,6 +166,60 @@ public class SmartcarAuthTest {
     }
 
     @Test
+    public void smartcarAuth_generateUrl_stateAndAuthVehicleInfo() {
+        String clientId = "client123";
+        String redirectUri = "scclient123://test";
+        String scope = "read_odometer read_vin";
+        SmartcarAuth smartcarAuth = new SmartcarAuth(clientId, redirectUri, scope, null);
+
+        SmartcarAuth.AuthVehicleInfo.Builder builder = new SmartcarAuth.AuthVehicleInfo.Builder();
+        SmartcarAuth.AuthVehicleInfo vehicleInfo = builder.setMake('TESLA').build();
+
+        String requestUri = smartcarAuth.generateUrl("somestring", vehicleInfo);
+        String expectedUri = "https://connect.smartcar.com/oauth/authorize?response_type=code&client_id="
+                + clientId + "&redirect_uri=" + redirectUri + "&scope=" + scope +
+                "&state=somestring&approval_prompt=auto&mode=live&make=TESLA";
+
+        assertEquals(expectedUri, requestUri);
+    }
+
+    @Test
+    public void smartcarAuth_generateUrl_forcePromptAndAuthVehicleInfo() {
+        String clientId = "client123";
+        String redirectUri = "scclient123://test";
+        String scope = "read_odometer read_vin";
+        SmartcarAuth smartcarAuth = new SmartcarAuth(clientId, redirectUri, scope, null);
+
+        SmartcarAuth.AuthVehicleInfo.Builder builder = new SmartcarAuth.AuthVehicleInfo.Builder();
+        SmartcarAuth.AuthVehicleInfo vehicleInfo = builder.setMake('TESLA').build();
+
+        String requestUri = smartcarAuth.generateUrl(true, vehicleInfo);
+        String expectedUri = "https://connect.smartcar.com/oauth/authorize?response_type=code&client_id="
+                + clientId + "&redirect_uri=" + redirectUri + "&scope=" + scope +
+                "&approval_prompt=force&mode=live&make=TESLA";
+
+        assertEquals(expectedUri, requestUri);
+    }
+
+    @Test
+    public void smartcarAuth_generateUrl_AuthVehicleInfo() {
+        String clientId = "client123";
+        String redirectUri = "scclient123://test";
+        String scope = "read_odometer read_vin";
+        SmartcarAuth smartcarAuth = new SmartcarAuth(clientId, redirectUri, scope, null);
+
+        SmartcarAuth.AuthVehicleInfo.Builder builder = new SmartcarAuth.AuthVehicleInfo.Builder();
+        SmartcarAuth.AuthVehicleInfo vehicleInfo = builder.setMake('TESLA').build();
+
+        String requestUri = smartcarAuth.generateUrl(true, vehicleInfo);
+        String expectedUri = "https://connect.smartcar.com/oauth/authorize?response_type=code&client_id="
+                + clientId + "&redirect_uri=" + redirectUri + "&scope=" + scope +
+                "&approval_prompt=auto&mode=live&make=TESLA";
+
+        assertEquals(expectedUri, requestUri);
+    }
+
+    @Test
     public void smartcarAuth_receiveResponse() {
         String clientId = "client123";
         String redirectUri = "scclient123://test";
