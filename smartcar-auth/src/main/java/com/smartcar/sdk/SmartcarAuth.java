@@ -108,7 +108,7 @@ public class SmartcarAuth {
         /**
          * Provides methods to build an AuthVehicleInfo object
          */
-        public class Builder {
+        public static class Builder {
             private String make;
 
             /**
