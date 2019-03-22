@@ -114,7 +114,7 @@ public class SmartcarAuthTest {
         String redirectUri = "scclient123://test";
         String scope = "read_odometer read_vin";
         SmartcarAuth smartcarAuth = new SmartcarAuth(clientId, redirectUri, scope, null);
-        String make = "TESLA"
+        String make = "TESLA";
 
         SmartcarAuth.AuthVehicleInfo.Builder builder = new SmartcarAuth.AuthVehicleInfo.Builder();
         SmartcarAuth.AuthVehicleInfo vehicleInfo = builder.setMake(make).build();
@@ -133,7 +133,7 @@ public class SmartcarAuthTest {
         String redirectUri = "scclient123://test";
         String scope = "read_odometer read_vin";
         SmartcarAuth smartcarAuth = new SmartcarAuth(clientId, redirectUri, scope, null);
-        String make = "TESLA"
+        String make = "TESLA";
 
         SmartcarAuth.AuthVehicleInfo.Builder builder = new SmartcarAuth.AuthVehicleInfo.Builder();
         SmartcarAuth.AuthVehicleInfo vehicleInfo = builder.setMake("TESLA").build();
@@ -152,7 +152,7 @@ public class SmartcarAuthTest {
         String redirectUri = "scclient123://test";
         String scope = "read_odometer read_vin";
         SmartcarAuth smartcarAuth = new SmartcarAuth(clientId, redirectUri, scope, null);
-        String make = "TESLA"
+        String make = "TESLA";
 
         SmartcarAuth.AuthVehicleInfo.Builder builder = new SmartcarAuth.AuthVehicleInfo.Builder();
         SmartcarAuth.AuthVehicleInfo vehicleInfo = builder.setMake("TESLA").build();
