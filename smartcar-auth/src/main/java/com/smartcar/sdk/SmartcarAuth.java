@@ -92,13 +92,61 @@ public class SmartcarAuth {
     }
 
     /**
+     * Exposes a Builder class for constructing AuthVehicleInfo
+     */
+    public static class AuthVehicleInfo {
+        private String make;
+
+        private AuthVehicleInfo (Builder builder) {
+            this.make = builder.getMake();
+        }
+
+        public String getMake() {
+        return this.make;
+        }
+
+        /**
+         * Provides methods to build an AuthVehicleInfo object
+         */
+        public static class Builder {
+            private String make;
+
+            /**
+             * Sets the make of the AuthVehicleInfo object being built
+             * @param make is a vehicle's make. See https://smartcar.com/docs/api#request-authorization
+             * for a list of makes.
+             */
+            public Builder setMake(String make) {
+                this.make = make;
+                return this;
+            }
+
+            /**
+             * Returns the set make.
+             */
+            public String getMake() {
+                return this.make;
+            }
+
+            /**
+             * Builds a new AuthVehicleInfo object from setters.
+             */
+            public AuthVehicleInfo build() {
+                return new AuthVehicleInfo(this);
+            }
+        }
+    }
+
+    /**
      * Generates the authorization request URI.
      *
      * @param state optional OAuth state to be returned on redirect
      * @param forcePrompt force permissions prompt to display on redirect (default: false)
+     * @param authVehicleInfo optional vehicle information object
+     * @param authVehicleInfo.make providing this will bypass the OEM selection screen
      * @return The authorization request URI
      */
-   public String generateUrl(String state, boolean forcePrompt) {
+   public String generateUrl(String state, boolean forcePrompt, AuthVehicleInfo authVehicleInfo) {
 
         String stateQuery = "";
         if (state != null) {
@@ -110,6 +158,15 @@ public class SmartcarAuth {
             approvalPrompt= ApprovalPrompt.force.toString();
         }
 
+        String vehicleInfoQuery = "";
+        if (authVehicleInfo != null) {
+            String make = authVehicleInfo.getMake();
+
+            if (make != null) {
+                vehicleInfoQuery += "&make=" + make;
+            }
+        }
+
         String requestUri = "https://connect.smartcar.com/oauth/authorize?response_type="
                 + smartcarAuthRequest.getResponseType().toString()
                 + "&client_id=" + smartcarAuthRequest.getClientId()
@@ -117,7 +174,8 @@ public class SmartcarAuth {
                 + "&scope=" + smartcarAuthRequest.getScope()
                 + stateQuery
                 + "&approval_prompt=" + approvalPrompt
-                + "&mode=" + (smartcarAuthRequest.getTestMode() ? "test" : "live");
+                + "&mode=" + (smartcarAuthRequest.getTestMode() ? "test" : "live")
+                + vehicleInfoQuery;
 
         return requestUri;
     }
@@ -126,10 +184,46 @@ public class SmartcarAuth {
      * Generates the authorization URI.
      *
      * @param state optional OAuth state to be returned on redirect
+     * @param forcePrompt force permissions prompt to display on redirect (default false)
      * @return The authorization request URI
      */
-    public String generateUrl(String state) {
-        return generateUrl(state, false);
+    public String generateUrl(String state, boolean forcePrompt) {
+        return generateUrl(state, forcePrompt, null);
+    }
+    
+    /**
+     * Generates the authorization URI.
+     *
+     * @param state optional OAuth state to be returned on redirect
+     * @param authVehicleInfo optional vehicle information object
+     * @param authVehicleInfo.make providing this will bypass the OEM selection screen
+     * @return The authorization request URI
+     */
+    public String generateUrl(String state, AuthVehicleInfo authVehicleInfo) {
+        return generateUrl(state, false, authVehicleInfo);
+    }
+
+    /**
+     * Generates the authorization URI.
+     *
+     * @param forcePrompt force permissions prompt to display on redirect (default false)
+     * @param authVehicleInfo optional vehicle information object
+     * @param authVehicleInfo.make providing this will bypass the OEM selection screen
+     * @return The authorization request URI
+     */
+    public String generateUrl(boolean forcePrompt, AuthVehicleInfo authVehicleInfo) {
+        return generateUrl(null, forcePrompt, authVehicleInfo);
+    } 
+
+    /**
+     * Generates the authorization URI.
+     *
+     * @param authVehicleInfo optional vehicle information object
+     * @param authVehicleInfo.make providing this will bypass the OEM selection screen
+     * @return The authorization request URI
+     */
+    public String generateUrl(AuthVehicleInfo authVehicleInfo) {
+        return generateUrl(null, false, authVehicleInfo);
     }
 
     /**
@@ -139,7 +233,18 @@ public class SmartcarAuth {
      * @return The authorization request URI
      */
     public String generateUrl(boolean forcePrompt) {
-        return generateUrl(null, forcePrompt);
+        return generateUrl(null, forcePrompt, null);
+    }
+
+
+    /**
+     * Generates the authorization URI.
+     *
+     * @param state optional OAuth state to be returned on redirect
+     * @return The authorization request URI
+     */
+    public String generateUrl(String state) {
+        return generateUrl(state, false, null);
     }
 
     /**
@@ -148,7 +253,7 @@ public class SmartcarAuth {
      * @return The authorization request URI
      */
     public String generateUrl() {
-        return generateUrl(null, false);
+        return generateUrl(null, false, null);
     }
 
     /**
