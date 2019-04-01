@@ -92,29 +92,44 @@ public class SmartcarAuth {
     }
 
     /**
-     * Exposes a Builder class for constructing AuthVehicleInfo
+     * A class that creates a custom AuthVehicleInfo object, which can be used
+     * when generating an authentication URL.
      */
     public static class AuthVehicleInfo {
         private String make;
 
+        /**
+         * Assigns optional and required properties on the AuthVehicleInfo object.
+         * 
+         * @param builder the builder to obtain the properties from
+         */
         private AuthVehicleInfo (Builder builder) {
-            this.make = builder.getMake();
-        }
-
-        public String getMake() {
-        return this.make;
+            this.make = builder.make;
         }
 
         /**
-         * Provides methods to build an AuthVehicleInfo object
+         * Returns the make assigned to AuthVehicleInfo
+         * 
+         * @return the make of the vehicle
+         */
+        public String getMake() {
+            return this.make;
+        }
+
+        /**
+         * Builder class that allows for optional properties on AuthVehicleInfo 
          */
         public static class Builder {
             private String make;
 
             /**
-             * Sets the make of the AuthVehicleInfo object being built
-             * @param make is a vehicle's make. See https://smartcar.com/docs/api#request-authorization
-             * for a list of makes.
+             * Sets the make on the Builder. Including a make allows the user to bypass the car brand
+             * selection screen.
+             * 
+             * @param make name of the make of a vehicle. For a list of supported makes, please see 
+             * <a href="https://smartcar.com/docs/api#request-authorization">our API Reference</a>
+             *
+             * @return the builder with a `make` property added
              */
             public Builder setMake(String make) {
                 this.make = make;
@@ -122,14 +137,10 @@ public class SmartcarAuth {
             }
 
             /**
-             * Returns the set make.
-             */
-            public String getMake() {
-                return this.make;
-            }
-
-            /**
-             * Builds a new AuthVehicleInfo object from setters.
+             * Instantiates a new AuthVehicleInfo object, which will also have any optional properties
+             * that are already set on the Builder object that is calling this method. 
+             *
+             * @return a new instantiation of the AuthVehicleInfo class
              */
             public AuthVehicleInfo build() {
                 return new AuthVehicleInfo(this);
@@ -142,8 +153,9 @@ public class SmartcarAuth {
      *
      * @param state optional OAuth state to be returned on redirect
      * @param forcePrompt force permissions prompt to display on redirect (default: false)
-     * @param authVehicleInfo optional vehicle information object
-     * @param authVehicleInfo.make providing this will bypass the OEM selection screen
+     * @param authVehicleInfo an optional AuthVehicleInfo object. Including the
+     * `make` property causes the car brand selection screen to be bypassed.
+     *
      * @return The authorization request URI
      */
    public String generateUrl(String state, boolean forcePrompt, AuthVehicleInfo authVehicleInfo) {
@@ -195,8 +207,8 @@ public class SmartcarAuth {
      * Generates the authorization URI.
      *
      * @param state optional OAuth state to be returned on redirect
-     * @param authVehicleInfo optional vehicle information object
-     * @param authVehicleInfo.make providing this will bypass the OEM selection screen
+     * @param authVehicleInfo an optional AuthVehicleInfo object. Including the
+     * `make` property causes the car brand selection screen to be bypassed.
      * @return The authorization request URI
      */
     public String generateUrl(String state, AuthVehicleInfo authVehicleInfo) {
@@ -207,8 +219,8 @@ public class SmartcarAuth {
      * Generates the authorization URI.
      *
      * @param forcePrompt force permissions prompt to display on redirect (default false)
-     * @param authVehicleInfo optional vehicle information object
-     * @param authVehicleInfo.make providing this will bypass the OEM selection screen
+     * @param authVehicleInfo an optional AuthVehicleInfo object. Including the
+     * `make` property causes the car brand selection screen to be bypassed.
      * @return The authorization request URI
      */
     public String generateUrl(boolean forcePrompt, AuthVehicleInfo authVehicleInfo) {
@@ -218,8 +230,9 @@ public class SmartcarAuth {
     /**
      * Generates the authorization URI.
      *
-     * @param authVehicleInfo optional vehicle information object
-     * @param authVehicleInfo.make providing this will bypass the OEM selection screen
+     * @param authVehicleInfo an optional AuthVehicleInfo object. Including the
+     * `make` property causes the car brand selection screen to be bypassed.
+     * 
      * @return The authorization request URI
      */
     public String generateUrl(AuthVehicleInfo authVehicleInfo) {

@@ -107,6 +107,10 @@ An opaque value used to mainain state between the request and callback. The auth
 
 Defaults to `false`. The `false` option will skip the approval prompt for usres who have already accepted the requested permissions for your application inthe past. Set it to `true` to force a user to see the approval prompt even if they have already accepted the permissions in the past.
 
+`authVehicleInfo` (optional)
+
+Defaults to `null`. Passing in a `AuthVehicleInfo` object with a `make` property causes the car brand selection screen to be bypassed. For a complete list of supported makes, please see our [API Reference](https://smartcar.com/docs/api#authorization) documentation.
+
 #### Example
 
 ```java
