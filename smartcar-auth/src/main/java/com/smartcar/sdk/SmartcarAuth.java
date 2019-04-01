@@ -104,7 +104,7 @@ public class SmartcarAuth {
          * @param builder the builder to obtain the properties from
          */
         private AuthVehicleInfo (Builder builder) {
-            this.make = builder.getMake();
+            this.make = builder.make;
         }
 
         /**
@@ -129,7 +129,7 @@ public class SmartcarAuth {
              * @param make name of the make of a vehicle. For a list of supported makes, please see 
              * <a href="https://smartcar.com/docs/api#request-authorization">our API Reference</a>
              *
-             * @return the builder with a make property added
+             * @return the builder with a `make` property added
              */
             public Builder setMake(String make) {
                 this.make = make;
@@ -154,7 +154,7 @@ public class SmartcarAuth {
      * @param state optional OAuth state to be returned on redirect
      * @param forcePrompt force permissions prompt to display on redirect (default: false)
      * @param authVehicleInfo an optional AuthVehicleInfo object. Including the
-     * make property causes the car brand selection screen to be bypassed.
+     * `make` property causes the car brand selection screen to be bypassed.
      *
      * @return The authorization request URI
      */
