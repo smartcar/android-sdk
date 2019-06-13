@@ -27,12 +27,34 @@ import static org.junit.Assert.assertEquals;
 public class SmartcarResponseTest {
 
     @Test
-    public void SmartcarResponseTest_all() {
-        SmartcarResponse smartcarResponse = new SmartcarResponse(
-                "testcode", "Just a testmessage", "teststate");
+    public void SmartcarResponseTest_code() {
+        SmartcarResponse smartcarResponse = new SmartcarResponse("Just a testmessage", "teststate");
+        smartcarResponse.setCode("testcode");
 
         assertEquals(smartcarResponse.getCode(), "testcode");
         assertEquals(smartcarResponse.getMessage(), "Just a testmessage");
         assertEquals(smartcarResponse.getState(), "teststate");
     }
+
+    @Test
+    public void SmartcarResponseTest_error() {
+        SmartcarResponse smartcarResponse = new SmartcarResponse("Error message", "errorstate");
+        smartcarResponse.setError("error");
+
+        assertEquals(smartcarResponse.getError(), "error");
+        assertEquals(smartcarResponse.getMessage(), "Error message");
+        assertEquals(smartcarResponse.getState(), "errorstate");
+    }
+
+    @Test
+    public void SmartcarResponseTest_errorWithVehicle() {
+        VehicleResponse vehicle = new VehicleResponse("00000", "TESLA", "Model S", "2019");
+        SmartcarResponse smartcarResponse = new SmartcarResponse("error", "Error message", "errorstate", vehicle);
+
+        assertEquals(smartcarResponse.getError(), "error");
+        assertEquals(smartcarResponse.getMessage(), "Error message");
+        assertEquals(smartcarResponse.getState(), "errorstate");
+        assertEquals(smartcarResponse.getVehicle(), vehicle);
+    }
+
 }

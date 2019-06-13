@@ -21,53 +21,29 @@
 package com.smartcar.sdk;
 
 /**
- * Class that encompasses the response code and error message, if any.
+ * Class that encompasses the vehicle returned in the response.
  */
-public class SmartcarResponse {
-    private String code;
-    private String error;
-    private String message;
-    private String state;
-    private VehicleResponse vehicle;
 
-    public SmartcarResponse(String message, String state) {
-        this.message = message;
-        this.state = state;
+public class VehicleResponse {
+    private String vin;
+    private String make;
+    private String model;
+    private String year;
+
+    public VehicleResponse(String vin, String make, String model, String year) {
+        this.vin = vin;
+        this.make = make;
+        this.model = model;
+        this.year = year;
     }
 
-    public SmartcarResponse(String error, String message, String state, VehicleResponse vehicle) {
-        this.error = error;
-        this.message = message;
-        this.state = state;
-        this.vehicle = vehicle;
+    public int hashCode() {
+        return 1;
     }
 
-    public String getCode() {
-        return code;
-    }
-
-    public String getError() {
-        return error;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public String getState() {
-        return state;
-    }
-
-    public VehicleResponse getVehicle() {
-        return vehicle;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public void setError(String error) {
-        this.error = error;
+    public boolean equals(VehicleResponse vehicle) {
+        if (this.vin == vehicle.vin) return true;
+        else return false;
     }
 
 }

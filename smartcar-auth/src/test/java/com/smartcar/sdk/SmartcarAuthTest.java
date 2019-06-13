@@ -231,6 +231,61 @@ public class SmartcarAuthTest {
     }
 
     @Test
+    public void smartcarAuth_receiveResponse_accessDenied() {
+        String clientId = "client123";
+        String redirectUri = "scclient123://test";
+        String scope = "read_odometer read_vin";
+        new SmartcarAuth(clientId, redirectUri, scope, new SmartcarCallback() {
+            @Override
+            public void handleResponse(SmartcarResponse smartcarResponse) {
+                assertEquals(smartcarResponse.getError(), "access_denied");
+                assertEquals(smartcarResponse.getMessage(), "User denied access to the requested scope of permissions.");
+            }
+        });
+
+        SmartcarAuth.receiveResponse(Uri.parse(redirectUri + "?error=access_denied&error_description=User%20denied%20access%20to%20the%20requested%20scope%20of%20permissions."));
+    }
+
+    @Test
+    public void smartcarAuth_receiveResponse_vehicleIncompatible() {
+        String clientId = "client123";
+        String redirectUri = "scclient123://test";
+        String scope = "read_odometer read_vin";
+        new SmartcarAuth(clientId, redirectUri, scope, new SmartcarCallback() {
+            @Override
+            public void handleResponse(SmartcarResponse smartcarResponse) {
+                assertEquals(smartcarResponse.getError(), "vehicle_incompatible");
+                assertEquals(smartcarResponse.getMessage(), "The user's vehicle is not compatible.");
+            }
+        });
+
+        SmartcarAuth.receiveResponse(Uri.parse(redirectUri + "?error=vehicle_incompatible&error_description=The%20user%27s%20vehicle%20is%20not%20compatible."));
+    }
+
+    @Test
+    public void smartcarAuth_receiveResponse_vehicleIncompatibleWithVehicle() {
+        String clientId = "client123";
+        String redirectUri = "scclient123://test";
+        String scope = "read_odometer read_vin";
+        final VehicleResponse vehicle = new VehicleResponse("1FDKE30G4JHA04964", "FORD", "E-350", "1998");
+        new SmartcarAuth(clientId, redirectUri, scope, new SmartcarCallback() {
+            @Override
+            public void handleResponse(SmartcarResponse smartcarResponse) {
+                VehicleResponse vehicle = smartcarResponse.getVehicle();
+
+                assertEquals(smartcarResponse.getError(), "vehicle_incompatible");
+                assertEquals(smartcarResponse.getMessage(), "The user's vehicle is not compatible.");
+                assertEquals(smartcarResponse.getVehicle(), vehicle);
+            }
+        });
+
+        SmartcarAuth.receiveResponse(Uri.parse(redirectUri + "?error=vehicle_incompatible" +
+                "&error_description=The%20user%27s%20vehicle%20is%20not%20compatible." +
+                "&vin=1FDKE30G4JHA04964&make=FORD&model=E-350&year=1988"));
+    }
+
+
+    @Test
     public void smartcarAuth_receiveResponse_nullCodeWithMessage() {
         String clientId = "client123";
         String redirectUri = "scclient123://test";

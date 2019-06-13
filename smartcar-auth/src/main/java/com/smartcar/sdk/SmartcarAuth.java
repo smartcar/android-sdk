@@ -390,20 +390,45 @@ public class SmartcarAuth {
      */
     protected static void receiveResponse(Uri uri) {
         String code;
+        String error;
         String message;
         String state;
 
         if (uri != null && Helper.matchesRedirectUri(uri.toString())) {
             state = uri.getQueryParameter("state");
-
-            code = uri.getQueryParameter("code");
             message = uri.getQueryParameter("error_description");
-            if (code == null && message == null) {
-                message = "Unable to fetch code. Please try again";
+            String queryCode = uri.getQueryParameter("code");
+            String queryError = uri.getQueryParameter("error");
+            String queryVin = uri.getQueryParameter("vin");
+
+            if (queryCode != null) {
+                SmartcarResponse smartcarResponse = new SmartcarResponse(message, state);
+                smartcarResponse.setCode(queryCode);
+                callback.handleResponse(smartcarResponse);
             }
 
-            SmartcarResponse smartcarResponse = new SmartcarResponse(code, message, state);
-            callback.handleResponse(smartcarResponse);
+            else if (queryError != null && queryVin == null) {
+                SmartcarResponse smartcarResponse = new SmartcarResponse(message, state);
+                smartcarResponse.setError(queryError);
+                callback.handleResponse(smartcarResponse);
+            }
+
+            else if (queryError != null && queryVin != null) {
+                String vin = queryVin;
+                String make = uri.getQueryParameter("make");
+                String model = uri.getQueryParameter("model");
+                String year = uri.getQueryParameter("year");
+                VehicleResponse vehicle = new VehicleResponse(vin, make, model, year);
+                SmartcarResponse smartcarResponse = new SmartcarResponse(queryError, message, state, vehicle);
+                callback.handleResponse(smartcarResponse);
+            }
+
+            else if (queryCode == null && message == null) {
+                message = "Unable to fetch code. Please try again";
+                SmartcarResponse smartcarResponse = new SmartcarResponse(message, state);
+                callback.handleResponse(smartcarResponse);
+            }
+
         }
     }
 }
