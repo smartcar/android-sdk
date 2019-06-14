@@ -37,13 +37,7 @@ public class VehicleResponse {
         this.year = year;
     }
 
-    public int hashCode() {
-        return 1;
+    public String getVin() {
+        return this.vin;
     }
-
-    public boolean equals(VehicleResponse vehicle) {
-        if (this.vin == vehicle.vin) return true;
-        else return false;
-    }
-
 }

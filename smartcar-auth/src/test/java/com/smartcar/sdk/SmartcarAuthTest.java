@@ -267,15 +267,12 @@ public class SmartcarAuthTest {
         String clientId = "client123";
         String redirectUri = "scclient123://test";
         String scope = "read_odometer read_vin";
-        final VehicleResponse vehicle = new VehicleResponse("1FDKE30G4JHA04964", "FORD", "E-350", "1998");
         new SmartcarAuth(clientId, redirectUri, scope, new SmartcarCallback() {
             @Override
             public void handleResponse(SmartcarResponse smartcarResponse) {
-                VehicleResponse vehicle = smartcarResponse.getVehicle();
-
                 assertEquals(smartcarResponse.getError(), "vehicle_incompatible");
                 assertEquals(smartcarResponse.getMessage(), "The user's vehicle is not compatible.");
-                assertEquals(smartcarResponse.getVehicle(), vehicle);
+                assertEquals(smartcarResponse.getVehicle().getVin(), "1FDKE30G4JHA04964");
             }
         });
 
