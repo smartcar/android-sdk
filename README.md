@@ -1,23 +1,25 @@
 # Smartcar Android Auth SDK [![Build Status][ci-image]][ci-url] [![Coverage][coverage-image]][coverage-url] [![Download][bintray-image]][bintray-url]
 
-The SmartcarAuth Android SDK makes it easy to handle the Smartcar authorization flow from Android.
+The SmartcarAuth Android SDK makes it easy to integrate with Smartcar Connect from Android.
 
 ## Resources
 
-* [Smartcar Developer Dashboard](https://developer.smartcar.com)
-* [Smartcar API Reference](https://smartcar.com/docs)
-* [Smartcar Android SDK Reference Documentation](https://smartcar.github.io/android-sdk)
+- [Smartcar Developer Dashboard](https://developer.smartcar.com)
+- [Smartcar API Reference](https://smartcar.com/docs)
+- [Smartcar Android SDK Reference Documentation](https://smartcar.github.io/android-sdk)
 
 ## Installation
 
 The recommended method for obtaining the SDK is via Gradle or Maven.
 
 ### Gradle
+
 ```groovy
 compile "com.smartcar.sdk:smartcar-auth:1.1.0"
 ```
 
 ### Maven
+
 ```xml
 <dependency>
   <groupId>com.smartcar.sdk</groupId>
@@ -36,7 +38,7 @@ Application client ID can be obtained from the [Smartcar Developer Portal](https
 
 `redirectUri`
 
-Your applciation must register a custom URI scheme in order to recieve the authorization callback. Smartcar requires the custom URI scheme to be in the format of `"sc" + clientId + "://" + hostname`. This URI bust also be registered in [Smartcar's developer portal](https://developer.smartcar.com) for your application. You may append an optional path component or TLD. For example, a redirect uri could be: `sc4a1b01e5-0497-417c-a30e-6df6ba33ba46://myapp.com/callback`.
+Your application must register a custom URI scheme in order to receive Connect's response. Smartcar requires the custom URI scheme to be in the format of `"sc" + clientId + "://" + hostname`. This URI bust also be registered in [Smartcar's developer portal](https://developer.smartcar.com) for your application. You may append an optional path component or TLD. For example, a redirect uri could be: `sc4a1b01e5-0497-417c-a30e-6df6ba33ba46://myapp.com/callback`.
 
 You will then need to register the URI in the `AndroidManifest.xml` by inserting a new activity with an intent filter. More information on the [data element](https://developer.android.com/guide/topics/manifest/data-element.html).
 
@@ -56,7 +58,7 @@ You will then need to register the URI in the `AndroidManifest.xml` by inserting
 
 `scope`
 
-Permissions requested of the vehicle owner. See the [Smartcar developer documentation](https://developer.smartcar.com/docs) for a full list of available permsisions.
+Permissions requested of the vehicle owner. See [our documentation center](https://smartcar.com/docs/api#authorization) for a full list of available permissions.
 
 `testMode`
 
@@ -64,8 +66,7 @@ Defaults to `false`. Set to `true` to enable to Mock OEM for testing.
 
 `callback`
 
-Callback run when the Authorization Flow returns with a `code` and the `state`. If there is an error, the `code` will be `null` and a `message` will be provided with more details.
-
+Callback run when Connect returns with a `code` and the `state`. If there is an error, the `code` will be `null` and a `message` will be provided with more details.
 
 #### Example
 
@@ -93,7 +94,7 @@ SmartcarAuth smartcarAuth = new SmartcarAuth(
 
 ### `launchAuthFlow`
 
-Launch the Smartcar authorization flow.
+Launch Connect.
 
 `context`
 
@@ -101,11 +102,11 @@ The application's Android context.
 
 `state` (optional)
 
-An opaque value used to mainain state between the request and callback. The authorization server includes this value when redirecting to the client. It can be retrieved from the `SmartcarResponse.getState()` method.
+An opaque value used to maintain state between the request and callback. Connect returns this value when redirecting to the client. It can be retrieved from the `SmartcarResponse.getState()` method.
 
 `forcePrompt` (optional)
 
-Defaults to `false`. The `false` option will skip the approval prompt for usres who have already accepted the requested permissions for your application inthe past. Set it to `true` to force a user to see the approval prompt even if they have already accepted the permissions in the past.
+Defaults to `false`. The `false` option will skip the approval prompt for users who have already accepted the requested permissions for your application in the past. Set it to `true` to force a user to see the approval prompt even if they have already accepted the permissions in the past.
 
 `authVehicleInfo` (optional)
 
@@ -131,11 +132,11 @@ The view to attach the click listener to.
 
 `state` (optional)
 
-An opaque value used to mainain state between the request and callback. The authorization server includes this value when redirecting to the client. It can be retrieved from the `SmartcarResponse.getState()` method.
+An opaque value used to maintain state between the request and callback. Connect returns this value when redirecting to the client. It can be retrieved from the `SmartcarResponse.getState()` method.
 
 `forcePrompt` (optional)
 
-Defaults to `false`. The `false` option will skip the approval prompt for usres who have already accepted the requested permissions for your application inthe past. Set it to `true` to force a user to see the approval prompt even if they have already accepted the permissions in the past.
+Defaults to `false`. The `false` option will skip the approval prompt for users who have already accepted the requested permissions for your application in the past. Set it to `true` to force a user to see the approval prompt even if they have already accepted the permissions in the past.
 
 #### Example
 
@@ -146,9 +147,7 @@ smartcarAuth.addClickHandler(getApplicationContext(), connectButton);
 
 [ci-image]: https://travis-ci.com/smartcar/android-sdk.svg?token=6Yrkze1DNb8WHnHxrCy6&branch=master
 [ci-url]: https://travis-ci.com/smartcar/android-sdk
-
 [coverage-image]: https://codecov.io/gh/smartcar/android-sdk/branch/master/graph/badge.svg?token=RhacvrisiW
 [coverage-url]: https://codecov.io/gh/smartcar/android-sdk
-
 [bintray-image]: https://api.bintray.com/packages/smartcar/library/smartcar-auth/images/download.svg
 [bintray-url]: https://bintray.com/smartcar/library/smartcar-auth/_latestVersion
