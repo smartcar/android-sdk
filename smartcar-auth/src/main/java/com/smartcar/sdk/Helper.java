@@ -66,6 +66,15 @@ class Helper {
         return stringBuilder.toString();
     }
 
+    /**
+     * Helper method to build a full vehicle Info class
+     *
+     * @param vin   The vin of the vehicle
+     * @param make  The make of the vehicle
+     * @param model The model of the vehicle
+     * @param year  The year of the vehicle
+     * @return      VehicleInfo class with desired fields
+     */
     protected static VehicleInfo makeFullVehicle(String vin, String make, String model, Integer year) {
         VehicleInfo vehicle = new VehicleInfo.Builder()
                 .setVin(vin)

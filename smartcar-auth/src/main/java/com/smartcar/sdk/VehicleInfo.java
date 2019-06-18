@@ -81,16 +81,37 @@ public class VehicleInfo {
             return this;
         }
 
+        /**
+         * Sets the vin on the Builder.
+         *
+         * @param vin vin of the vehicle
+         *
+         * @return the builder with a `vin` property added
+         */
         public Builder setVin(String vin) {
             this.vin = vin;
             return this;
         }
 
+        /**
+         * Sets the model on the Builder.
+         *
+         * @param model model of the vehicle
+         *
+         * @return the builder with a `model` property added
+         */
         public Builder setModel(String model) {
             this.model = model;
             return this;
         }
 
+        /**
+         * Sets the year on the Builder.
+         *
+         * @param year year of the vehicle
+         *
+         * @return the builder with a `year` property added
+         */
         public Builder setYear(Integer year) {
             this.year = year;
             return this;

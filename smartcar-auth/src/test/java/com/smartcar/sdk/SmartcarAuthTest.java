@@ -109,7 +109,7 @@ public class SmartcarAuthTest {
     }
 
     @Test
-    public void smartcarAuth_generateUrl_stateAndVehicleInfo() {
+    public void smartcarAuth_generateUrl_stateAndAuthVehicleInfo() {
         String clientId = "client123";
         String redirectUri = "scclient123://test";
         String scope = "read_odometer read_vin";
@@ -128,7 +128,7 @@ public class SmartcarAuthTest {
     }
 
     @Test
-    public void smartcarAuth_generateUrl_forcePromptAndVehicleInfo() {
+    public void smartcarAuth_generateUrl_forcePromptAndAuthVehicleInfo() {
         String clientId = "client123";
         String redirectUri = "scclient123://test";
         String scope = "read_odometer read_vin";
@@ -147,7 +147,7 @@ public class SmartcarAuthTest {
     }
 
     @Test
-    public void smartcarAuth_generateUrl_stateAndforcePromptAndVehicleInfo() {
+    public void smartcarAuth_generateUrl_stateAndforcePromptAndAuthVehicleInfo() {
         String clientId = "client123";
         String redirectUri = "scclient123://test";
         String scope = "read_odometer read_vin";
@@ -280,7 +280,6 @@ public class SmartcarAuthTest {
                 "&error_description=The%20user%27s%20vehicle%20is%20not%20compatible." +
                 "&vin=1FDKE30G4JHA04964&make=FORD&model=E-350&year=1988"));
     }
-
 
     @Test
     public void smartcarAuth_receiveResponse_nullCodeWithMessage() {

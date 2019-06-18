@@ -59,5 +59,4 @@ public class SmartcarResponse {
 
     public VehicleInfo getResponseVehicle() { return this.responseVehicleInfo; }
 
-
 }
