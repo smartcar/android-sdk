@@ -109,7 +109,7 @@ Defaults to `false`. The `false` option will skip the approval prompt for usres 
 
 `authVehicleInfo` (optional)
 
-Defaults to `null`. Passing in a `AuthVehicleInfo` object with a `make` property causes the car brand selection screen to be bypassed. For a complete list of supported makes, please see our [API Reference](https://smartcar.com/docs/api#authorization) documentation.
+Defaults to `null`. Passing in a `VehicleInfo` object with a `make` property causes the car brand selection screen to be bypassed. For a complete list of supported makes, please see our [API Reference](https://smartcar.com/docs/api#authorization) documentation.
 
 #### Example
 

@@ -83,7 +83,7 @@ public class SmartcarAuthTest {
         String scope = "read_odometer read_vin";
         SmartcarAuth smartcarAuth = new SmartcarAuth(clientId, redirectUri, scope, null);
         String make = "TESLA";
-        SmartcarAuth.AuthVehicleInfo authVehicleInfo = new SmartcarAuth.AuthVehicleInfo.Builder().setMake(make).build();
+        VehicleInfo authVehicleInfo = new VehicleInfo.Builder().setMake(make).build();
 
         String requestUri = smartcarAuth.generateUrl(authVehicleInfo);
         String expectedUri = "https://connect.smartcar.com/oauth/authorize?response_type=code&client_id="
@@ -109,15 +109,15 @@ public class SmartcarAuthTest {
     }
 
     @Test
-    public void smartcarAuth_generateUrl_stateAndAuthVehicleInfo() {
+    public void smartcarAuth_generateUrl_stateAndVehicleInfo() {
         String clientId = "client123";
         String redirectUri = "scclient123://test";
         String scope = "read_odometer read_vin";
         SmartcarAuth smartcarAuth = new SmartcarAuth(clientId, redirectUri, scope, null);
         String make = "TESLA";
 
-        SmartcarAuth.AuthVehicleInfo.Builder builder = new SmartcarAuth.AuthVehicleInfo.Builder();
-        SmartcarAuth.AuthVehicleInfo vehicleInfo = builder.setMake(make).build();
+        VehicleInfo.Builder builder = new VehicleInfo.Builder();
+        VehicleInfo vehicleInfo = builder.setMake(make).build();
 
         String requestUri = smartcarAuth.generateUrl("somestring", vehicleInfo);
         String expectedUri = "https://connect.smartcar.com/oauth/authorize?response_type=code&client_id="
@@ -128,15 +128,15 @@ public class SmartcarAuthTest {
     }
 
     @Test
-    public void smartcarAuth_generateUrl_forcePromptAndAuthVehicleInfo() {
+    public void smartcarAuth_generateUrl_forcePromptAndVehicleInfo() {
         String clientId = "client123";
         String redirectUri = "scclient123://test";
         String scope = "read_odometer read_vin";
         SmartcarAuth smartcarAuth = new SmartcarAuth(clientId, redirectUri, scope, null);
         String make = "TESLA";
 
-        SmartcarAuth.AuthVehicleInfo.Builder builder = new SmartcarAuth.AuthVehicleInfo.Builder();
-        SmartcarAuth.AuthVehicleInfo vehicleInfo = builder.setMake("TESLA").build();
+        VehicleInfo.Builder builder = new VehicleInfo.Builder();
+        VehicleInfo vehicleInfo = builder.setMake("TESLA").build();
 
         String requestUri = smartcarAuth.generateUrl(true, vehicleInfo);
         String expectedUri = "https://connect.smartcar.com/oauth/authorize?response_type=code&client_id="
@@ -147,15 +147,15 @@ public class SmartcarAuthTest {
     }
 
     @Test
-    public void smartcarAuth_generateUrl_stateAndforcePromptAndAuthVehicleInfo() {
+    public void smartcarAuth_generateUrl_stateAndforcePromptAndVehicleInfo() {
         String clientId = "client123";
         String redirectUri = "scclient123://test";
         String scope = "read_odometer read_vin";
         SmartcarAuth smartcarAuth = new SmartcarAuth(clientId, redirectUri, scope, null);
         String make = "TESLA";
 
-        SmartcarAuth.AuthVehicleInfo.Builder builder = new SmartcarAuth.AuthVehicleInfo.Builder();
-        SmartcarAuth.AuthVehicleInfo vehicleInfo = builder.setMake("TESLA").build();
+        VehicleInfo.Builder builder = new VehicleInfo.Builder();
+        VehicleInfo vehicleInfo = builder.setMake("TESLA").build();
 
         String requestUri = smartcarAuth.generateUrl("somestring", true, vehicleInfo);
         String expectedUri = "https://connect.smartcar.com/oauth/authorize?response_type=code&client_id="
@@ -272,7 +272,7 @@ public class SmartcarAuthTest {
             public void handleResponse(SmartcarResponse smartcarResponse) {
                 assertEquals(smartcarResponse.getError(), "vehicle_incompatible");
                 assertEquals(smartcarResponse.getMessage(), "The user's vehicle is not compatible.");
-                assertEquals(smartcarResponse.getVehicle().getVin(), "1FDKE30G4JHA04964");
+                assertEquals(smartcarResponse.getResponseVehicle().getVin(), "1FDKE30G4JHA04964");
             }
         });
 

@@ -28,46 +28,36 @@ public class SmartcarResponse {
     private String error;
     private String message;
     private String state;
-    private VehicleResponse vehicle;
+    private VehicleInfo responseVehicleInfo;
 
     public SmartcarResponse(String message, String state) {
         this.message = message;
         this.state = state;
     }
 
-    public SmartcarResponse(String error, String message, String state, VehicleResponse vehicle) {
-        this.error = error;
-        this.message = message;
-        this.state = state;
-        this.vehicle = vehicle;
-    }
+    public void setCode(String code) { this.code = code; }
+
+    public void setError(String error) { this.error = error; }
+
+    public void setResponseVehicleInfo(VehicleInfo vehicle) { this.responseVehicleInfo = vehicle; }
 
     public String getCode() {
-        return code;
+        return this.code;
     }
 
     public String getError() {
-        return error;
+        return this.error;
     }
 
     public String getMessage() {
-        return message;
+        return this.message;
     }
 
     public String getState() {
-        return state;
+        return this.state;
     }
 
-    public VehicleResponse getVehicle() {
-        return vehicle;
-    }
+    public VehicleInfo getResponseVehicle() { return this.responseVehicleInfo; }
 
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public void setError(String error) {
-        this.error = error;
-    }
 
 }

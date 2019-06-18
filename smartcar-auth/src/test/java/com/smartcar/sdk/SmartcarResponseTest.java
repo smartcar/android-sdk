@@ -46,7 +46,7 @@ public class SmartcarResponseTest {
         assertEquals(smartcarResponse.getState(), "errorstate");
     }
 
-    @Test
+    /*@Test
     public void SmartcarResponseTest_errorWithVehicle() {
         VehicleResponse vehicle = new VehicleResponse("00000", "TESLA", "Model S", "2019");
         SmartcarResponse smartcarResponse = new SmartcarResponse("error", "Error message", "errorstate", vehicle);
@@ -55,6 +55,6 @@ public class SmartcarResponseTest {
         assertEquals(smartcarResponse.getMessage(), "Error message");
         assertEquals(smartcarResponse.getState(), "errorstate");
         assertEquals(smartcarResponse.getVehicle(), vehicle);
-    }
+    }*/
 
 }
