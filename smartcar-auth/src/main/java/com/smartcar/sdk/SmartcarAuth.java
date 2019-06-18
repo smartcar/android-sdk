@@ -326,7 +326,7 @@ public class SmartcarAuth {
     }
 
     /**
-     * Receives the response for the authorization request and sends it back to the calling function
+     * Receives the response from Connect and sends it back to the calling function
      * via the callback method. The code is packed in a Bundle with the key "code".
      *
      * @param uri The response data as a Uri
