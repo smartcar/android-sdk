@@ -76,12 +76,11 @@ class Helper {
      * @return      VehicleInfo class with desired fields
      */
     protected static VehicleInfo makeFullVehicle(String vin, String make, String model, Integer year) {
-        VehicleInfo vehicle = new VehicleInfo.Builder()
+        return new VehicleInfo.Builder()
                 .setVin(vin)
                 .setMake(make)
                 .setModel(model)
                 .setYear(year)
                 .build();
-        return vehicle;
     }
 }

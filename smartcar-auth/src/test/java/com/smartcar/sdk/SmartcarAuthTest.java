@@ -270,9 +270,13 @@ public class SmartcarAuthTest {
         new SmartcarAuth(clientId, redirectUri, scope, new SmartcarCallback() {
             @Override
             public void handleResponse(SmartcarResponse smartcarResponse) {
+                VehicleInfo responseVehicle = smartcarResponse.getResponseVehicle();
                 assertEquals(smartcarResponse.getError(), "vehicle_incompatible");
                 assertEquals(smartcarResponse.getMessage(), "The user's vehicle is not compatible.");
-                assertEquals(smartcarResponse.getResponseVehicle().getVin(), "1FDKE30G4JHA04964");
+                assertEquals(responseVehicle.getVin(), "1FDKE30G4JHA04964");
+                assertEquals(responseVehicle.getMake(), "FORD");
+                assertEquals(responseVehicle.getModel(), "E-350");
+                assertEquals(responseVehicle.getYear().intValue(), 1988);
             }
         });
 

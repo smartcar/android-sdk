@@ -91,7 +91,6 @@ public class SmartcarAuth {
         this.callback = callback;
     }
 
-
     /**
      * Generates the authorization request URI.
      *
@@ -359,7 +358,7 @@ public class SmartcarAuth {
                 String make = uri.getQueryParameter("make");
                 String model = uri.getQueryParameter("model");
                 Integer year = Integer.parseInt(uri.getQueryParameter("year"));
-                VehicleInfo responseVehicle = Helper.makeFullVehicle(queryVin, make, null, year);
+                VehicleInfo responseVehicle = Helper.makeFullVehicle(queryVin, make, model, year);
                 SmartcarResponse smartcarResponse = new SmartcarResponse(message, state);
                 smartcarResponse.setError(queryError);
                 smartcarResponse.setResponseVehicleInfo(responseVehicle);
