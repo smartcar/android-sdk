@@ -347,11 +347,11 @@ public class SmartcarAuth {
             String queryError = uri.getQueryParameter("error");
             String queryVin = uri.getQueryParameter("vin");
 
-            boolean receievedCode = queryCode != null;
+            boolean receivedCode = queryCode != null;
             boolean receivedError = queryError != null && queryVin == null;
-            boolean receievedErrorWithVehicle = queryError != null && queryVin != null;
+            boolean receivedErrorWithVehicle = queryError != null && queryVin != null;
 
-            if (receievedCode) {
+            if (receivedCode) {
                 SmartcarResponse smartcarResponse = new SmartcarResponse(message, state);
                 smartcarResponse.setCode(queryCode);
                 callback.handleResponse(smartcarResponse);
@@ -363,7 +363,7 @@ public class SmartcarAuth {
                 callback.handleResponse(smartcarResponse);
             }
 
-            else if (receievedErrorWithVehicle) {
+            else if (receivedErrorWithVehicle) {
                 String make = uri.getQueryParameter("make");
                 String model = uri.getQueryParameter("model");
                 int year = Integer.parseInt(uri.getQueryParameter("year"));
