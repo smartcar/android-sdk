@@ -36,8 +36,8 @@ public class SmartcarAuth {
      *
      * @param clientId    The client's ID
      * @param redirectUri The client's redirect URI
-     * @param scope       A space-separated list of authentication scopes
-     * @param callback    Handler to a Callback for receiving the authentication response
+     * @param scope       A space-separated list of authorization scopes
+     * @param callback    Handler to a Callback for receiving the Smartcar Connect response
      */
     public SmartcarAuth(String clientId, String redirectUri, String scope,
                         SmartcarCallback callback) {
@@ -50,8 +50,8 @@ public class SmartcarAuth {
      *
      * @param clientId    The client's ID
      * @param redirectUri The client's redirect URI
-     * @param scope       An array of authentication scopes
-     * @param callback    Handler to a Callback for receiving the authentication response
+     * @param scope       An array of authorization scopes
+     * @param callback    Handler to a Callback for receiving the Smartcar Connect response
      */
     public SmartcarAuth(String clientId, String redirectUri, String[] scope,
                         SmartcarCallback callback) {
@@ -65,9 +65,9 @@ public class SmartcarAuth {
      *
      * @param clientId    The client's ID
      * @param redirectUri The client's redirect URI
-     * @param scope       An array of authentication scopes
+     * @param scope       An array of authorization scopes
      * @param testMode    Whether to display the MOCK vehicle brand or not
-     * @param callback    Handler to a Callback for receiving the authentication response
+     * @param callback    Handler to a Callback for receiving the Smartcar Connect response
      */
     public SmartcarAuth(String clientId, String redirectUri, String scope, boolean testMode,
                         SmartcarCallback callback) {
@@ -80,9 +80,9 @@ public class SmartcarAuth {
      *
      * @param clientId    The client's ID
      * @param redirectUri The client's redirect URI
-     * @param scope       An array of authentication scopes
+     * @param scope       An array of authorization scopes
      * @param testMode    Whether to display the MOCK vehicle brand or not
-     * @param callback    Handler to a Callback for receiving the authentication response
+     * @param callback    Handler to a Callback for receiving the Smartcar Connect response
      */
     public SmartcarAuth(String clientId, String redirectUri, String[] scope, boolean testMode,
                         SmartcarCallback callback) {
@@ -92,14 +92,14 @@ public class SmartcarAuth {
     }
 
     /**
-     * Generates the Connect URI.
+     * Generates the Smartcar Connect URI.
      *
      * @param state optional OAuth state to be returned on redirect
      * @param forcePrompt force permissions prompt to display on redirect (default: false)
      * @param authVehicleInfo an optional VehicleInfo object. Including the
      * `make` property causes the car brand selection screen to be bypassed.
      *
-     * @return The Connect URI
+     * @return The Smartcar Connect URI
      */
    public String generateUrl(String state, boolean forcePrompt, VehicleInfo authVehicleInfo) {
 
@@ -136,57 +136,61 @@ public class SmartcarAuth {
     }
 
     /**
-     * Generates the authorization URI.
+     * Generates the Connect URI.
      *
      * @param state optional OAuth state to be returned on redirect
      * @param forcePrompt force permissions prompt to display on redirect (default false)
-     * @return The Connect URI
+     *
+     * @return The Smartcar Connect URI
      */
     public String generateUrl(String state, boolean forcePrompt) {
         return generateUrl(state, forcePrompt, null);
     }
-    
+
     /**
-     * Generates the authorization URI.
+     * Generates the Connect URI.
      *
      * @param state optional OAuth state to be returned on redirect
      * @param authVehicleInfo an optional VehicleInfo object. Including the
      * `make` property causes the car brand selection screen to be bypassed.
-     * @return The Connect URI
+     *
+     * @return The Smartcar Connect URI
      */
     public String generateUrl(String state, VehicleInfo authVehicleInfo) {
         return generateUrl(state, false, authVehicleInfo);
     }
 
     /**
-     * Generates the authorization URI.
+     * Generates the Connect URI.
      *
      * @param forcePrompt force permissions prompt to display on redirect (default false)
      * @param authVehicleInfo an optional VehicleInfo object. Including the
      * `make` property causes the car brand selection screen to be bypassed.
-     * @return The Connect URI
+     *
+     * @return The Smartcar Connect URI
      */
     public String generateUrl(boolean forcePrompt, VehicleInfo authVehicleInfo) {
         return generateUrl(null, forcePrompt, authVehicleInfo);
-    } 
+    }
 
     /**
-     * Generates the authorization URI.
+     * Generates the Connect URI.
      *
      * @param authVehicleInfo an optional VehicleInfo object. Including the
      * `make` property causes the car brand selection screen to be bypassed.
-     * 
-     * @return The Connect URI
+     *
+     * @return The Smartcar Connect URI
      */
     public String generateUrl(VehicleInfo authVehicleInfo) {
         return generateUrl(null, false, authVehicleInfo);
     }
 
     /**
-     * Generates the authorization URI.
+     * Generates the Connect URI.
      *
      * @param forcePrompt force permissions prompt to display on redirect (default false)
-     * @return The Connect URI
+     *
+     * @return The Smartcar Connect URI
      */
     public String generateUrl(boolean forcePrompt) {
         return generateUrl(null, forcePrompt, null);
@@ -194,30 +198,31 @@ public class SmartcarAuth {
 
 
     /**
-     * Generates the authorization URI.
+     * Generates the Connect URI.
      *
      * @param state optional OAuth state to be returned on redirect
-     * @return The Connect URI
+     *
+     * @return The Smartcar Connect URI
      */
     public String generateUrl(String state) {
         return generateUrl(state, false, null);
     }
 
     /**
-     * Generates the authorization URI
+     * Generates the Connect URI
      *
-     * @return The Connect URI
+     * @return The Smartcar Connect URI
      */
     public String generateUrl() {
         return generateUrl(null, false, null);
     }
 
     /**
-     * Generates a click event listener for managing the Smartcar Auth flow, and attaches
+     * Generates a click event listener for managing Smartcar Connect, and attaches
      *  it to the input View.
      *
      * @param context The client application's context
-     * @param view The View to attach the Smartcar Auth flow launch to
+     * @param view The View to attach Smartcar Connect launch to
      */
     public void addClickHandler(final Context context, final View view) {
         final View.OnClickListener listener = new View.OnClickListener() {
@@ -229,11 +234,11 @@ public class SmartcarAuth {
     }
 
     /**
-     * Generates a click event listener for managing the Smartcar Auth flow, and attaches
+     * Generates a click event listener for managing Smartcar Connect, and attaches
      *  it to the input View.
      *
      * @param context The client application's context
-     * @param view The View to attach the Smartcar Auth flow launch to
+     * @param view The View to attach Smartcar Connect launch to
      * @param state optional OAuth state to be returned on redirect
      * @param forcePrompt force permissions prompt to display on redirect (default: false)
      */
@@ -248,11 +253,11 @@ public class SmartcarAuth {
     }
 
     /**
-     * Generates a click event listener for managing the Smartcar Auth flow, and attaches
+     * Generates a click event listener for managing Smartcar Connect, and attaches
      *  it to the input View.
      *
      * @param context The client application's context
-     * @param view The View to attach the Smartcar Auth flow launch to
+     * @param view The View to attach Smartcar Connect launch to
      * @param state optional OAuth state to be returned on redirect
      */
     public void addClickHandler(final Context context, final View view, final String state){
@@ -265,11 +270,11 @@ public class SmartcarAuth {
     }
 
     /**
-     * Generates a click event listener for managing the Smartcar Auth flow, and attaches
+     * Generates a click event listener for managing Smartcar Connect, and attaches
      *  it to the input View.
      *
      * @param context The client application's context
-     * @param view The View to attach the Smartcar Auth flow launch to
+     * @param view The View to attach Smartcar Connect launch to
      * @param forcePrompt force permissions prompt to display on redirect (default: false)
      */
     public void addClickHandler(final Context context, final View view, final boolean forcePrompt) {
@@ -282,7 +287,7 @@ public class SmartcarAuth {
     }
 
     /**
-     * Starts the launch of the Smartcar auth flow. Use this to attach to any event
+     * Starts the launch of Smartcar Connect. Use this to attach to any event
      * trigger like a swipe or touch event on the client application.
      *
      * @param context The client application's context
@@ -292,7 +297,7 @@ public class SmartcarAuth {
     }
 
     /**
-     * Starts the launch of the Smartcar auth flow. Use this to attach to any event
+     * Starts the launch of Smartcar Connect. Use this to attach to any event
      * trigger like a swipe or touch event on the client application.
      *
      * @param context The client application's context
@@ -304,7 +309,7 @@ public class SmartcarAuth {
     }
 
     /**
-     * Starts the launch of the Smartcar auth flow. Use this to attach to any event
+     * Starts the launch of Smartcar Connect. Use this to attach to any event
      * trigger like a swipe or touch event on the client application.
      *
      * @param context The client application's context
@@ -315,7 +320,7 @@ public class SmartcarAuth {
     }
 
     /**
-     * Starts the launch of the Smartcar auth flow. Use this to attach to any event
+     * Starts the launch of Smartcar Connect. Use this to attach to any event
      * trigger like a swipe or touch event on the client application.
      *
      * @param context The client application's context

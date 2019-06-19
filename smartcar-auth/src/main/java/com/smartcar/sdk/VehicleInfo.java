@@ -2,7 +2,7 @@ package com.smartcar.sdk;
 
 /**
  * A class that creates a custom VehicleInfo object, which can be used
- * when generating an authentication URL or to receive a vehicle in the response.
+ * when generating an Smartcar Connect URL.
  */
 public class VehicleInfo {
     private String vin;
