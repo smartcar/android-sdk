@@ -7,7 +7,7 @@ public class VehicleInfo {
     private String vin;
     private String make;
     private String model;
-    private int year;
+    private Integer year;
 
     /**
      * Assigns properties on the VehicleInfo object.
@@ -53,18 +53,18 @@ public class VehicleInfo {
      *
      * @return the year of the vehicle
      */
-    public int getYear() {
+    public Integer getYear() {
         return this.year;
     }
 
     /**
-     * Builder class that allows for optional properties on VehicleInfo
+     * Builder class that allows for optional properties that can be null on VehicleInfo
      */
     public static class Builder {
         private String vin;
         private String make;
         private String model;
-        private int year;
+        private Integer year;
 
         /**
          * Sets the make on the Builder. Including a make allows the user to bypass the car brand
@@ -110,7 +110,7 @@ public class VehicleInfo {
          *
          * @return the builder with a `year` property added
          */
-        public Builder setYear(int year) {
+        public Builder setYear(Integer year) {
             this.year = year;
             return this;
         }

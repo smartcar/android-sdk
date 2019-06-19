@@ -270,7 +270,7 @@ public class SmartcarAuthTest {
                 assertEquals(responseVehicle.getVin(), "1FDKE30G4JHA04964");
                 assertEquals(responseVehicle.getMake(), "FORD");
                 assertEquals(responseVehicle.getModel(), "E-350");
-                assertEquals(responseVehicle.getYear(), 1988);
+                assertEquals(responseVehicle.getYear(), new Integer(1988));
             }
         });
 
