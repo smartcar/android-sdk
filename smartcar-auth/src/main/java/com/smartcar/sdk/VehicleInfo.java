@@ -2,7 +2,7 @@ package com.smartcar.sdk;
 
 /**
  * A class that creates a custom VehicleInfo object, which can be used
- * when generating an authentication URL.
+ * when generating an Smartcar Connect URL.
  */
 public class VehicleInfo {
     private String vin;
@@ -71,8 +71,7 @@ public class VehicleInfo {
          * Sets the make on the Builder. Including a make allows the user to bypass the car brand
          * selection screen.
          *
-         * @param make name of the make of a vehicle. For a list of supported makes, please see
-         * <a href="https://smartcar.com/docs/api#request-authorization">our API Reference</a>
+         * @param make name of the make of a vehicle.
          *
          * @return the builder with a `make` property added
          */
