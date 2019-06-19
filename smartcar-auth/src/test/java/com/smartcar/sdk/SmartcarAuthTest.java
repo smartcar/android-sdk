@@ -83,7 +83,7 @@ public class SmartcarAuthTest {
         String scope = "read_odometer read_vin";
         SmartcarAuth smartcarAuth = new SmartcarAuth(clientId, redirectUri, scope, null);
         String make = "TESLA";
-        VehicleInfo authVehicleInfo = new VehicleInfo(make);
+        VehicleInfo authVehicleInfo = new VehicleInfo.Builder().setMake(make).build();
 
         String requestUri = smartcarAuth.generateUrl(authVehicleInfo);
         String expectedUri = "https://connect.smartcar.com/oauth/authorize?response_type=code&client_id="
@@ -115,7 +115,7 @@ public class SmartcarAuthTest {
         String scope = "read_odometer read_vin";
         SmartcarAuth smartcarAuth = new SmartcarAuth(clientId, redirectUri, scope, null);
         String make = "TESLA";
-        VehicleInfo vehicleInfo = new VehicleInfo(make);
+        VehicleInfo vehicleInfo = new VehicleInfo.Builder().setMake(make).build();
 
         String requestUri = smartcarAuth.generateUrl("somestring", vehicleInfo);
         String expectedUri = "https://connect.smartcar.com/oauth/authorize?response_type=code&client_id="
@@ -132,7 +132,7 @@ public class SmartcarAuthTest {
         String scope = "read_odometer read_vin";
         SmartcarAuth smartcarAuth = new SmartcarAuth(clientId, redirectUri, scope, null);
         String make = "TESLA";
-        VehicleInfo vehicleInfo = new VehicleInfo(make);;
+        VehicleInfo vehicleInfo = new VehicleInfo.Builder().setMake(make).build();
 
         String requestUri = smartcarAuth.generateUrl(true, vehicleInfo);
         String expectedUri = "https://connect.smartcar.com/oauth/authorize?response_type=code&client_id="
@@ -149,7 +149,7 @@ public class SmartcarAuthTest {
         String scope = "read_odometer read_vin";
         SmartcarAuth smartcarAuth = new SmartcarAuth(clientId, redirectUri, scope, null);
         String make = "TESLA";
-        VehicleInfo vehicleInfo = new VehicleInfo(make);
+        VehicleInfo vehicleInfo = new VehicleInfo.Builder().setMake(make).build();
 
         String requestUri = smartcarAuth.generateUrl("somestring", true, vehicleInfo);
         String expectedUri = "https://connect.smartcar.com/oauth/authorize?response_type=code&client_id="
@@ -265,13 +265,12 @@ public class SmartcarAuthTest {
             @Override
             public void handleResponse(SmartcarResponse smartcarResponse) {
                 VehicleInfo responseVehicle = smartcarResponse.getVehicleInfo();
-                VehicleInfo expectedVehicle = new VehicleInfo("1FDKE30G4JHA04964", "FORD", "E-350", 1988);
                 assertEquals(smartcarResponse.getError(), "vehicle_incompatible");
                 assertEquals(smartcarResponse.getMessage(), "The user's vehicle is not compatible.");
-                assertEquals(responseVehicle.getVin(), expectedVehicle.getVin());
-                assertEquals(responseVehicle.getMake(), expectedVehicle.getMake());
-                assertEquals(responseVehicle.getModel(), expectedVehicle.getModel());
-                assertEquals(responseVehicle.getYear(), expectedVehicle.getYear());
+                assertEquals(responseVehicle.getVin(), "1FDKE30G4JHA04964");
+                assertEquals(responseVehicle.getMake(), "FORD");
+                assertEquals(responseVehicle.getModel(), "E-350");
+                assertEquals(responseVehicle.getYear(), 1988);
             }
         });
 
