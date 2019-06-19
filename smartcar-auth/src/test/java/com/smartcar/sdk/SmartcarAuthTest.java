@@ -268,10 +268,10 @@ public class SmartcarAuthTest {
                 VehicleInfo expectedVehicle = new VehicleInfo("1FDKE30G4JHA04964", "FORD", "E-350", 1988);
                 assertEquals(smartcarResponse.getError(), "vehicle_incompatible");
                 assertEquals(smartcarResponse.getMessage(), "The user's vehicle is not compatible.");
-                assertEquals(smartcarResponse.getVehicleInfo().getVin(), expectedVehicle.getVin());
-                assertEquals(smartcarResponse.getVehicleInfo().getMake(), expectedVehicle.getMake());
-                assertEquals(smartcarResponse.getVehicleInfo().getModel(), expectedVehicle.getModel());
-                assertEquals(smartcarResponse.getVehicleInfo().getYear(), expectedVehicle.getYear());
+                assertEquals(responseVehicle.getVin(), expectedVehicle.getVin());
+                assertEquals(responseVehicle.getMake(), expectedVehicle.getMake());
+                assertEquals(responseVehicle.getModel(), expectedVehicle.getModel());
+                assertEquals(responseVehicle.getYear(), expectedVehicle.getYear());
             }
         });
 

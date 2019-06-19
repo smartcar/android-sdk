@@ -58,5 +58,4 @@ public class SmartcarResponseTest {
         assertEquals(smartcarResponse.getState(), "errorstate");
         assertEquals(smartcarResponse.getVehicleInfo(), vehicle);
     }
-
 }
