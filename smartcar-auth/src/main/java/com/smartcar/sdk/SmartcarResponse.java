@@ -28,7 +28,7 @@ public class SmartcarResponse {
     private String error;
     private String message;
     private String state;
-    private VehicleInfo responseVehicleInfo;
+    private VehicleInfo vehicleInfo;
 
     public SmartcarResponse(String message, String state) {
         this.message = message;
@@ -39,7 +39,7 @@ public class SmartcarResponse {
 
     public void setError(String error) { this.error = error; }
 
-    public void setResponseVehicleInfo(VehicleInfo vehicle) { this.responseVehicleInfo = vehicle; }
+    public void setVehicleInfo(VehicleInfo vehicle) { this.vehicleInfo = vehicle; }
 
     public String getCode() {
         return this.code;
@@ -57,6 +57,6 @@ public class SmartcarResponse {
         return this.state;
     }
 
-    public VehicleInfo getResponseVehicle() { return this.responseVehicleInfo; }
+    public VehicleInfo getVehicleInfo() { return this.vehicleInfo; }
 
 }

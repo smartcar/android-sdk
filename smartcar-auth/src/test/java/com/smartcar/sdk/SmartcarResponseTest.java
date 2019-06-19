@@ -48,20 +48,15 @@ public class SmartcarResponseTest {
 
     @Test
     public void SmartcarResponseTest_errorWithVehicle() {
-        VehicleInfo vehicle = new VehicleInfo.Builder()
-                .setVin("0000")
-                .setMake("TESLA")
-                .setModel("Model S")
-                .setYear(2019)
-                .build();
+        VehicleInfo vehicle = new VehicleInfo("0000", "TESLA", "Model S", 2016);
         SmartcarResponse smartcarResponse = new SmartcarResponse("Error message", "errorstate");
         smartcarResponse.setError("error");
-        smartcarResponse.setResponseVehicleInfo(vehicle);
+        smartcarResponse.setVehicleInfo(vehicle);
 
         assertEquals(smartcarResponse.getError(), "error");
         assertEquals(smartcarResponse.getMessage(), "Error message");
         assertEquals(smartcarResponse.getState(), "errorstate");
-        assertEquals(smartcarResponse.getResponseVehicle(), vehicle);
+        assertEquals(smartcarResponse.getVehicleInfo(), vehicle);
     }
 
 }

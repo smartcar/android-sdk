@@ -92,14 +92,14 @@ public class SmartcarAuth {
     }
 
     /**
-     * Generates the authorization request URI.
+     * Generates the Connect URI.
      *
      * @param state optional OAuth state to be returned on redirect
      * @param forcePrompt force permissions prompt to display on redirect (default: false)
      * @param authVehicleInfo an optional VehicleInfo object. Including the
      * `make` property causes the car brand selection screen to be bypassed.
      *
-     * @return The authorization request URI
+     * @return The Connect URI
      */
    public String generateUrl(String state, boolean forcePrompt, VehicleInfo authVehicleInfo) {
 
@@ -140,7 +140,7 @@ public class SmartcarAuth {
      *
      * @param state optional OAuth state to be returned on redirect
      * @param forcePrompt force permissions prompt to display on redirect (default false)
-     * @return The authorization request URI
+     * @return The Connect URI
      */
     public String generateUrl(String state, boolean forcePrompt) {
         return generateUrl(state, forcePrompt, null);
@@ -152,7 +152,7 @@ public class SmartcarAuth {
      * @param state optional OAuth state to be returned on redirect
      * @param authVehicleInfo an optional VehicleInfo object. Including the
      * `make` property causes the car brand selection screen to be bypassed.
-     * @return The authorization request URI
+     * @return The Connect URI
      */
     public String generateUrl(String state, VehicleInfo authVehicleInfo) {
         return generateUrl(state, false, authVehicleInfo);
@@ -164,7 +164,7 @@ public class SmartcarAuth {
      * @param forcePrompt force permissions prompt to display on redirect (default false)
      * @param authVehicleInfo an optional VehicleInfo object. Including the
      * `make` property causes the car brand selection screen to be bypassed.
-     * @return The authorization request URI
+     * @return The Connect URI
      */
     public String generateUrl(boolean forcePrompt, VehicleInfo authVehicleInfo) {
         return generateUrl(null, forcePrompt, authVehicleInfo);
@@ -176,7 +176,7 @@ public class SmartcarAuth {
      * @param authVehicleInfo an optional VehicleInfo object. Including the
      * `make` property causes the car brand selection screen to be bypassed.
      * 
-     * @return The authorization request URI
+     * @return The Connect URI
      */
     public String generateUrl(VehicleInfo authVehicleInfo) {
         return generateUrl(null, false, authVehicleInfo);
@@ -186,7 +186,7 @@ public class SmartcarAuth {
      * Generates the authorization URI.
      *
      * @param forcePrompt force permissions prompt to display on redirect (default false)
-     * @return The authorization request URI
+     * @return The Connect URI
      */
     public String generateUrl(boolean forcePrompt) {
         return generateUrl(null, forcePrompt, null);
@@ -197,7 +197,7 @@ public class SmartcarAuth {
      * Generates the authorization URI.
      *
      * @param state optional OAuth state to be returned on redirect
-     * @return The authorization request URI
+     * @return The Connect URI
      */
     public String generateUrl(String state) {
         return generateUrl(state, false, null);
@@ -206,7 +206,7 @@ public class SmartcarAuth {
     /**
      * Generates the authorization URI
      *
-     * @return The authorization request URI
+     * @return The Connect URI
      */
     public String generateUrl() {
         return generateUrl(null, false, null);
@@ -342,30 +342,34 @@ public class SmartcarAuth {
             String queryError = uri.getQueryParameter("error");
             String queryVin = uri.getQueryParameter("vin");
 
-            if (queryCode != null) {
+            boolean receievedCode = queryCode != null;
+            boolean receivedError = queryError != null && queryVin == null;
+            boolean receievedErrorWithVehicle = queryError != null && queryVin != null;
+
+            if (receievedCode) {
                 SmartcarResponse smartcarResponse = new SmartcarResponse(message, state);
                 smartcarResponse.setCode(queryCode);
                 callback.handleResponse(smartcarResponse);
             }
 
-            else if (queryError != null && queryVin == null) {
+            else if (receivedError) {
                 SmartcarResponse smartcarResponse = new SmartcarResponse(message, state);
                 smartcarResponse.setError(queryError);
                 callback.handleResponse(smartcarResponse);
             }
 
-            else if (queryError != null && queryVin != null) {
+            else if (receievedErrorWithVehicle) {
                 String make = uri.getQueryParameter("make");
                 String model = uri.getQueryParameter("model");
-                Integer year = Integer.parseInt(uri.getQueryParameter("year"));
-                VehicleInfo responseVehicle = Helper.makeFullVehicle(queryVin, make, model, year);
+                int year = Integer.parseInt(uri.getQueryParameter("year"));
+                VehicleInfo responseVehicle = new VehicleInfo(queryVin, make, model, year);
                 SmartcarResponse smartcarResponse = new SmartcarResponse(message, state);
                 smartcarResponse.setError(queryError);
-                smartcarResponse.setResponseVehicleInfo(responseVehicle);
+                smartcarResponse.setVehicleInfo(responseVehicle);
                 callback.handleResponse(smartcarResponse);
             }
 
-            else if (queryCode == null && message == null) {
+            else {
                 message = "Unable to fetch code. Please try again";
                 SmartcarResponse smartcarResponse = new SmartcarResponse(message, state);
                 callback.handleResponse(smartcarResponse);

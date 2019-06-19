@@ -83,7 +83,7 @@ public class SmartcarAuthTest {
         String scope = "read_odometer read_vin";
         SmartcarAuth smartcarAuth = new SmartcarAuth(clientId, redirectUri, scope, null);
         String make = "TESLA";
-        VehicleInfo authVehicleInfo = new VehicleInfo.Builder().setMake(make).build();
+        VehicleInfo authVehicleInfo = new VehicleInfo(make);
 
         String requestUri = smartcarAuth.generateUrl(authVehicleInfo);
         String expectedUri = "https://connect.smartcar.com/oauth/authorize?response_type=code&client_id="
@@ -115,9 +115,7 @@ public class SmartcarAuthTest {
         String scope = "read_odometer read_vin";
         SmartcarAuth smartcarAuth = new SmartcarAuth(clientId, redirectUri, scope, null);
         String make = "TESLA";
-
-        VehicleInfo.Builder builder = new VehicleInfo.Builder();
-        VehicleInfo vehicleInfo = builder.setMake(make).build();
+        VehicleInfo vehicleInfo = new VehicleInfo(make);
 
         String requestUri = smartcarAuth.generateUrl("somestring", vehicleInfo);
         String expectedUri = "https://connect.smartcar.com/oauth/authorize?response_type=code&client_id="
@@ -134,9 +132,7 @@ public class SmartcarAuthTest {
         String scope = "read_odometer read_vin";
         SmartcarAuth smartcarAuth = new SmartcarAuth(clientId, redirectUri, scope, null);
         String make = "TESLA";
-
-        VehicleInfo.Builder builder = new VehicleInfo.Builder();
-        VehicleInfo vehicleInfo = builder.setMake("TESLA").build();
+        VehicleInfo vehicleInfo = new VehicleInfo(make);;
 
         String requestUri = smartcarAuth.generateUrl(true, vehicleInfo);
         String expectedUri = "https://connect.smartcar.com/oauth/authorize?response_type=code&client_id="
@@ -153,9 +149,7 @@ public class SmartcarAuthTest {
         String scope = "read_odometer read_vin";
         SmartcarAuth smartcarAuth = new SmartcarAuth(clientId, redirectUri, scope, null);
         String make = "TESLA";
-
-        VehicleInfo.Builder builder = new VehicleInfo.Builder();
-        VehicleInfo vehicleInfo = builder.setMake("TESLA").build();
+        VehicleInfo vehicleInfo = new VehicleInfo(make);
 
         String requestUri = smartcarAuth.generateUrl("somestring", true, vehicleInfo);
         String expectedUri = "https://connect.smartcar.com/oauth/authorize?response_type=code&client_id="
@@ -270,13 +264,14 @@ public class SmartcarAuthTest {
         new SmartcarAuth(clientId, redirectUri, scope, new SmartcarCallback() {
             @Override
             public void handleResponse(SmartcarResponse smartcarResponse) {
-                VehicleInfo responseVehicle = smartcarResponse.getResponseVehicle();
+                VehicleInfo responseVehicle = smartcarResponse.getVehicleInfo();
+                VehicleInfo expectedVehicle = new VehicleInfo("1FDKE30G4JHA04964", "FORD", "E-350", 1988);
                 assertEquals(smartcarResponse.getError(), "vehicle_incompatible");
                 assertEquals(smartcarResponse.getMessage(), "The user's vehicle is not compatible.");
-                assertEquals(responseVehicle.getVin(), "1FDKE30G4JHA04964");
-                assertEquals(responseVehicle.getMake(), "FORD");
-                assertEquals(responseVehicle.getModel(), "E-350");
-                assertEquals(responseVehicle.getYear().intValue(), 1988);
+                assertEquals(smartcarResponse.getVehicleInfo().getVin(), expectedVehicle.getVin());
+                assertEquals(smartcarResponse.getVehicleInfo().getMake(), expectedVehicle.getMake());
+                assertEquals(smartcarResponse.getVehicleInfo().getModel(), expectedVehicle.getModel());
+                assertEquals(smartcarResponse.getVehicleInfo().getYear(), expectedVehicle.getYear());
             }
         });
 
@@ -294,7 +289,7 @@ public class SmartcarAuthTest {
         new SmartcarAuth(clientId, redirectUri, scope, new SmartcarCallback() {
             @Override
             public void handleResponse(SmartcarResponse smartcarResponse) {
-                assertEquals(smartcarResponse.getMessage(), "error");
+                assertEquals(smartcarResponse.getMessage(), "Unable to fetch code. Please try again");
             }
         });
 
