@@ -28,8 +28,11 @@ public class SmartcarResponseTest {
 
     @Test
     public void SmartcarResponseTest_code() {
-        SmartcarResponse smartcarResponse = new SmartcarResponse("Just a testmessage", "teststate");
-        smartcarResponse.setCode("testcode");
+        SmartcarResponse smartcarResponse = new SmartcarResponse.Builder()
+                .code("testcode")
+                .message("Just a testmessage")
+                .state("teststate")
+                .build();
 
         assertEquals(smartcarResponse.getCode(), "testcode");
         assertEquals(smartcarResponse.getMessage(), "Just a testmessage");
@@ -38,8 +41,11 @@ public class SmartcarResponseTest {
 
     @Test
     public void SmartcarResponseTest_error() {
-        SmartcarResponse smartcarResponse = new SmartcarResponse("Error message", "errorstate");
-        smartcarResponse.setError("error");
+        SmartcarResponse smartcarResponse = new SmartcarResponse.Builder()
+                .error("error")
+                .message("Error message")
+                .state("errorstate")
+                .build();
 
         assertEquals(smartcarResponse.getError(), "error");
         assertEquals(smartcarResponse.getMessage(), "Error message");
@@ -54,9 +60,13 @@ public class SmartcarResponseTest {
                 .setModel("Model S")
                 .setYear(2019)
                 .build();
-        SmartcarResponse smartcarResponse = new SmartcarResponse("Error message", "errorstate");
-        smartcarResponse.setError("error");
-        smartcarResponse.setVehicleInfo(vehicle);
+
+        SmartcarResponse smartcarResponse = new SmartcarResponse.Builder()
+                .error("error")
+                .message("Error message")
+                .state("errorstate")
+                .vehicleInfo(vehicle)
+                .build();
 
         assertEquals(smartcarResponse.getError(), "error");
         assertEquals(smartcarResponse.getMessage(), "Error message");

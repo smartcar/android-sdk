@@ -337,12 +337,9 @@ public class SmartcarAuth {
      * @param uri The response data as a Uri
      */
     protected static void receiveResponse(Uri uri) {
-        String message;
-        String state;
-
         if (uri != null && Helper.matchesRedirectUri(uri.toString())) {
-            state = uri.getQueryParameter("state");
-            message = uri.getQueryParameter("error_description");
+            String queryState = uri.getQueryParameter("state");
+            String queryMessage = uri.getQueryParameter("error_description");
             String queryCode = uri.getQueryParameter("code");
             String queryError = uri.getQueryParameter("error");
             String queryVin = uri.getQueryParameter("vin");
@@ -351,15 +348,23 @@ public class SmartcarAuth {
             boolean receivedError = queryError != null && queryVin == null;
             boolean receivedErrorWithVehicle = queryError != null && queryVin != null;
 
+            SmartcarResponse.Builder responseBuilder = new SmartcarResponse.Builder();
+
             if (receivedCode) {
-                SmartcarResponse smartcarResponse = new SmartcarResponse(message, state);
-                smartcarResponse.setCode(queryCode);
+                SmartcarResponse smartcarResponse = responseBuilder
+                        .code(queryCode)
+                        .message(queryMessage)
+                        .state(queryState)
+                        .build();
                 callback.handleResponse(smartcarResponse);
             }
 
             else if (receivedError) {
-                SmartcarResponse smartcarResponse = new SmartcarResponse(message, state);
-                smartcarResponse.setError(queryError);
+                SmartcarResponse smartcarResponse = responseBuilder
+                        .error(queryError)
+                        .message(queryMessage)
+                        .state(queryState)
+                        .build();
                 callback.handleResponse(smartcarResponse);
             }
 
@@ -368,15 +373,21 @@ public class SmartcarAuth {
                 String model = uri.getQueryParameter("model");
                 int year = Integer.parseInt(uri.getQueryParameter("year"));
                 VehicleInfo responseVehicle = Helper.makeFullVehicle(queryVin, make, model, year);
-                SmartcarResponse smartcarResponse = new SmartcarResponse(message, state);
-                smartcarResponse.setError(queryError);
-                smartcarResponse.setVehicleInfo(responseVehicle);
+
+                SmartcarResponse smartcarResponse = responseBuilder
+                        .error(queryError)
+                        .message(queryMessage)
+                        .state(queryState)
+                        .vehicleInfo(responseVehicle)
+                        .build();
                 callback.handleResponse(smartcarResponse);
             }
 
             else {
-                message = "Unable to fetch code. Please try again";
-                SmartcarResponse smartcarResponse = new SmartcarResponse(message, state);
+                SmartcarResponse smartcarResponse = responseBuilder
+                        .message("Unable to fetch code. Please try again")
+                        .state(queryState)
+                        .build();
                 callback.handleResponse(smartcarResponse);
             }
 
