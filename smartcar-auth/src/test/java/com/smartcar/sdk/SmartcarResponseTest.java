@@ -30,12 +30,12 @@ public class SmartcarResponseTest {
     public void SmartcarResponseTest_code() {
         SmartcarResponse smartcarResponse = new SmartcarResponse.Builder()
                 .code("testcode")
-                .message("Just a testmessage")
+                .errorDescription("Just a testmessage")
                 .state("teststate")
                 .build();
 
         assertEquals(smartcarResponse.getCode(), "testcode");
-        assertEquals(smartcarResponse.getMessage(), "Just a testmessage");
+        assertEquals(smartcarResponse.getErrorDescription(), "Just a testmessage");
         assertEquals(smartcarResponse.getState(), "teststate");
     }
 
@@ -43,12 +43,12 @@ public class SmartcarResponseTest {
     public void SmartcarResponseTest_error() {
         SmartcarResponse smartcarResponse = new SmartcarResponse.Builder()
                 .error("error")
-                .message("Error message")
+                .errorDescription("Error message")
                 .state("errorstate")
                 .build();
 
         assertEquals(smartcarResponse.getError(), "error");
-        assertEquals(smartcarResponse.getMessage(), "Error message");
+        assertEquals(smartcarResponse.getErrorDescription(), "Error message");
         assertEquals(smartcarResponse.getState(), "errorstate");
     }
 
@@ -63,13 +63,13 @@ public class SmartcarResponseTest {
 
         SmartcarResponse smartcarResponse = new SmartcarResponse.Builder()
                 .error("error")
-                .message("Error message")
+                .errorDescription("Error message")
                 .state("errorstate")
                 .vehicleInfo(vehicle)
                 .build();
 
         assertEquals(smartcarResponse.getError(), "error");
-        assertEquals(smartcarResponse.getMessage(), "Error message");
+        assertEquals(smartcarResponse.getErrorDescription(), "Error message");
         assertEquals(smartcarResponse.getState(), "errorstate");
         assertEquals(smartcarResponse.getVehicleInfo(), vehicle);
     }

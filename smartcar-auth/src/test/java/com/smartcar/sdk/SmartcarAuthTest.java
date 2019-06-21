@@ -217,7 +217,7 @@ public class SmartcarAuthTest {
         new SmartcarAuth(clientId, redirectUri, scope, new SmartcarCallback() {
             @Override
             public void handleResponse(SmartcarResponse smartcarResponse) {
-                assertEquals(smartcarResponse.getMessage(), "Unable to fetch code. Please try again");
+                assertEquals(smartcarResponse.getErrorDescription(), "Unable to fetch code. Please try again");
             }
         });
 
@@ -233,7 +233,7 @@ public class SmartcarAuthTest {
             @Override
             public void handleResponse(SmartcarResponse smartcarResponse) {
                 assertEquals(smartcarResponse.getError(), "access_denied");
-                assertEquals(smartcarResponse.getMessage(), "User denied access to the requested scope of permissions.");
+                assertEquals(smartcarResponse.getErrorDescription(), "User denied access to the requested scope of permissions.");
             }
         });
 
@@ -249,7 +249,7 @@ public class SmartcarAuthTest {
             @Override
             public void handleResponse(SmartcarResponse smartcarResponse) {
                 assertEquals(smartcarResponse.getError(), "vehicle_incompatible");
-                assertEquals(smartcarResponse.getMessage(), "The user's vehicle is not compatible.");
+                assertEquals(smartcarResponse.getErrorDescription(), "The user's vehicle is not compatible.");
             }
         });
 
@@ -266,7 +266,7 @@ public class SmartcarAuthTest {
             public void handleResponse(SmartcarResponse smartcarResponse) {
                 VehicleInfo responseVehicle = smartcarResponse.getVehicleInfo();
                 assertEquals(smartcarResponse.getError(), "vehicle_incompatible");
-                assertEquals(smartcarResponse.getMessage(), "The user's vehicle is not compatible.");
+                assertEquals(smartcarResponse.getErrorDescription(), "The user's vehicle is not compatible.");
                 assertEquals(responseVehicle.getVin(), "1FDKE30G4JHA04964");
                 assertEquals(responseVehicle.getMake(), "FORD");
                 assertEquals(responseVehicle.getModel(), "E-350");
@@ -288,7 +288,7 @@ public class SmartcarAuthTest {
         new SmartcarAuth(clientId, redirectUri, scope, new SmartcarCallback() {
             @Override
             public void handleResponse(SmartcarResponse smartcarResponse) {
-                assertEquals(smartcarResponse.getMessage(), "Unable to fetch code. Please try again");
+                assertEquals(smartcarResponse.getErrorDescription(), "Unable to fetch code. Please try again");
             }
         });
 

@@ -339,7 +339,7 @@ public class SmartcarAuth {
     protected static void receiveResponse(Uri uri) {
         if (uri != null && Helper.matchesRedirectUri(uri.toString())) {
             String queryState = uri.getQueryParameter("state");
-            String queryMessage = uri.getQueryParameter("error_description");
+            String queryErrorDescription = uri.getQueryParameter("error_description");
             String queryCode = uri.getQueryParameter("code");
             String queryError = uri.getQueryParameter("error");
             String queryVin = uri.getQueryParameter("vin");
@@ -353,7 +353,7 @@ public class SmartcarAuth {
             if (receivedCode) {
                 SmartcarResponse smartcarResponse = responseBuilder
                         .code(queryCode)
-                        .message(queryMessage)
+                        .errorDescription(queryErrorDescription)
                         .state(queryState)
                         .build();
                 callback.handleResponse(smartcarResponse);
@@ -362,7 +362,7 @@ public class SmartcarAuth {
             else if (receivedError) {
                 SmartcarResponse smartcarResponse = responseBuilder
                         .error(queryError)
-                        .message(queryMessage)
+                        .errorDescription(queryErrorDescription)
                         .state(queryState)
                         .build();
                 callback.handleResponse(smartcarResponse);
@@ -376,7 +376,7 @@ public class SmartcarAuth {
 
                 SmartcarResponse smartcarResponse = responseBuilder
                         .error(queryError)
-                        .message(queryMessage)
+                        .errorDescription(queryErrorDescription)
                         .state(queryState)
                         .vehicleInfo(responseVehicle)
                         .build();
@@ -385,7 +385,7 @@ public class SmartcarAuth {
 
             else {
                 SmartcarResponse smartcarResponse = responseBuilder
-                        .message("Unable to fetch code. Please try again")
+                        .errorDescription("Unable to fetch code. Please try again")
                         .state(queryState)
                         .build();
                 callback.handleResponse(smartcarResponse);

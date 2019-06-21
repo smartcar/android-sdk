@@ -26,7 +26,7 @@ package com.smartcar.sdk;
 public class SmartcarResponse {
     private String code;
     private String error;
-    private String message;
+    private String errorDescription;
     private String state;
     private VehicleInfo vehicleInfo;
 
@@ -38,7 +38,7 @@ public class SmartcarResponse {
     private SmartcarResponse(Builder builder) {
         this.code = builder.code;
         this.error = builder.error;
-        this.message = builder.message;
+        this.errorDescription = builder.errorDescription;
         this.state = builder.state;
         this.vehicleInfo = builder.vehicleInfo;
     }
@@ -51,8 +51,8 @@ public class SmartcarResponse {
         return this.error;
     }
 
-    public String getMessage() {
-        return this.message;
+    public String getErrorDescription() {
+        return this.errorDescription;
     }
 
     public String getState() {
@@ -64,12 +64,12 @@ public class SmartcarResponse {
     public static class Builder {
         private String code;
         private String error;
-        private String message;
+        private String errorDescription;
         private String state;
         private VehicleInfo vehicleInfo;
 
-        public Builder message(String message) {
-            this.message = message;
+        public Builder errorDescription(String errorDescription) {
+            this.errorDescription = errorDescription;
             return this;
         }
 
