@@ -22,7 +22,7 @@ package com.smartcar.sdk;
 
 /**
 /**
- * Class to maintain the authentication parameters.
+ * Class to maintain the authorization parameters.
  */
 class SmartcarAuthRequest {
 
@@ -37,7 +37,7 @@ class SmartcarAuthRequest {
      *
      * @param clientId       The client's ID
      * @param redirectURI    The client's redirect URI
-     * @param scope          A space-separated list of authentication scopes
+     * @param scope          A space-separated list of authorization scopes
      * @param testMode       Whether to display the MOCK vehicle brand or not
      */
     protected SmartcarAuthRequest(String clientId, String redirectURI,
@@ -54,7 +54,7 @@ class SmartcarAuthRequest {
      *
      * @param clientId    The client's ID
      * @param redirectURI The client's redirect URI
-     * @param scope       A space-separated list of authentication scopes
+     * @param scope       A space-separated list of authorization scopes
      */
     protected SmartcarAuthRequest(String clientId, String redirectURI, String scope) {
         this(clientId, redirectURI, scope, false);

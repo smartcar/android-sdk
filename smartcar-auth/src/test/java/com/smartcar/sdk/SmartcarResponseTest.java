@@ -27,12 +27,51 @@ import static org.junit.Assert.assertEquals;
 public class SmartcarResponseTest {
 
     @Test
-    public void SmartcarResponseTest_all() {
-        SmartcarResponse smartcarResponse = new SmartcarResponse(
-                "testcode", "Just a testmessage", "teststate");
+    public void SmartcarResponseTest_code() {
+        SmartcarResponse smartcarResponse = new SmartcarResponse.Builder()
+                .code("testcode")
+                .errorDescription("Just a testmessage")
+                .state("teststate")
+                .build();
 
         assertEquals(smartcarResponse.getCode(), "testcode");
-        assertEquals(smartcarResponse.getMessage(), "Just a testmessage");
+        assertEquals(smartcarResponse.getErrorDescription(), "Just a testmessage");
         assertEquals(smartcarResponse.getState(), "teststate");
     }
+
+    @Test
+    public void SmartcarResponseTest_error() {
+        SmartcarResponse smartcarResponse = new SmartcarResponse.Builder()
+                .error("error")
+                .errorDescription("Error message")
+                .state("errorstate")
+                .build();
+
+        assertEquals(smartcarResponse.getError(), "error");
+        assertEquals(smartcarResponse.getErrorDescription(), "Error message");
+        assertEquals(smartcarResponse.getState(), "errorstate");
+    }
+
+    @Test
+    public void SmartcarResponseTest_errorWithVehicle() {
+        VehicleInfo vehicle = new VehicleInfo.Builder()
+                .vin("0000")
+                .make("TESLA")
+                .model("Model S")
+                .year(2019)
+                .build();
+
+        SmartcarResponse smartcarResponse = new SmartcarResponse.Builder()
+                .error("error")
+                .errorDescription("Error message")
+                .state("errorstate")
+                .vehicleInfo(vehicle)
+                .build();
+
+        assertEquals(smartcarResponse.getError(), "error");
+        assertEquals(smartcarResponse.getErrorDescription(), "Error message");
+        assertEquals(smartcarResponse.getState(), "errorstate");
+        assertEquals(smartcarResponse.getVehicleInfo(), vehicle);
+    }
+
 }

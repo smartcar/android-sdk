@@ -21,28 +21,86 @@
 package com.smartcar.sdk;
 
 /**
- * Class that encompasses the response code and error message, if any.
+ * A class that creates the response from Smartcar Connect.
  */
 public class SmartcarResponse {
     private String code;
-    private String message;
+    private String error;
+    private String errorDescription;
     private String state;
+    private VehicleInfo vehicleInfo;
 
-    public SmartcarResponse(String code, String message, String state) {
-        this.code = code;
-        this.message = message;
-        this.state = state;
+    /**
+     * Assigns properties on the SmartcarResponse object.
+     *
+     * @param builder the builder to obtain the properties from
+     */
+    private SmartcarResponse(Builder builder) {
+        this.code = builder.code;
+        this.error = builder.error;
+        this.errorDescription = builder.errorDescription;
+        this.state = builder.state;
+        this.vehicleInfo = builder.vehicleInfo;
     }
 
     public String getCode() {
-        return code;
+        return this.code;
     }
 
-    public String getMessage() {
-        return message;
+    public String getError() {
+        return this.error;
+    }
+
+    public String getErrorDescription() {
+        return this.errorDescription;
     }
 
     public String getState() {
-        return state;
+        return this.state;
+    }
+
+    public VehicleInfo getVehicleInfo() { return this.vehicleInfo; }
+
+    public static class Builder {
+        private String code;
+        private String error;
+        private String errorDescription;
+        private String state;
+        private VehicleInfo vehicleInfo;
+
+        public Builder errorDescription(String errorDescription) {
+            this.errorDescription = errorDescription;
+            return this;
+        }
+
+        public Builder state(String state) {
+            this.state = state;
+            return this;
+        }
+
+        public Builder code(String code) {
+            this.code = code;
+            return this;
+        }
+
+        public Builder error(String error) {
+            this.error = error;
+            return this;
+        }
+
+        public Builder vehicleInfo(VehicleInfo vehicle) {
+            this.vehicleInfo = vehicle;
+            return this;
+        }
+
+        /**
+         * Instantiates a new SmartcarResponse object, which will also have any optional properties
+         * that are already set on the Builder object that is calling this method.
+         *
+         * @return a new instantiation of the SmartcarResponse class
+         */
+        public SmartcarResponse build() {
+            return new SmartcarResponse(this);
+        }
     }
 }

@@ -1,3 +1,6 @@
+# Global
+.project
+
 # Built application files
 *.apk
 *.ap_
@@ -35,6 +38,8 @@ captures/
 # IntelliJ
 *.iml
 .idea
+.classpath
+.settings
 
 # Keystore files
 # Uncomment the following line if you do not want to check your keystore files in.

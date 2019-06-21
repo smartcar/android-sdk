@@ -83,7 +83,7 @@ public class SmartcarAuthTest {
         String scope = "read_odometer read_vin";
         SmartcarAuth smartcarAuth = new SmartcarAuth(clientId, redirectUri, scope, null);
         String make = "TESLA";
-        SmartcarAuth.AuthVehicleInfo authVehicleInfo = new SmartcarAuth.AuthVehicleInfo.Builder().setMake(make).build();
+        VehicleInfo authVehicleInfo = new VehicleInfo.Builder().make(make).build();
 
         String requestUri = smartcarAuth.generateUrl(authVehicleInfo);
         String expectedUri = "https://connect.smartcar.com/oauth/authorize?response_type=code&client_id="
@@ -115,9 +115,7 @@ public class SmartcarAuthTest {
         String scope = "read_odometer read_vin";
         SmartcarAuth smartcarAuth = new SmartcarAuth(clientId, redirectUri, scope, null);
         String make = "TESLA";
-
-        SmartcarAuth.AuthVehicleInfo.Builder builder = new SmartcarAuth.AuthVehicleInfo.Builder();
-        SmartcarAuth.AuthVehicleInfo vehicleInfo = builder.setMake(make).build();
+        VehicleInfo vehicleInfo = new VehicleInfo.Builder().make(make).build();
 
         String requestUri = smartcarAuth.generateUrl("somestring", vehicleInfo);
         String expectedUri = "https://connect.smartcar.com/oauth/authorize?response_type=code&client_id="
@@ -134,9 +132,7 @@ public class SmartcarAuthTest {
         String scope = "read_odometer read_vin";
         SmartcarAuth smartcarAuth = new SmartcarAuth(clientId, redirectUri, scope, null);
         String make = "TESLA";
-
-        SmartcarAuth.AuthVehicleInfo.Builder builder = new SmartcarAuth.AuthVehicleInfo.Builder();
-        SmartcarAuth.AuthVehicleInfo vehicleInfo = builder.setMake("TESLA").build();
+        VehicleInfo vehicleInfo = new VehicleInfo.Builder().make(make).build();
 
         String requestUri = smartcarAuth.generateUrl(true, vehicleInfo);
         String expectedUri = "https://connect.smartcar.com/oauth/authorize?response_type=code&client_id="
@@ -153,9 +149,7 @@ public class SmartcarAuthTest {
         String scope = "read_odometer read_vin";
         SmartcarAuth smartcarAuth = new SmartcarAuth(clientId, redirectUri, scope, null);
         String make = "TESLA";
-
-        SmartcarAuth.AuthVehicleInfo.Builder builder = new SmartcarAuth.AuthVehicleInfo.Builder();
-        SmartcarAuth.AuthVehicleInfo vehicleInfo = builder.setMake("TESLA").build();
+        VehicleInfo vehicleInfo = new VehicleInfo.Builder().make(make).build();
 
         String requestUri = smartcarAuth.generateUrl("somestring", true, vehicleInfo);
         String expectedUri = "https://connect.smartcar.com/oauth/authorize?response_type=code&client_id="
@@ -223,11 +217,66 @@ public class SmartcarAuthTest {
         new SmartcarAuth(clientId, redirectUri, scope, new SmartcarCallback() {
             @Override
             public void handleResponse(SmartcarResponse smartcarResponse) {
-                assertEquals(smartcarResponse.getMessage(), "Unable to fetch code. Please try again");
+                assertEquals(smartcarResponse.getErrorDescription(), "Unable to fetch code. Please try again");
             }
         });
 
         SmartcarAuth.receiveResponse(Uri.parse(redirectUri));
+    }
+
+    @Test
+    public void smartcarAuth_receiveResponse_accessDenied() {
+        String clientId = "client123";
+        String redirectUri = "scclient123://test";
+        String scope = "read_odometer read_vin";
+        new SmartcarAuth(clientId, redirectUri, scope, new SmartcarCallback() {
+            @Override
+            public void handleResponse(SmartcarResponse smartcarResponse) {
+                assertEquals(smartcarResponse.getError(), "access_denied");
+                assertEquals(smartcarResponse.getErrorDescription(), "User denied access to the requested scope of permissions.");
+            }
+        });
+
+        SmartcarAuth.receiveResponse(Uri.parse(redirectUri + "?error=access_denied&error_description=User%20denied%20access%20to%20the%20requested%20scope%20of%20permissions."));
+    }
+
+    @Test
+    public void smartcarAuth_receiveResponse_vehicleIncompatible() {
+        String clientId = "client123";
+        String redirectUri = "scclient123://test";
+        String scope = "read_odometer read_vin";
+        new SmartcarAuth(clientId, redirectUri, scope, new SmartcarCallback() {
+            @Override
+            public void handleResponse(SmartcarResponse smartcarResponse) {
+                assertEquals(smartcarResponse.getError(), "vehicle_incompatible");
+                assertEquals(smartcarResponse.getErrorDescription(), "The user's vehicle is not compatible.");
+            }
+        });
+
+        SmartcarAuth.receiveResponse(Uri.parse(redirectUri + "?error=vehicle_incompatible&error_description=The%20user%27s%20vehicle%20is%20not%20compatible."));
+    }
+
+    @Test
+    public void smartcarAuth_receiveResponse_vehicleIncompatibleWithVehicle() {
+        String clientId = "client123";
+        String redirectUri = "scclient123://test";
+        String scope = "read_odometer read_vin";
+        new SmartcarAuth(clientId, redirectUri, scope, new SmartcarCallback() {
+            @Override
+            public void handleResponse(SmartcarResponse smartcarResponse) {
+                VehicleInfo responseVehicle = smartcarResponse.getVehicleInfo();
+                assertEquals(smartcarResponse.getError(), "vehicle_incompatible");
+                assertEquals(smartcarResponse.getErrorDescription(), "The user's vehicle is not compatible.");
+                assertEquals(responseVehicle.getVin(), "1FDKE30G4JHA04964");
+                assertEquals(responseVehicle.getMake(), "FORD");
+                assertEquals(responseVehicle.getModel(), "E-350");
+                assertEquals(responseVehicle.getYear(), new Integer(1988));
+            }
+        });
+
+        SmartcarAuth.receiveResponse(Uri.parse(redirectUri + "?error=vehicle_incompatible" +
+                "&error_description=The%20user%27s%20vehicle%20is%20not%20compatible." +
+                "&vin=1FDKE30G4JHA04964&make=FORD&model=E-350&year=1988"));
     }
 
     @Test
@@ -239,7 +288,7 @@ public class SmartcarAuthTest {
         new SmartcarAuth(clientId, redirectUri, scope, new SmartcarCallback() {
             @Override
             public void handleResponse(SmartcarResponse smartcarResponse) {
-                assertEquals(smartcarResponse.getMessage(), "error");
+                assertEquals(smartcarResponse.getErrorDescription(), "Unable to fetch code. Please try again");
             }
         });
 
