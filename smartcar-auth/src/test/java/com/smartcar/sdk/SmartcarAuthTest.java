@@ -83,7 +83,7 @@ public class SmartcarAuthTest {
         String scope = "read_odometer read_vin";
         SmartcarAuth smartcarAuth = new SmartcarAuth(clientId, redirectUri, scope, null);
         String make = "TESLA";
-        VehicleInfo authVehicleInfo = new VehicleInfo.Builder().setMake(make).build();
+        VehicleInfo authVehicleInfo = new VehicleInfo.Builder().make(make).build();
 
         String requestUri = smartcarAuth.generateUrl(authVehicleInfo);
         String expectedUri = "https://connect.smartcar.com/oauth/authorize?response_type=code&client_id="
@@ -115,7 +115,7 @@ public class SmartcarAuthTest {
         String scope = "read_odometer read_vin";
         SmartcarAuth smartcarAuth = new SmartcarAuth(clientId, redirectUri, scope, null);
         String make = "TESLA";
-        VehicleInfo vehicleInfo = new VehicleInfo.Builder().setMake(make).build();
+        VehicleInfo vehicleInfo = new VehicleInfo.Builder().make(make).build();
 
         String requestUri = smartcarAuth.generateUrl("somestring", vehicleInfo);
         String expectedUri = "https://connect.smartcar.com/oauth/authorize?response_type=code&client_id="
@@ -132,7 +132,7 @@ public class SmartcarAuthTest {
         String scope = "read_odometer read_vin";
         SmartcarAuth smartcarAuth = new SmartcarAuth(clientId, redirectUri, scope, null);
         String make = "TESLA";
-        VehicleInfo vehicleInfo = new VehicleInfo.Builder().setMake(make).build();
+        VehicleInfo vehicleInfo = new VehicleInfo.Builder().make(make).build();
 
         String requestUri = smartcarAuth.generateUrl(true, vehicleInfo);
         String expectedUri = "https://connect.smartcar.com/oauth/authorize?response_type=code&client_id="
@@ -149,7 +149,7 @@ public class SmartcarAuthTest {
         String scope = "read_odometer read_vin";
         SmartcarAuth smartcarAuth = new SmartcarAuth(clientId, redirectUri, scope, null);
         String make = "TESLA";
-        VehicleInfo vehicleInfo = new VehicleInfo.Builder().setMake(make).build();
+        VehicleInfo vehicleInfo = new VehicleInfo.Builder().make(make).build();
 
         String requestUri = smartcarAuth.generateUrl("somestring", true, vehicleInfo);
         String expectedUri = "https://connect.smartcar.com/oauth/authorize?response_type=code&client_id="

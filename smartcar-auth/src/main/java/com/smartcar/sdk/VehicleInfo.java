@@ -74,7 +74,7 @@ public class VehicleInfo {
          *
          * @return the builder with a `make` property added
          */
-        public Builder setMake(String make) {
+        public Builder make(String make) {
             this.make = make;
             return this;
         }
@@ -86,7 +86,7 @@ public class VehicleInfo {
          *
          * @return the builder with a `vin` property added
          */
-        public Builder setVin(String vin) {
+        public Builder vin(String vin) {
             this.vin = vin;
             return this;
         }
@@ -98,7 +98,7 @@ public class VehicleInfo {
          *
          * @return the builder with a `model` property added
          */
-        public Builder setModel(String model) {
+        public Builder model(String model) {
             this.model = model;
             return this;
         }
@@ -110,7 +110,7 @@ public class VehicleInfo {
          *
          * @return the builder with a `year` property added
          */
-        public Builder setYear(Integer year) {
+        public Builder year(Integer year) {
             this.year = year;
             return this;
         }

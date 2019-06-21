@@ -55,10 +55,10 @@ public class SmartcarResponseTest {
     @Test
     public void SmartcarResponseTest_errorWithVehicle() {
         VehicleInfo vehicle = new VehicleInfo.Builder()
-                .setVin("0000")
-                .setMake("TESLA")
-                .setModel("Model S")
-                .setYear(2019)
+                .vin("0000")
+                .make("TESLA")
+                .model("Model S")
+                .year(2019)
                 .build();
 
         SmartcarResponse smartcarResponse = new SmartcarResponse.Builder()

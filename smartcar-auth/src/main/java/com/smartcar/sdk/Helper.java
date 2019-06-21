@@ -77,10 +77,10 @@ class Helper {
      */
     protected static VehicleInfo makeFullVehicle(String vin, String make, String model, Integer year) {
         return new VehicleInfo.Builder()
-                .setVin(vin)
-                .setMake(make)
-                .setModel(model)
-                .setYear(year)
+                .vin(vin)
+                .make(make)
+                .model(model)
+                .year(year)
                 .build();
     }
 }
