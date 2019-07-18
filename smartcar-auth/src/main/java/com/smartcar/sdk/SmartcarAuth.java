@@ -23,6 +23,7 @@ package com.smartcar.sdk;
 import android.content.Context;
 import android.net.Uri;
 import android.view.View;
+import okhttp3.HttpUrl;
 
 /**
  * Main class that provides SDK access methods.
@@ -30,6 +31,9 @@ import android.view.View;
 public class SmartcarAuth {
     protected static SmartcarAuthRequest smartcarAuthRequest;
     private static SmartcarCallback callback;
+    private static final String URL_AUTHORIZE = "https://connect.smartcar.com/oauth/authorize";
+
+    public String urlAuthorize = SmartcarAuth.URL_AUTHORIZE;
 
     /**
      * Constructs an instance with the given parameters.
@@ -92,25 +96,70 @@ public class SmartcarAuth {
     }
 
     /**
+     * A class that creates a custom AuthUrlBuilder object, used
+     * for generating authentication URLs.
+     */
+    public class AuthUrlBuilder {
+        private HttpUrl.Builder urlBuilder;
+
+        public AuthUrlBuilder() {
+            urlBuilder = HttpUrl.parse(urlAuthorize).newBuilder()
+                    .addQueryParameter("response_type", "code")
+                    .addQueryParameter("client_id", SmartcarAuth.smartcarAuthRequest.getClientId())
+                    .addQueryParameter("redirect_uri", SmartcarAuth.smartcarAuthRequest.getRedirectURI())
+                    .addQueryParameter("mode", SmartcarAuth.smartcarAuthRequest.getTestMode() ? "test" : "live")
+                    .addQueryParameter("scope", SmartcarAuth.smartcarAuthRequest.getScope());
+        }
+
+        public AuthUrlBuilder setState(String state) {
+            if (!state.equals("")) {
+                urlBuilder.addQueryParameter("state", state);
+            }
+            return this;
+        }
+
+        public AuthUrlBuilder setApprovalPrompt(boolean approvalPrompt) {
+            urlBuilder.addQueryParameter("approval_prompt", approvalPrompt ? "force" : "auto");
+            return this;
+        }
+
+        public AuthUrlBuilder setSingleSelect(boolean singleSelect) {
+            urlBuilder.addQueryParameter("single_select", Boolean.toString(singleSelect));
+            return this;
+        }
+
+        public AuthUrlBuilder setMakeBypass(String make) {
+            urlBuilder.addQueryParameter("make", make);
+            return this;
+        }
+
+        public String build() {
+            return urlBuilder.build().toString();
+        }
+    }
+
+    /**
+     * @deprecated as of 2.1.0. Please use @AuthUrlBuilder.
+     *
      * Generates the Smartcar Connect URI.
      *
      * @param state optional OAuth state to be returned on redirect
      * @param forcePrompt force permissions prompt to display on redirect (default: false)
      * @param authVehicleInfo an optional VehicleInfo object. Including the
-     * `make` property causes the car brand selection screen to be bypassed.
-     *
+     *                        `make` property causes the car brand selection screen to be bypassed.
      * @return The Smartcar Connect URI
      */
-   public String generateUrl(String state, boolean forcePrompt, VehicleInfo authVehicleInfo) {
+    @Deprecated
+    public String generateUrl(String state, boolean forcePrompt, VehicleInfo authVehicleInfo) {
 
         String stateQuery = "";
         if (state != null) {
             stateQuery = "&state=" + state;
         }
 
-        String approvalPrompt= ApprovalPrompt.auto.toString();
+        String approvalPrompt = ApprovalPrompt.auto.toString();
         if (forcePrompt) {
-            approvalPrompt= ApprovalPrompt.force.toString();
+            approvalPrompt = ApprovalPrompt.force.toString();
         }
 
         String vehicleInfoQuery = "";
@@ -136,6 +185,8 @@ public class SmartcarAuth {
     }
 
     /**
+     * @deprecated as of 2.1.0. Please use @AuthUrlBuilder.
+     *
      * Generates the Connect URI.
      *
      * @param state optional OAuth state to be returned on redirect
@@ -143,11 +194,14 @@ public class SmartcarAuth {
      *
      * @return The Smartcar Connect URI
      */
+    @Deprecated
     public String generateUrl(String state, boolean forcePrompt) {
         return generateUrl(state, forcePrompt, null);
     }
 
     /**
+     * @deprecated as of 2.1.0. Please use @AuthUrlBuilder.
+     *
      * Generates the Connect URI.
      *
      * @param state optional OAuth state to be returned on redirect
@@ -156,11 +210,14 @@ public class SmartcarAuth {
      *
      * @return The Smartcar Connect URI
      */
+    @Deprecated
     public String generateUrl(String state, VehicleInfo authVehicleInfo) {
         return generateUrl(state, false, authVehicleInfo);
     }
 
     /**
+     * @deprecated as of 2.1.0. Please use @AuthUrlBuilder.
+     *
      * Generates the Connect URI.
      *
      * @param forcePrompt force permissions prompt to display on redirect (default false)
@@ -169,11 +226,14 @@ public class SmartcarAuth {
      *
      * @return The Smartcar Connect URI
      */
+    @Deprecated
     public String generateUrl(boolean forcePrompt, VehicleInfo authVehicleInfo) {
         return generateUrl(null, forcePrompt, authVehicleInfo);
     }
 
     /**
+     * @deprecated as of 2.1.0. Please use @AuthUrlBuilder.
+     *
      * Generates the Connect URI.
      *
      * @param authVehicleInfo an optional VehicleInfo object. Including the
@@ -181,38 +241,48 @@ public class SmartcarAuth {
      *
      * @return The Smartcar Connect URI
      */
+    @Deprecated
     public String generateUrl(VehicleInfo authVehicleInfo) {
         return generateUrl(null, false, authVehicleInfo);
     }
 
     /**
+     * @deprecated as of 2.1.0. Please use @AuthUrlBuilder.
+     *
      * Generates the Connect URI.
      *
      * @param forcePrompt force permissions prompt to display on redirect (default false)
      *
      * @return The Smartcar Connect URI
      */
+    @Deprecated
     public String generateUrl(boolean forcePrompt) {
         return generateUrl(null, forcePrompt, null);
     }
 
 
     /**
+     * @deprecated as of 2.1.0. Please use @AuthUrlBuilder.
+     *
      * Generates the Connect URI.
      *
      * @param state optional OAuth state to be returned on redirect
      *
      * @return The Smartcar Connect URI
      */
+    @Deprecated
     public String generateUrl(String state) {
         return generateUrl(state, false, null);
     }
 
     /**
+     * @deprecated as of 2.1.0. Please use @AuthUrlBuilder.
+     *
      * Generates the Connect URI
      *
      * @return The Smartcar Connect URI
      */
+    @Deprecated
     public String generateUrl() {
         return generateUrl(null, false, null);
     }
