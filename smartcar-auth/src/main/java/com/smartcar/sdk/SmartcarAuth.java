@@ -123,13 +123,18 @@ public class SmartcarAuth {
             return this;
         }
 
+        public AuthUrlBuilder setMakeBypass(String make) {
+            urlBuilder.addQueryParameter("make", make);
+            return this;
+        }
+
         public AuthUrlBuilder setSingleSelect(boolean singleSelect) {
             urlBuilder.addQueryParameter("single_select", Boolean.toString(singleSelect));
             return this;
         }
 
-        public AuthUrlBuilder setMakeBypass(String make) {
-            urlBuilder.addQueryParameter("make", make);
+        public AuthUrlBuilder setSingleSelectVin(String vin) {
+            urlBuilder.addQueryParameter("single_select_vin", vin);
             return this;
         }
 
