@@ -144,155 +144,6 @@ public class SmartcarAuth {
     }
 
     /**
-     * @deprecated as of 2.1.0. Please use @AuthUrlBuilder.
-     *
-     * Generates the Smartcar Connect URI.
-     *
-     * @param state optional OAuth state to be returned on redirect
-     * @param forcePrompt force permissions prompt to display on redirect (default: false)
-     * @param authVehicleInfo an optional VehicleInfo object. Including the
-     *                        `make` property causes the car brand selection screen to be bypassed.
-     * @return The Smartcar Connect URI
-     */
-    @Deprecated
-    public String generateUrl(String state, boolean forcePrompt, VehicleInfo authVehicleInfo) {
-
-        String stateQuery = "";
-        if (state != null) {
-            stateQuery = "&state=" + state;
-        }
-
-        String approvalPrompt = ApprovalPrompt.auto.toString();
-        if (forcePrompt) {
-            approvalPrompt = ApprovalPrompt.force.toString();
-        }
-
-        String vehicleInfoQuery = "";
-        if (authVehicleInfo != null) {
-            String make = authVehicleInfo.getMake();
-
-            if (make != null) {
-                vehicleInfoQuery += "&make=" + make;
-            }
-        }
-
-        String requestUri = "https://connect.smartcar.com/oauth/authorize?response_type="
-                + smartcarAuthRequest.getResponseType().toString()
-                + "&client_id=" + smartcarAuthRequest.getClientId()
-                + "&redirect_uri=" + smartcarAuthRequest.getRedirectURI()
-                + "&scope=" + smartcarAuthRequest.getScope()
-                + stateQuery
-                + "&approval_prompt=" + approvalPrompt
-                + "&mode=" + (smartcarAuthRequest.getTestMode() ? "test" : "live")
-                + vehicleInfoQuery;
-
-        return requestUri;
-    }
-
-    /**
-     * @deprecated as of 2.1.0. Please use @AuthUrlBuilder.
-     *
-     * Generates the Connect URI.
-     *
-     * @param state optional OAuth state to be returned on redirect
-     * @param forcePrompt force permissions prompt to display on redirect (default false)
-     *
-     * @return The Smartcar Connect URI
-     */
-    @Deprecated
-    public String generateUrl(String state, boolean forcePrompt) {
-        return generateUrl(state, forcePrompt, null);
-    }
-
-    /**
-     * @deprecated as of 2.1.0. Please use @AuthUrlBuilder.
-     *
-     * Generates the Connect URI.
-     *
-     * @param state optional OAuth state to be returned on redirect
-     * @param authVehicleInfo an optional VehicleInfo object. Including the
-     * `make` property causes the car brand selection screen to be bypassed.
-     *
-     * @return The Smartcar Connect URI
-     */
-    @Deprecated
-    public String generateUrl(String state, VehicleInfo authVehicleInfo) {
-        return generateUrl(state, false, authVehicleInfo);
-    }
-
-    /**
-     * @deprecated as of 2.1.0. Please use @AuthUrlBuilder.
-     *
-     * Generates the Connect URI.
-     *
-     * @param forcePrompt force permissions prompt to display on redirect (default false)
-     * @param authVehicleInfo an optional VehicleInfo object. Including the
-     * `make` property causes the car brand selection screen to be bypassed.
-     *
-     * @return The Smartcar Connect URI
-     */
-    @Deprecated
-    public String generateUrl(boolean forcePrompt, VehicleInfo authVehicleInfo) {
-        return generateUrl(null, forcePrompt, authVehicleInfo);
-    }
-
-    /**
-     * @deprecated as of 2.1.0. Please use @AuthUrlBuilder.
-     *
-     * Generates the Connect URI.
-     *
-     * @param authVehicleInfo an optional VehicleInfo object. Including the
-     * `make` property causes the car brand selection screen to be bypassed.
-     *
-     * @return The Smartcar Connect URI
-     */
-    @Deprecated
-    public String generateUrl(VehicleInfo authVehicleInfo) {
-        return generateUrl(null, false, authVehicleInfo);
-    }
-
-    /**
-     * @deprecated as of 2.1.0. Please use @AuthUrlBuilder.
-     *
-     * Generates the Connect URI.
-     *
-     * @param forcePrompt force permissions prompt to display on redirect (default false)
-     *
-     * @return The Smartcar Connect URI
-     */
-    @Deprecated
-    public String generateUrl(boolean forcePrompt) {
-        return generateUrl(null, forcePrompt, null);
-    }
-
-
-    /**
-     * @deprecated as of 2.1.0. Please use @AuthUrlBuilder.
-     *
-     * Generates the Connect URI.
-     *
-     * @param state optional OAuth state to be returned on redirect
-     *
-     * @return The Smartcar Connect URI
-     */
-    @Deprecated
-    public String generateUrl(String state) {
-        return generateUrl(state, false, null);
-    }
-
-    /**
-     * @deprecated as of 2.1.0. Please use @AuthUrlBuilder.
-     *
-     * Generates the Connect URI
-     *
-     * @return The Smartcar Connect URI
-     */
-    @Deprecated
-    public String generateUrl() {
-        return generateUrl(null, false, null);
-    }
-
-    /**
      * Generates a click event listener for managing Smartcar Connect, and attaches
      *  it to the input View.
      *
@@ -314,48 +165,12 @@ public class SmartcarAuth {
      *
      * @param context The client application's context
      * @param view The View to attach Smartcar Connect launch to
-     * @param state optional OAuth state to be returned on redirect
-     * @param forcePrompt force permissions prompt to display on redirect (default: false)
+     * @param authUrl Use @AuthUrlBuilder to generate the authorization url
      */
-    public void addClickHandler(final Context context, final View view, final String state,
-                                final boolean forcePrompt) {
+    public void addClickHandler(final Context context, final View view, final String authUrl) {
         final View.OnClickListener listener = new View.OnClickListener() {
             public void onClick(View v) {
-                launchAuthFlow(context, state, forcePrompt);
-            }
-        };
-        view.setOnClickListener(listener);
-    }
-
-    /**
-     * Generates a click event listener for managing Smartcar Connect, and attaches
-     *  it to the input View.
-     *
-     * @param context The client application's context
-     * @param view The View to attach Smartcar Connect launch to
-     * @param state optional OAuth state to be returned on redirect
-     */
-    public void addClickHandler(final Context context, final View view, final String state){
-        final View.OnClickListener listener = new View.OnClickListener() {
-            public void onClick(View v) {
-                launchAuthFlow(context, state);
-            }
-        };
-        view.setOnClickListener(listener);
-    }
-
-    /**
-     * Generates a click event listener for managing Smartcar Connect, and attaches
-     *  it to the input View.
-     *
-     * @param context The client application's context
-     * @param view The View to attach Smartcar Connect launch to
-     * @param forcePrompt force permissions prompt to display on redirect (default: false)
-     */
-    public void addClickHandler(final Context context, final View view, final boolean forcePrompt) {
-        final View.OnClickListener listener = new View.OnClickListener() {
-            public void onClick(View v) {
-                launchAuthFlow(context, forcePrompt);
+                launchAuthFlow(context, authUrl);
             }
         };
         view.setOnClickListener(listener);
@@ -368,7 +183,7 @@ public class SmartcarAuth {
      * @param context The client application's context
      */
     public void launchAuthFlow(final Context context) {
-        Helper.startActivity(context, generateUrl());
+        Helper.startActivity(context, (new AuthUrlBuilder()).build());
     }
 
     /**
@@ -376,33 +191,10 @@ public class SmartcarAuth {
      * trigger like a swipe or touch event on the client application.
      *
      * @param context The client application's context
-     * @param state optional OAuth state to be returned on redirect
-     * @param forcePrompt force permissions prompt to display on redirect (default: false)
+     * @param authUrl Use @AuthUrlBuilder to generate the authorization url
      */
-    public void launchAuthFlow(final Context context, String state, boolean forcePrompt) {
-        Helper.startActivity(context, generateUrl(state, forcePrompt));
-    }
-
-    /**
-     * Starts the launch of Smartcar Connect. Use this to attach to any event
-     * trigger like a swipe or touch event on the client application.
-     *
-     * @param context The client application's context
-     * @param state optional OAuth state to be returned on redirect
-     */
-    public void launchAuthFlow(final Context context, String state) {
-        Helper.startActivity(context, generateUrl(state));
-    }
-
-    /**
-     * Starts the launch of Smartcar Connect. Use this to attach to any event
-     * trigger like a swipe or touch event on the client application.
-     *
-     * @param context The client application's context
-     * @param forcePrompt force permissions prompt to display on redirect (default: false)
-     */
-    public void launchAuthFlow(final Context context, boolean forcePrompt) {
-        Helper.startActivity(context, generateUrl(forcePrompt));
+    public void launchAuthFlow(final Context context, final String authUrl) {
+        Helper.startActivity(context, authUrl);
     }
 
     /**

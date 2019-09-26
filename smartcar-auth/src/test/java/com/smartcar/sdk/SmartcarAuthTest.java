@@ -20,31 +20,22 @@
 
 package com.smartcar.sdk;
 
+import android.content.Context;
 import android.net.Uri;
+import android.view.View;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
+import org.mockito.Mockito;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import static org.junit.Assert.assertEquals;
 
-@RunWith(RobolectricTestRunner.class)
+@PrepareForTest({Helper.class})
+@RunWith(PowerMockRunner.class)
 public class SmartcarAuthTest {
-
-    @Test
-    public void smartcarAuth_generateUrl() {
-        String clientId = "client123";
-        String redirectUri = "scclient123://test";
-        String scope = "read_odometer read_vin";
-        SmartcarAuth smartcarAuth = new SmartcarAuth(clientId, redirectUri, scope, null);
-
-        String requestUri = smartcarAuth.generateUrl();
-        String expectedUri = "https://connect.smartcar.com/oauth/authorize?response_type=code&client_id="
-                + clientId + "&redirect_uri=" + redirectUri + "&scope=" + scope +
-                "&approval_prompt=auto&mode=live";
-
-        assertEquals(expectedUri, requestUri);
-    }
 
     @Test
     public void smartcarAuth_authUrlBuilder() {
@@ -93,117 +84,94 @@ public class SmartcarAuthTest {
     }
 
     @Test
-    public void smartcarAuth_generateUrl_forcePrompt() {
+    public void smartcarAuth_launchAuthFlow() {
+
+        // Setup Mocks
+        PowerMockito.mockStatic(Helper.class);
+        Context context = Mockito.mock(Context.class);
+
+        // Execute Method
         String clientId = "client123";
         String redirectUri = "scclient123://test";
         String scope = "read_odometer read_vin";
         SmartcarAuth smartcarAuth = new SmartcarAuth(clientId, redirectUri, scope, null);
+        String authUrl = smartcarAuth.new AuthUrlBuilder().build();
 
-        String requestUri = smartcarAuth.generateUrl(true);
-        String expectedUri = "https://connect.smartcar.com/oauth/authorize?response_type=code&client_id="
-                + clientId + "&redirect_uri=" + redirectUri + "&scope=" + scope +
-                "&approval_prompt=force&mode=live";
+        smartcarAuth.launchAuthFlow(context);
 
-        assertEquals(expectedUri, requestUri);
+        // Verify Mocks
+        PowerMockito.verifyStatic(Helper.class, Mockito.times(1));
+        Helper.startActivity(context, authUrl);
+
     }
 
     @Test
-    public void smartcarAuth_generateUrl_state() {
+    public void smartcarAuth_launchAuthFlow_withAuthUrl() {
+
+        // Setup Mocks
+        PowerMockito.mockStatic(Helper.class);
+        Context context = Mockito.mock(Context.class);
+
+        // Execute Method
         String clientId = "client123";
         String redirectUri = "scclient123://test";
         String scope = "read_odometer read_vin";
         SmartcarAuth smartcarAuth = new SmartcarAuth(clientId, redirectUri, scope, null);
+        String authUrl = smartcarAuth.new AuthUrlBuilder()
+            .setState("foo")
+            .setMakeBypass("TESLA")
+            .setSingleSelect(false)
+            .build();
 
-        String requestUri = smartcarAuth.generateUrl("somestring");
-        String expectedUri = "https://connect.smartcar.com/oauth/authorize?response_type=code&client_id="
-                + clientId + "&redirect_uri=" + redirectUri + "&scope=" + scope +
-                "&state=somestring&approval_prompt=auto&mode=live";
+        smartcarAuth.launchAuthFlow(context, authUrl);
 
-        assertEquals(expectedUri, requestUri);
+        // Verify Mocks
+        PowerMockito.verifyStatic(Helper.class, Mockito.times(1));
+        Helper.startActivity(context, authUrl);
+
     }
 
     @Test
-    public void smartcarAuth_generateUrl_authVehicleInfo() {
+    public void smartcarAuth_addClickHandler() {
+
+        Context context = Mockito.mock(Context.class);
+        View view = Mockito.mock(View.class);
+
         String clientId = "client123";
         String redirectUri = "scclient123://test";
         String scope = "read_odometer read_vin";
         SmartcarAuth smartcarAuth = new SmartcarAuth(clientId, redirectUri, scope, null);
-        String make = "TESLA";
-        VehicleInfo authVehicleInfo = new VehicleInfo.Builder().make(make).build();
 
-        String requestUri = smartcarAuth.generateUrl(authVehicleInfo);
-        String expectedUri = "https://connect.smartcar.com/oauth/authorize?response_type=code&client_id="
-                + clientId + "&redirect_uri=" + redirectUri + "&scope=" + scope +
-                "&approval_prompt=auto&mode=live&make=" + make;
+        smartcarAuth.addClickHandler(context, view);
 
-        assertEquals(expectedUri, requestUri);
+        Mockito.verify(view, Mockito.times(1))
+            .setOnClickListener(Mockito.any(View.OnClickListener.class));
+
     }
 
     @Test
-    public void smartcarAuth_generateUrl_stateAndForcePrompt() {
+    public void smartcarAuth_addClickHandler_withAuthUrl() {
+
+        Context context = Mockito.mock(Context.class);
+        View view = Mockito.mock(View.class);
+
         String clientId = "client123";
         String redirectUri = "scclient123://test";
         String scope = "read_odometer read_vin";
         SmartcarAuth smartcarAuth = new SmartcarAuth(clientId, redirectUri, scope, null);
+        String authUrl = smartcarAuth.new AuthUrlBuilder()
+            .setState("foo")
+            .setMakeBypass("TESLA")
+            .setSingleSelect(false)
+            .build();
 
-        String requestUri = smartcarAuth.generateUrl("somestring", true);
-        String expectedUri = "https://connect.smartcar.com/oauth/authorize?response_type=code&client_id="
-                + clientId + "&redirect_uri=" + redirectUri + "&scope=" + scope +
-                "&state=somestring&approval_prompt=force&mode=live";
+        smartcarAuth.addClickHandler(context, view, authUrl);
 
-        assertEquals(expectedUri, requestUri);
+        Mockito.verify(view, Mockito.times(1))
+                .setOnClickListener(Mockito.any(View.OnClickListener.class));
+
     }
 
-    @Test
-    public void smartcarAuth_generateUrl_stateAndAuthVehicleInfo() {
-        String clientId = "client123";
-        String redirectUri = "scclient123://test";
-        String scope = "read_odometer read_vin";
-        SmartcarAuth smartcarAuth = new SmartcarAuth(clientId, redirectUri, scope, null);
-        String make = "TESLA";
-        VehicleInfo vehicleInfo = new VehicleInfo.Builder().make(make).build();
-
-        String requestUri = smartcarAuth.generateUrl("somestring", vehicleInfo);
-        String expectedUri = "https://connect.smartcar.com/oauth/authorize?response_type=code&client_id="
-                + clientId + "&redirect_uri=" + redirectUri + "&scope=" + scope +
-                "&state=somestring&approval_prompt=auto&mode=live&make=" + make;
-
-        assertEquals(expectedUri, requestUri);
-    }
-
-    @Test
-    public void smartcarAuth_generateUrl_forcePromptAndAuthVehicleInfo() {
-        String clientId = "client123";
-        String redirectUri = "scclient123://test";
-        String scope = "read_odometer read_vin";
-        SmartcarAuth smartcarAuth = new SmartcarAuth(clientId, redirectUri, scope, null);
-        String make = "TESLA";
-        VehicleInfo vehicleInfo = new VehicleInfo.Builder().make(make).build();
-
-        String requestUri = smartcarAuth.generateUrl(true, vehicleInfo);
-        String expectedUri = "https://connect.smartcar.com/oauth/authorize?response_type=code&client_id="
-                + clientId + "&redirect_uri=" + redirectUri + "&scope=" + scope +
-                "&approval_prompt=force&mode=live&make=" + make;
-
-        assertEquals(expectedUri, requestUri);
-    }
-
-    @Test
-    public void smartcarAuth_generateUrl_stateAndforcePromptAndAuthVehicleInfo() {
-        String clientId = "client123";
-        String redirectUri = "scclient123://test";
-        String scope = "read_odometer read_vin";
-        SmartcarAuth smartcarAuth = new SmartcarAuth(clientId, redirectUri, scope, null);
-        String make = "TESLA";
-        VehicleInfo vehicleInfo = new VehicleInfo.Builder().make(make).build();
-
-        String requestUri = smartcarAuth.generateUrl("somestring", true, vehicleInfo);
-        String expectedUri = "https://connect.smartcar.com/oauth/authorize?response_type=code&client_id="
-                + clientId + "&redirect_uri=" + redirectUri + "&scope=" + scope +
-                "&state=somestring&approval_prompt=force&mode=live&make=" + make;
-
-        assertEquals(expectedUri, requestUri);
-    }
 
     @Test
     public void smartcarAuth_receiveResponse() {
