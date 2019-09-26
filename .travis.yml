@@ -7,7 +7,7 @@ branches:
 
 env:
   global:
-    - ANDROID_TARGET=android-25
+    - ANDROID_TARGET=android-21
     - ANDROID_ABI=armeabi-v7a
     - ADB_INSTALL_TIMEOUT=10
 
@@ -18,7 +18,9 @@ android:
     - platform-tools
     - tools
     - build-tools-27.0.3
+    - android-21
     - android-25
+    - android-29
     - extra-android-m2repository
     - sys-img-${ANDROID_ABI}-${ANDROID_TARGET}
 
