@@ -27,11 +27,14 @@ import android.view.View;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 
 @PrepareForTest({Helper.class})
 @RunWith(PowerMockRunner.class)
@@ -87,8 +90,8 @@ public class SmartcarAuthTest {
     public void smartcarAuth_launchAuthFlow() {
 
         // Setup Mocks
-        PowerMockito.mockStatic(Helper.class);
-        Context context = Mockito.mock(Context.class);
+        mockStatic(Helper.class);
+        Context context = mock(Context.class);
 
         // Execute Method
         String clientId = "client123";
@@ -100,7 +103,7 @@ public class SmartcarAuthTest {
         smartcarAuth.launchAuthFlow(context);
 
         // Verify Mocks
-        PowerMockito.verifyStatic(Helper.class, Mockito.times(1));
+        verifyStatic(Helper.class, times(1));
         Helper.startActivity(context, authUrl);
 
     }
@@ -109,8 +112,8 @@ public class SmartcarAuthTest {
     public void smartcarAuth_launchAuthFlow_withAuthUrl() {
 
         // Setup Mocks
-        PowerMockito.mockStatic(Helper.class);
-        Context context = Mockito.mock(Context.class);
+        mockStatic(Helper.class);
+        Context context = mock(Context.class);
 
         // Execute Method
         String clientId = "client123";
@@ -126,7 +129,7 @@ public class SmartcarAuthTest {
         smartcarAuth.launchAuthFlow(context, authUrl);
 
         // Verify Mocks
-        PowerMockito.verifyStatic(Helper.class, Mockito.times(1));
+        verifyStatic(Helper.class, times(1));
         Helper.startActivity(context, authUrl);
 
     }
@@ -134,8 +137,8 @@ public class SmartcarAuthTest {
     @Test
     public void smartcarAuth_addClickHandler() {
 
-        Context context = Mockito.mock(Context.class);
-        View view = Mockito.mock(View.class);
+        Context context = mock(Context.class);
+        View view = mock(View.class);
 
         String clientId = "client123";
         String redirectUri = "scclient123://test";
@@ -144,7 +147,7 @@ public class SmartcarAuthTest {
 
         smartcarAuth.addClickHandler(context, view);
 
-        Mockito.verify(view, Mockito.times(1))
+        Mockito.verify(view, times(1))
             .setOnClickListener(Mockito.any(View.OnClickListener.class));
 
     }
@@ -152,8 +155,8 @@ public class SmartcarAuthTest {
     @Test
     public void smartcarAuth_addClickHandler_withAuthUrl() {
 
-        Context context = Mockito.mock(Context.class);
-        View view = Mockito.mock(View.class);
+        Context context = mock(Context.class);
+        View view = mock(View.class);
 
         String clientId = "client123";
         String redirectUri = "scclient123://test";
@@ -167,7 +170,7 @@ public class SmartcarAuthTest {
 
         smartcarAuth.addClickHandler(context, view, authUrl);
 
-        Mockito.verify(view, Mockito.times(1))
+        Mockito.verify(view, times(1))
                 .setOnClickListener(Mockito.any(View.OnClickListener.class));
 
     }
