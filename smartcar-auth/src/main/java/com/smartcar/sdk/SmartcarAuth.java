@@ -239,7 +239,12 @@ public class SmartcarAuth {
                 String make = uri.getQueryParameter("make");
                 String model = uri.getQueryParameter("model");
                 int year = Integer.parseInt(uri.getQueryParameter("year"));
-                VehicleInfo responseVehicle = Helper.makeFullVehicle(queryVin, make, model, year);
+                VehicleInfo responseVehicle = new VehicleInfo.Builder()
+                    .vin(queryVin)
+                    .make(make)
+                    .model(model)
+                    .year(year)
+                    .build();
 
                 SmartcarResponse smartcarResponse = responseBuilder
                         .error(queryError)
