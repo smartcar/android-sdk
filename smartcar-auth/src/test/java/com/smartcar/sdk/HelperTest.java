@@ -20,13 +20,50 @@
 
 package com.smartcar.sdk;
 
+import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
+
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.powermock.api.mockito.PowerMockito.whenNew;
 
+@PrepareForTest({Log.class, Helper.class})
+@RunWith(PowerMockRunner.class)
 public class HelperTest {
+
+    @Test
+    public void helper_startActivity() throws Exception {
+        mockStatic(Log.class);
+        Context context = mock(Context.class);
+        Intent intent = mock(Intent.class);
+        whenNew(Intent.class)
+            .withArguments(context, WebViewActivity.class)
+            .thenReturn(intent);
+
+        String url = "https://some-url.com";
+        Helper.startActivity(context, url);
+
+        verify(intent, times(1))
+            .putExtra("URI", url);
+        verify(intent, times(1))
+            .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+        verify(intent, times(1))
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        verify(context, times(1))
+            .startActivity(Mockito.any(Intent.class));
+    }
 
     @Test
     public void helper_matchesRedirectUri() {
