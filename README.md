@@ -15,7 +15,7 @@ The recommended method for obtaining the SDK is via Gradle or Maven.
 ### Gradle
 
 ```groovy
-compile "com.smartcar.sdk:smartcar-auth:2.0.0"
+compile "com.smartcar.sdk:smartcar-auth:3.0.0"
 ```
 
 ### Maven
@@ -24,7 +24,7 @@ compile "com.smartcar.sdk:smartcar-auth:2.0.0"
 <dependency>
   <groupId>com.smartcar.sdk</groupId>
   <artifactId>smartcar-auth</artifactId>
-  <version>2.0.0</version>
+  <version>3.0.0</version>
 </dependency>
 ```
 
@@ -144,6 +144,10 @@ Defaults to `false`. The `false` option will skip the approval prompt for users 
 Button connectButton = (Button) findViewById(R.id.connect_button);
 smartcarAuth.addClickHandler(getApplicationContext(), connectButton);
 ```
+
+## Contributing
+
+Please use Android Studio 3.5 to develop on the Smartcar Android SDK.
 
 [ci-image]: https://travis-ci.com/smartcar/android-sdk.svg?token=6Yrkze1DNb8WHnHxrCy6&branch=master
 [ci-url]: https://travis-ci.com/smartcar/android-sdk
