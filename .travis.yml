@@ -14,6 +14,8 @@ env:
 
 android:
   components:
+    - tools
+    - platform-tools
     - $BUILD_TOOLS
     - $ANDROID_TARGET
     - extra-google-google_play_services
