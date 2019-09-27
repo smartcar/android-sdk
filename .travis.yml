@@ -7,22 +7,18 @@ branches:
 
 env:
   global:
-    - ANDROID_TARGET=android-21
+    - BUILD_TOOLS=build-tools-29.0.2
+    - ANDROID_TARGET=android-29
     - ANDROID_ABI=armeabi-v7a
     - ADB_INSTALL_TIMEOUT=10
 
 android:
-  update_sdk: true
   components:
-    - tools
-    - platform-tools
-    - tools
-    - build-tools-27.0.3
-    - android-21
-    - android-25
-    - android-29
+    - $BUILD_TOOLS
+    - $ANDROID_TARGET
+    - extra-google-google_play_services
+    - extra-google-m2repository
     - extra-android-m2repository
-    - sys-img-${ANDROID_ABI}-${ANDROID_TARGET}
 
 script:
   - ./gradlew build jacocoTestReport assembleAndroidTest
