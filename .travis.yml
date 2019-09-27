@@ -23,6 +23,7 @@ android:
     - extra-android-m2repository
 
 script:
+  - yes | sdkmanager --licenses
   - ./gradlew build jacocoTestReport assembleAndroidTest
   - echo no | android create avd --force --name test --target $ANDROID_TARGET --abi $ANDROID_ABI
   - emulator -avd test -no-skin -no-audio -no-window &
