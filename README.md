@@ -100,18 +100,6 @@ Launch Connect.
 
 The application's Android context.
 
-`state` (optional)
-
-An opaque value used to maintain state between the request and callback. Connect returns this value when redirecting to the client. It can be retrieved from the `SmartcarResponse.getState()` method.
-
-`forcePrompt` (optional)
-
-Defaults to `false`. The `false` option will skip the approval prompt for users who have already accepted the requested permissions for your application in the past. Set it to `true` to force a user to see the approval prompt even if they have already accepted the permissions in the past.
-
-`authVehicleInfo` (optional)
-
-Defaults to `null`. Passing in a `VehicleInfo` object with a `make` property causes the car brand selection screen to be bypassed.
-
 #### Example
 
 ```java
@@ -130,13 +118,6 @@ The application's Android context.
 
 The view to attach the click listener to.
 
-`state` (optional)
-
-An opaque value used to maintain state between the request and callback. Connect returns this value when redirecting to the client. It can be retrieved from the `SmartcarResponse.getState()` method.
-
-`forcePrompt` (optional)
-
-Defaults to `false`. The `false` option will skip the approval prompt for users who have already accepted the requested permissions for your application in the past. Set it to `true` to force a user to see the approval prompt even if they have already accepted the permissions in the past.
 
 #### Example
 
