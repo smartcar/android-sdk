@@ -18,6 +18,7 @@ android:
     - platform-tools
     - $BUILD_TOOLS
     - $ANDROID_TARGET
+    - sys-image-${ANDROID_ABI}-${ANDROID_TARGET}
     - extra-google-google_play_services
     - extra-google-m2repository
     - extra-android-m2repository
