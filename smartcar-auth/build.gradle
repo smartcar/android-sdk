@@ -39,9 +39,6 @@ android {
         }
     }
     testOptions {
-        unitTests {
-            includeAndroidResources = true
-        }
         unitTests.all {
             jacoco {
                 includeNoLocationClasses = true
@@ -75,6 +72,7 @@ dependencies {
     androidTestImplementation 'androidx.annotation:annotation:1.1.0'
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test:rules:1.2.0'
+    testAnnotationProcessor 'com.google.auto.service:auto-service:1.0-rc4'
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.mockito:mockito-core:3.1.0'
     testImplementation 'org.powermock:powermock-core:2.0.2'
