@@ -40,20 +40,6 @@ public class SmartcarAuth {
      *
      * @param clientId    The client's ID
      * @param redirectUri The client's redirect URI
-     * @param scope       A space-separated list of authorization scopes
-     * @param callback    Handler to a Callback for receiving the Smartcar Connect response
-     */
-    public SmartcarAuth(String clientId, String redirectUri, String scope,
-                        SmartcarCallback callback) {
-        smartcarAuthRequest = new SmartcarAuthRequest(clientId, redirectUri, scope);
-        this.callback = callback;
-    }
-
-    /**
-     * Constructs an instance with the given parameters.
-     *
-     * @param clientId    The client's ID
-     * @param redirectUri The client's redirect URI
      * @param scope       An array of authorization scopes
      * @param callback    Handler to a Callback for receiving the Smartcar Connect response
      */
@@ -61,21 +47,6 @@ public class SmartcarAuth {
                         SmartcarCallback callback) {
         String scopeStr = Helper.arrayToString(scope);
         smartcarAuthRequest = new SmartcarAuthRequest(clientId, redirectUri, scopeStr);
-        this.callback = callback;
-    }
-
-    /**
-     * Constructs an instance with the given parameters.
-     *
-     * @param clientId    The client's ID
-     * @param redirectUri The client's redirect URI
-     * @param scope       An array of authorization scopes
-     * @param testMode    Whether to display the MOCK vehicle brand or not
-     * @param callback    Handler to a Callback for receiving the Smartcar Connect response
-     */
-    public SmartcarAuth(String clientId, String redirectUri, String scope, boolean testMode,
-                        SmartcarCallback callback) {
-        smartcarAuthRequest = new SmartcarAuthRequest(clientId, redirectUri, scope, testMode);
         this.callback = callback;
     }
 

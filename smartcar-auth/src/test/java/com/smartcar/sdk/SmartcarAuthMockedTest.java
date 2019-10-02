@@ -48,7 +48,7 @@ public class SmartcarAuthMockedTest {
         // Execute Method
         String clientId = "client123";
         String redirectUri = "scclient123://test";
-        String scope = "read_odometer read_vin";
+        String[] scope = {"read_odometer", "read_vin"};
         SmartcarAuth smartcarAuth = new SmartcarAuth(clientId, redirectUri, scope, null);
         String authUrl = smartcarAuth.new AuthUrlBuilder().build();
 
@@ -70,7 +70,7 @@ public class SmartcarAuthMockedTest {
         // Execute Method
         String clientId = "client123";
         String redirectUri = "scclient123://test";
-        String scope = "read_odometer read_vin";
+        String[] scope = {"read_odometer", "read_vin"};
         SmartcarAuth smartcarAuth = new SmartcarAuth(clientId, redirectUri, scope, null);
         String authUrl = smartcarAuth.new AuthUrlBuilder()
             .setState("foo")
@@ -94,7 +94,7 @@ public class SmartcarAuthMockedTest {
 
         String clientId = "client123";
         String redirectUri = "scclient123://test";
-        String scope = "read_odometer read_vin";
+        String[] scope = {"read_odometer", "read_vin"};
         SmartcarAuth smartcarAuth = new SmartcarAuth(clientId, redirectUri, scope, null);
 
         smartcarAuth.addClickHandler(context, view);
@@ -112,7 +112,7 @@ public class SmartcarAuthMockedTest {
 
         String clientId = "client123";
         String redirectUri = "scclient123://test";
-        String scope = "read_odometer read_vin";
+        String[] scope = {"read_odometer", "read_vin"};
         SmartcarAuth smartcarAuth = new SmartcarAuth(clientId, redirectUri, scope, null);
         String authUrl = smartcarAuth.new AuthUrlBuilder()
             .setState("foo")

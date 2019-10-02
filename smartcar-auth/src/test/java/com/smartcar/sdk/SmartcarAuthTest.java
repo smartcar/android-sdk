@@ -60,7 +60,7 @@ public class SmartcarAuthTest {
     public void smartcarAuth_receiveResponse() {
         String clientId = "client123";
         String redirectUri = "scclient123://test";
-        String scope = "read_odometer read_vin";
+        String[] scope = {"read_odometer", "read_vin"};
 
         new SmartcarAuth(clientId, redirectUri, scope, new SmartcarCallback() {
             @Override
@@ -76,7 +76,7 @@ public class SmartcarAuthTest {
     public void smartcarAuth_receiveResponse_mismatchRedirectUri() {
         String clientId = "client123";
         String redirectUri = "scclient123://test";
-        String scope = "read_odometer read_vin";
+        String[] scope = {"read_odometer", "read_vin"};
         String wrongRedirectUri = "wrongscheme://test";
 
         new SmartcarAuth(clientId, redirectUri, scope, new SmartcarCallback() {
@@ -93,7 +93,7 @@ public class SmartcarAuthTest {
     public void smartcarAuth_receiveResponse_nullUri() {
         String clientId = "client123";
         String redirectUri = "scclient123://test";
-        String scope = "read_odometer read_vin";
+        String[] scope = {"read_odometer", "read_vin"};
 
         new SmartcarAuth(clientId, redirectUri, scope, new SmartcarCallback() {
             @Override
@@ -109,7 +109,7 @@ public class SmartcarAuthTest {
     public void smartcarAuth_receiveResponse_nullCode() {
         String clientId = "client123";
         String redirectUri = "scclient123://test";
-        String scope = "read_odometer read_vin";
+        String[] scope = {"read_odometer", "read_vin"};
 
         new SmartcarAuth(clientId, redirectUri, scope, new SmartcarCallback() {
             @Override
@@ -125,7 +125,7 @@ public class SmartcarAuthTest {
     public void smartcarAuth_receiveResponse_accessDenied() {
         String clientId = "client123";
         String redirectUri = "scclient123://test";
-        String scope = "read_odometer read_vin";
+        String[] scope = {"read_odometer", "read_vin"};
         new SmartcarAuth(clientId, redirectUri, scope, new SmartcarCallback() {
             @Override
             public void handleResponse(SmartcarResponse smartcarResponse) {
@@ -141,7 +141,7 @@ public class SmartcarAuthTest {
     public void smartcarAuth_receiveResponse_vehicleIncompatible() {
         String clientId = "client123";
         String redirectUri = "scclient123://test";
-        String scope = "read_odometer read_vin";
+        String[] scope = {"read_odometer", "read_vin"};
         new SmartcarAuth(clientId, redirectUri, scope, new SmartcarCallback() {
             @Override
             public void handleResponse(SmartcarResponse smartcarResponse) {
@@ -157,7 +157,7 @@ public class SmartcarAuthTest {
     public void smartcarAuth_receiveResponse_vehicleIncompatibleWithVehicle() {
         String clientId = "client123";
         String redirectUri = "scclient123://test";
-        String scope = "read_odometer read_vin";
+        String[] scope = {"read_odometer", "read_vin"};
         new SmartcarAuth(clientId, redirectUri, scope, new SmartcarCallback() {
             @Override
             public void handleResponse(SmartcarResponse smartcarResponse) {
@@ -180,7 +180,7 @@ public class SmartcarAuthTest {
     public void smartcarAuth_receiveResponse_nullCodeWithMessage() {
         String clientId = "client123";
         String redirectUri = "scclient123://test";
-        String scope = "read_odometer read_vin";
+        String[] scope = {"read_odometer", "read_vin"};
 
         new SmartcarAuth(clientId, redirectUri, scope, new SmartcarCallback() {
             @Override
@@ -196,7 +196,7 @@ public class SmartcarAuthTest {
     public void smartcarAuth_receiveResponse_codeWithState() {
         String clientId = "client123";
         String redirectUri = "scclient123://test";
-        String scope = "read_odometer read_vin";
+        String[] scope = {"read_odometer", "read_vin"};
 
         new SmartcarAuth(clientId, redirectUri, scope, new SmartcarCallback() {
             @Override

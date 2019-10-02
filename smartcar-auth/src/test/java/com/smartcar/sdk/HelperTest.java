@@ -69,7 +69,7 @@ public class HelperTest {
     public void helper_matchesRedirectUri() {
         String clientId = "client123";
         String redirectUri = "scclient123://test";
-        String scope = "read_odometer read_vin";
+        String[] scope = {"read_odometer", "read_vin"};
         String matchedResponse = "scclient123://test?code=democode456&state=demostate789";
         String unmatchedResponse = "sctestclient123://test?code=democode456&state=demostate789";
         new SmartcarAuth(clientId, redirectUri, scope, null);
