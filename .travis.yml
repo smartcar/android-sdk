@@ -9,8 +9,6 @@ env:
   global:
     - BUILD_TOOLS_VERSION=29.0.2
     - ANDROID_API_LEVEL=29
-    - ANDROID_ABI=x86
-    - ADB_INSTALL_TIMEOUT=10
 
 android:
   components:
@@ -18,7 +16,6 @@ android:
     - platform-tools
     - build-tools-$BUILD_TOOLS
     - android-$ANDROID_API_LEVEL
-    - sys-image-$ANDROID_ABI-android-$ANDROID_API_LEVEL
     - extra-google-google_play_services
     - extra-google-m2repository
     - extra-android-m2repository
@@ -30,12 +27,8 @@ android:
 
 script:
   - yes | sdkmanager --update
-  - sdkmanager tools
   - ./gradlew build jacocoTestReport assembleAndroidTest
-  - echo no | android create avd --force -n test -t android-25 --abi google_apis/armeabi-v7a
-  - emulator -avd test -no-skin -no-audio -no-window &
-  - android-wait-for-emulator
-  - ./gradlew connectedCheck
+  - ./gradlew test
 
   # report coverage
   - bash <(curl -s https://codecov.io/bash)
