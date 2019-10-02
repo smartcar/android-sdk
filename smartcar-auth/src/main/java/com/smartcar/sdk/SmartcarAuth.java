@@ -56,7 +56,7 @@ public class SmartcarAuth {
      * @param clientId    The client's ID
      * @param redirectUri The client's redirect URI
      * @param scope       An array of authorization scopes
-     * @param testMode    Whether to display the MOCK vehicle brand or not
+     * @param testMode    Set to true to run Smartcar Connect in test mode
      * @param callback    Handler to a Callback for receiving the Smartcar Connect response
      */
     public SmartcarAuth(String clientId, String redirectUri, String[] scope, boolean testMode,
@@ -67,8 +67,7 @@ public class SmartcarAuth {
     }
 
     /**
-     * A class that creates a custom AuthUrlBuilder object, used
-     * for generating authentication URLs.
+     * A builder used for generating Smartcar Connect authorization URLs.
      */
     public class AuthUrlBuilder {
         private HttpUrl.Builder urlBuilder;
@@ -82,6 +81,12 @@ public class SmartcarAuth {
                     .addQueryParameter("scope", SmartcarAuth.smartcarAuthRequest.getScope());
         }
 
+        /**
+         * Set an optional state parameter.
+         *
+         * @param state An optional value included on the {@link SmartcarResponse} object returned
+         *              to the {@link SmartcarCallback}
+         */
         public AuthUrlBuilder setState(String state) {
             if (!state.equals("")) {
                 urlBuilder.addQueryParameter("state", state);
@@ -89,26 +94,65 @@ public class SmartcarAuth {
             return this;
         }
 
-        public AuthUrlBuilder setApprovalPrompt(boolean approvalPrompt) {
-            urlBuilder.addQueryParameter("approval_prompt", approvalPrompt ? "force" : "auto");
+        /**
+         * Force display of the grant approval dialog in Smartcar Connect.
+         *
+         * Defaults to false and will only display the approval dialog if the user has not
+         * previously approved the scope. Set this to true to ensure the approval dialog is always
+         * shown to the user even if they have previously approved the same scope.
+         *
+         * @param forcePrompt Set to true to ensure the grant approval dialog is always shown
+         */
+        public AuthUrlBuilder setForcePrompt(boolean forcePrompt) {
+            urlBuilder.addQueryParameter("approval_prompt", forcePrompt ? "force" : "auto");
             return this;
         }
 
+        /**
+         * Bypass the brand selector screen to a specified make.
+         *
+         * See the available makes on the <a href="https://smartcar.com/docs/api#connect-direct" Smartcar API Reference</a>.
+         *
+         * @param make The selected make
+         */
         public AuthUrlBuilder setMakeBypass(String make) {
             urlBuilder.addQueryParameter("make", make);
             return this;
         }
 
+        /**
+         * Ensure the user only authorizes a single vehicle.
+         *
+         * A user's connected service account can be connected to multiple vehicles. Setting this
+         * parameter to true forces the user to select only a single vehicle.
+         *
+         * @see https://smartcar.com/docs/api#connect-match
+         * @param singleSelect Set to true to ensure only a single vehicle is authorized.
+         */
         public AuthUrlBuilder setSingleSelect(boolean singleSelect) {
             urlBuilder.addQueryParameter("single_select", Boolean.toString(singleSelect));
             return this;
         }
 
+        /**
+         * Specify the vin a user can authorize in Smartcar Connect.
+         *
+         * When the {@link AuthUrlBuilder#setSingleSelect(boolean)} is set to true, this parameter
+         * can be used to ensure that Smartcar Connect will allow the user to authorize only the
+         * vehicle with a specific VIN.
+         *
+         * @param vin The specific VIN to authorize
+         */
         public AuthUrlBuilder setSingleSelectVin(String vin) {
             urlBuilder.addQueryParameter("single_select_vin", vin);
             return this;
         }
 
+        /**
+         * Build a Smartcar Connect authorization url.
+         *
+         * @return A built url which can be used in {@link SmartcarAuth#launchAuthFlow(Context, String)} or {@link SmartcarAuth#addClickHandler(Context, View, String)}
+         */
         public String build() {
             return urlBuilder.build().toString();
         }

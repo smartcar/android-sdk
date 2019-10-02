@@ -31,6 +31,25 @@ public class SmartcarAuthTest {
     }
 
     @Test
+    public void smartcarAuth_authUrlBuilder_testMode() {
+        String clientId = "client123";
+        String redirectUri = "scclient123://test";
+        String redirectUriEncoded = "scclient123%3A%2F%2Ftest";
+        String[] scope = {"read_odometer", "read_vin"};
+        String expectedUri = "https://connect.smartcar.com/oauth/authorize?response_type=code" +
+                "&client_id=" + clientId +
+                "&redirect_uri=" + redirectUriEncoded +
+                "&mode=test&scope=read_odometer%20read_vin";
+
+
+        SmartcarAuth smartcarAuth = new SmartcarAuth(clientId, redirectUri, scope, true, null);
+        String requestUri = smartcarAuth.new AuthUrlBuilder()
+                .build();
+
+        assertEquals(expectedUri, requestUri);
+    }
+
+    @Test
     public void smartcarAuth_authUrlBuilderWithSetters() {
         String clientId = "client123";
         String redirectUri = "scclient123://test";
@@ -47,7 +66,7 @@ public class SmartcarAuthTest {
 
         SmartcarAuth smartcarAuth = new SmartcarAuth(clientId, redirectUri, scope, null);
         String requestUri = smartcarAuth.new AuthUrlBuilder()
-                .setApprovalPrompt(true)
+                .setForcePrompt(true)
                 .setMakeBypass("BMW")
                 .setState("some state")
                 .setSingleSelect(true)
