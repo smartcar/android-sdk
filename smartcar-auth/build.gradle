@@ -87,6 +87,7 @@ task javadoc(type: Javadoc) {
     destinationDir = file('../docs')
     options.header = project.name
     options.windowTitle = "${project.name} - ${project.version}"
+    options.memberLevel = JavadocMemberLevel.PUBLIC
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {

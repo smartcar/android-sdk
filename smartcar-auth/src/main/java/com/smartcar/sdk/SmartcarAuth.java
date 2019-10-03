@@ -21,19 +21,25 @@
 package com.smartcar.sdk;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
+import android.text.TextUtils;
 import android.view.View;
+
 import okhttp3.HttpUrl;
 
 /**
  * Main class that provides SDK access methods.
  */
 public class SmartcarAuth {
-    protected static SmartcarAuthRequest smartcarAuthRequest;
-    private static SmartcarCallback callback;
-    private static final String URL_AUTHORIZE = "https://connect.smartcar.com/oauth/authorize";
 
-    public String urlAuthorize = SmartcarAuth.URL_AUTHORIZE;
+    private static final String BASE_AUTHORIZATION_URL = "https://connect.smartcar.com/oauth/authorize";
+
+    protected static String clientId;
+    protected static String redirectUri;
+    protected static String[] scope;
+    protected static Boolean testMode;
+    private static SmartcarCallback callback;
 
     /**
      * Constructs an instance with the given parameters.
@@ -45,8 +51,10 @@ public class SmartcarAuth {
      */
     public SmartcarAuth(String clientId, String redirectUri, String[] scope,
                         SmartcarCallback callback) {
-        String scopeStr = Helper.arrayToString(scope);
-        smartcarAuthRequest = new SmartcarAuthRequest(clientId, redirectUri, scopeStr);
+        this.clientId = clientId;
+        this.redirectUri = redirectUri;
+        this.scope = scope;
+        this.testMode = false;
         this.callback = callback;
     }
 
@@ -61,8 +69,10 @@ public class SmartcarAuth {
      */
     public SmartcarAuth(String clientId, String redirectUri, String[] scope, boolean testMode,
                         SmartcarCallback callback) {
-        String scopeStr = Helper.arrayToString(scope);
-        smartcarAuthRequest = new SmartcarAuthRequest(clientId, redirectUri, scopeStr, testMode);
+        this.clientId = clientId;
+        this.redirectUri = redirectUri;
+        this.scope = scope;
+        this.testMode = testMode;
         this.callback = callback;
     }
 
@@ -73,12 +83,12 @@ public class SmartcarAuth {
         private HttpUrl.Builder urlBuilder;
 
         public AuthUrlBuilder() {
-            urlBuilder = HttpUrl.parse(urlAuthorize).newBuilder()
+            urlBuilder = HttpUrl.parse(BASE_AUTHORIZATION_URL).newBuilder()
                     .addQueryParameter("response_type", "code")
-                    .addQueryParameter("client_id", SmartcarAuth.smartcarAuthRequest.getClientId())
-                    .addQueryParameter("redirect_uri", SmartcarAuth.smartcarAuthRequest.getRedirectURI())
-                    .addQueryParameter("mode", SmartcarAuth.smartcarAuthRequest.getTestMode() ? "test" : "live")
-                    .addQueryParameter("scope", SmartcarAuth.smartcarAuthRequest.getScope());
+                    .addQueryParameter("client_id", clientId)
+                    .addQueryParameter("redirect_uri", redirectUri)
+                    .addQueryParameter("mode", testMode ? "test" : "live")
+                    .addQueryParameter("scope", TextUtils.join(" ", scope));
         }
 
         /**
@@ -86,6 +96,7 @@ public class SmartcarAuth {
          *
          * @param state An optional value included on the {@link SmartcarResponse} object returned
          *              to the {@link SmartcarCallback}
+         * @return a reference to this object
          */
         public AuthUrlBuilder setState(String state) {
             if (!state.equals("")) {
@@ -102,6 +113,7 @@ public class SmartcarAuth {
          * shown to the user even if they have previously approved the same scope.
          *
          * @param forcePrompt Set to true to ensure the grant approval dialog is always shown
+         * @return a reference to this object
          */
         public AuthUrlBuilder setForcePrompt(boolean forcePrompt) {
             urlBuilder.addQueryParameter("approval_prompt", forcePrompt ? "force" : "auto");
@@ -111,9 +123,11 @@ public class SmartcarAuth {
         /**
          * Bypass the brand selector screen to a specified make.
          *
-         * See the available makes on the <a href="https://smartcar.com/docs/api#connect-direct" Smartcar API Reference</a>.
+         * See the available makes on the <a href="https://smartcar.com/docs/api#connect-direct">Smartcar API Reference</a>.
          *
+         * @see <a href="https://smartcar.com/docs/api#connect-direct">Smartcar Connect Direct</a>
          * @param make The selected make
+         * @return a reference to this object
          */
         public AuthUrlBuilder setMakeBypass(String make) {
             urlBuilder.addQueryParameter("make", make);
@@ -126,8 +140,9 @@ public class SmartcarAuth {
          * A user's connected service account can be connected to multiple vehicles. Setting this
          * parameter to true forces the user to select only a single vehicle.
          *
-         * @see https://smartcar.com/docs/api#connect-match
-         * @param singleSelect Set to true to ensure only a single vehicle is authorized.
+         * @see <a href="https://smartcar.com/docs/api#connect-match">Smartcar Connect Match</a>
+         * @param singleSelect Set to true to ensure only a single vehicle is authorized
+         * @return a reference to this object
          */
         public AuthUrlBuilder setSingleSelect(boolean singleSelect) {
             urlBuilder.addQueryParameter("single_select", Boolean.toString(singleSelect));
@@ -141,7 +156,9 @@ public class SmartcarAuth {
          * can be used to ensure that Smartcar Connect will allow the user to authorize only the
          * vehicle with a specific VIN.
          *
+         * @see <a href="https://smartcar.com/docs/api#connect-match">Smartcar Connect Match</a>
          * @param vin The specific VIN to authorize
+         * @return a reference to this object
          */
         public AuthUrlBuilder setSingleSelectVin(String vin) {
             urlBuilder.addQueryParameter("single_select_vin", vin);
@@ -159,28 +176,21 @@ public class SmartcarAuth {
     }
 
     /**
-     * Generates a click event listener for managing Smartcar Connect, and attaches
-     *  it to the input View.
+     * Attaches a click listener to a view to launch Smartcar Connect.
      *
      * @param context The client application's context
-     * @param view The View to attach Smartcar Connect launch to
+     * @param view The view to attach the click listener
      */
     public void addClickHandler(final Context context, final View view) {
-        final View.OnClickListener listener = new View.OnClickListener() {
-            public void onClick(View v) {
-                launchAuthFlow(context);
-            }
-        };
-        view.setOnClickListener(listener);
+        addClickHandler(context, view, (new AuthUrlBuilder()).build());
     }
 
     /**
-     * Generates a click event listener for managing Smartcar Connect, and attaches
-     *  it to the input View.
+     * Attaches a click listener to a view to launch Smartcar Connect.
      *
      * @param context The client application's context
-     * @param view The View to attach Smartcar Connect launch to
-     * @param authUrl Use @AuthUrlBuilder to generate the authorization url
+     * @param view The view to attach the click listener
+     * @param authUrl Use {@link AuthUrlBuilder} to generate the authorization url
      */
     public void addClickHandler(final Context context, final View view, final String authUrl) {
         final View.OnClickListener listener = new View.OnClickListener() {
@@ -198,7 +208,7 @@ public class SmartcarAuth {
      * @param context The client application's context
      */
     public void launchAuthFlow(final Context context) {
-        Helper.startActivity(context, (new AuthUrlBuilder()).build());
+        launchAuthFlow(context, (new AuthUrlBuilder()).build());
     }
 
     /**
@@ -206,10 +216,15 @@ public class SmartcarAuth {
      * trigger like a swipe or touch event on the client application.
      *
      * @param context The client application's context
-     * @param authUrl Use @AuthUrlBuilder to generate the authorization url
+     * @param authUrl Use {@link AuthUrlBuilder} to generate the authorization url
      */
     public void launchAuthFlow(final Context context, final String authUrl) {
-        Helper.startActivity(context, authUrl);
+        Intent intent = new Intent(context, com.smartcar.sdk.WebViewActivity.class);
+        intent.putExtra("URI", authUrl);
+        // The new activity (web view) will not be in the history stack
+        intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
     }
 
     /**
@@ -219,7 +234,7 @@ public class SmartcarAuth {
      * @param uri The response data as a Uri
      */
     protected static void receiveResponse(Uri uri) {
-        if (uri != null && Helper.matchesRedirectUri(uri.toString())) {
+        if (uri != null && uri.toString().startsWith(redirectUri)) {
             String queryState = uri.getQueryParameter("state");
             String queryErrorDescription = uri.getQueryParameter("error_description");
             String queryCode = uri.getQueryParameter("code");

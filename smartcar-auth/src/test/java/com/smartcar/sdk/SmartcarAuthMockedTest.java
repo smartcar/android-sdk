@@ -21,8 +21,11 @@
 package com.smartcar.sdk;
 
 import android.content.Context;
+import android.content.Intent;
+import android.text.TextUtils;
 import android.view.View;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -31,75 +34,96 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.verifyStatic;
+import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Helper.class})
+@PrepareForTest({SmartcarAuth.class, TextUtils.class})
 public class SmartcarAuthMockedTest {
 
+    private final String clientId = "client123";
+    private final String redirectUri = "scclient123://test";
+    private final String[] scope = {"read_odometer", "read_vin"};
+
+    @Before
+    public void setUp() {
+        mockStatic(TextUtils.class);
+        when(TextUtils.join(" ", scope)).thenReturn("read_odometer read_vin");
+    }
+
     @Test
-    public void smartcarAuth_launchAuthFlow() {
+    public void smartcarAuth_launchAuthFlow() throws Exception {
 
-        // Setup Mocks
-        mockStatic(Helper.class);
+        // Setup mocks
         Context context = mock(Context.class);
+        Intent intent = mock(Intent.class);
+        whenNew(Intent.class)
+                .withArguments(context, WebViewActivity.class)
+                .thenReturn(intent);
 
-        // Execute Method
-        String clientId = "client123";
-        String redirectUri = "scclient123://test";
-        String[] scope = {"read_odometer", "read_vin"};
+        // Execute method
         SmartcarAuth smartcarAuth = new SmartcarAuth(clientId, redirectUri, scope, null);
-        String authUrl = smartcarAuth.new AuthUrlBuilder().build();
-
         smartcarAuth.launchAuthFlow(context);
 
-        // Verify Mocks
-        verifyStatic(Helper.class, times(1));
-        Helper.startActivity(context, authUrl);
+        // Verify mocks
+        String expectedUrl = smartcarAuth.new AuthUrlBuilder().build();
+        verify(intent, times(1))
+                .putExtra("URI", expectedUrl);
+        verify(intent, times(1))
+                .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+        verify(intent, times(1))
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        verify(context, times(1))
+                .startActivity(Mockito.any(Intent.class));
 
     }
 
     @Test
-    public void smartcarAuth_launchAuthFlow_withAuthUrl() {
+    public void smartcarAuth_launchAuthFlow_withAuthUrl() throws Exception {
 
-        // Setup Mocks
-        mockStatic(Helper.class);
+        // Setup mocks
         Context context = mock(Context.class);
+        Intent intent = mock(Intent.class);
+        whenNew(Intent.class)
+                .withArguments(context, WebViewActivity.class)
+                .thenReturn(intent);
 
-        // Execute Method
-        String clientId = "client123";
-        String redirectUri = "scclient123://test";
-        String[] scope = {"read_odometer", "read_vin"};
+        // Execute method
         SmartcarAuth smartcarAuth = new SmartcarAuth(clientId, redirectUri, scope, null);
         String authUrl = smartcarAuth.new AuthUrlBuilder()
-            .setState("foo")
-            .setMakeBypass("TESLA")
-            .setSingleSelect(false)
-            .build();
-
+                .setState("foo")
+                .setMakeBypass("TESLA")
+                .setSingleSelect(false)
+                .build();
         smartcarAuth.launchAuthFlow(context, authUrl);
 
-        // Verify Mocks
-        verifyStatic(Helper.class, times(1));
-        Helper.startActivity(context, authUrl);
+        // Verify mocks
+        verify(intent, times(1))
+                .putExtra("URI", authUrl);
+        verify(intent, times(1))
+                .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+        verify(intent, times(1))
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        verify(context, times(1))
+                .startActivity(Mockito.any(Intent.class));
 
     }
 
     @Test
     public void smartcarAuth_addClickHandler() {
 
+        // Setup mocks
         Context context = mock(Context.class);
         View view = mock(View.class);
 
-        String clientId = "client123";
-        String redirectUri = "scclient123://test";
-        String[] scope = {"read_odometer", "read_vin"};
+        // Execute methods
         SmartcarAuth smartcarAuth = new SmartcarAuth(clientId, redirectUri, scope, null);
-
         smartcarAuth.addClickHandler(context, view);
 
-        Mockito.verify(view, times(1))
+        // Verify mocks
+        verify(view, times(1))
             .setOnClickListener(Mockito.any(View.OnClickListener.class));
 
     }
@@ -107,22 +131,21 @@ public class SmartcarAuthMockedTest {
     @Test
     public void smartcarAuth_addClickHandler_withAuthUrl() {
 
+        // Setup mocks
         Context context = mock(Context.class);
         View view = mock(View.class);
 
-        String clientId = "client123";
-        String redirectUri = "scclient123://test";
-        String[] scope = {"read_odometer", "read_vin"};
+        // Execute methods
         SmartcarAuth smartcarAuth = new SmartcarAuth(clientId, redirectUri, scope, null);
         String authUrl = smartcarAuth.new AuthUrlBuilder()
             .setState("foo")
             .setMakeBypass("TESLA")
             .setSingleSelect(false)
             .build();
-
         smartcarAuth.addClickHandler(context, view, authUrl);
 
-        Mockito.verify(view, times(1))
+        // Verify mocks
+        verify(view, times(1))
                 .setOnClickListener(Mockito.any(View.OnClickListener.class));
 
     }
