@@ -25,6 +25,8 @@ import android.content.Intent;
 import android.text.TextUtils;
 import android.view.View;
 
+import androidx.browser.customtabs.CustomTabsIntent;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -58,10 +60,14 @@ public class SmartcarAuthMockedTest {
 
         // Setup mocks
         Context context = mock(Context.class);
-        Intent intent = mock(Intent.class);
-        whenNew(Intent.class)
-                .withArguments(context, WebViewActivity.class)
-                .thenReturn(intent);
+
+        CustomTabsIntent.Builder builder = mock(CustomTabsIntent.Builder.class);
+        whenNew(CustomTabsIntent.Builder.class).withNoArguments().thenReturn(builder);
+
+        CustomTabsIntent customTabsIntent = mock(CustomTabsIntent.class);
+        when(builder.build()).thenReturn(customTabsIntent);
+
+        Intent intent = customTabsIntent.intent;
 
         // Execute method
         SmartcarAuth smartcarAuth = new SmartcarAuth(clientId, redirectUri, scope, null);
@@ -85,10 +91,14 @@ public class SmartcarAuthMockedTest {
 
         // Setup mocks
         Context context = mock(Context.class);
-        Intent intent = mock(Intent.class);
-        whenNew(Intent.class)
-                .withArguments(context, WebViewActivity.class)
-                .thenReturn(intent);
+
+        CustomTabsIntent.Builder builder = mock(CustomTabsIntent.Builder.class);
+        CustomTabsIntent customTabsIntent = mock(CustomTabsIntent.class);
+        whenNew(CustomTabsIntent.Builder.class).withNoArguments().thenReturn(builder);
+        when(builder.build()).thenReturn(customTabsIntent);
+
+        Intent intent = customTabsIntent.intent;
+
 
         // Execute method
         SmartcarAuth smartcarAuth = new SmartcarAuth(clientId, redirectUri, scope, null);

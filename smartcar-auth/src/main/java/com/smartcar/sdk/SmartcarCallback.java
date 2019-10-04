@@ -24,6 +24,7 @@ package com.smartcar.sdk;
  * Callback interface that should be implemented by the application.
  * Defines a single method that will be used to send the response data back to the application.
  */
+@FunctionalInterface
 public interface SmartcarCallback {
     void handleResponse(SmartcarResponse smartcarResponse);
 }

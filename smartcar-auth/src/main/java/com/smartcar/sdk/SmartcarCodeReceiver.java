@@ -32,6 +32,8 @@ import androidx.appcompat.app.AppCompatActivity;
  */
 @SuppressLint("Registered")
 public class SmartcarCodeReceiver extends AppCompatActivity {
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Intent intent = getIntent();
@@ -40,4 +42,5 @@ public class SmartcarCodeReceiver extends AppCompatActivity {
         SmartcarAuth.receiveResponse(uri);
         finish();
     }
+
 }

@@ -26,6 +26,8 @@ import android.net.Uri;
 import android.text.TextUtils;
 import android.view.View;
 
+import androidx.browser.customtabs.CustomTabsIntent;
+
 import okhttp3.HttpUrl;
 
 /**
@@ -219,12 +221,14 @@ public class SmartcarAuth {
      * @param authUrl Use {@link AuthUrlBuilder} to generate the authorization url
      */
     public void launchAuthFlow(final Context context, final String authUrl) {
-        Intent intent = new Intent(context, com.smartcar.sdk.WebViewActivity.class);
-        intent.putExtra("URI", authUrl);
-        // The new activity (web view) will not be in the history stack
+
+        CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+        CustomTabsIntent customTabsIntent = builder.build();
+        Intent intent = customTabsIntent.intent;
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.startActivity(intent);
+        customTabsIntent.launchUrl(context, Uri.parse(authUrl));
+
     }
 
     /**
