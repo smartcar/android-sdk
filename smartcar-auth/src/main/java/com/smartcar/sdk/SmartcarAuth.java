@@ -195,7 +195,7 @@ public class SmartcarAuth {
      * @param authUrl Use {@link AuthUrlBuilder} to generate the authorization url
      */
     public void addClickHandler(final Context context, final View view, final String authUrl) {
-        final View.OnClickListener listener = new View.OnClickListener() {
+        View.OnClickListener listener = new View.OnClickListener() {
             public void onClick(View v) {
                 launchAuthFlow(context, authUrl);
             }

@@ -21,11 +21,8 @@
 package com.smartcar.sdk;
 
 import android.content.Context;
-import android.content.Intent;
 import android.text.TextUtils;
 import android.view.View;
-
-import androidx.browser.customtabs.CustomTabsIntent;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -39,10 +36,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({SmartcarAuth.class, TextUtils.class})
+@PrepareForTest({TextUtils.class})
 public class SmartcarAuthMockedTest {
 
     private final String clientId = "client123";
@@ -53,72 +49,6 @@ public class SmartcarAuthMockedTest {
     public void setUp() {
         mockStatic(TextUtils.class);
         when(TextUtils.join(" ", scope)).thenReturn("read_odometer read_vin");
-    }
-
-    @Test
-    public void smartcarAuth_launchAuthFlow() throws Exception {
-
-        // Setup mocks
-        Context context = mock(Context.class);
-
-        CustomTabsIntent.Builder builder = mock(CustomTabsIntent.Builder.class);
-        whenNew(CustomTabsIntent.Builder.class).withNoArguments().thenReturn(builder);
-
-        CustomTabsIntent customTabsIntent = mock(CustomTabsIntent.class);
-        when(builder.build()).thenReturn(customTabsIntent);
-
-        Intent intent = customTabsIntent.intent;
-
-        // Execute method
-        SmartcarAuth smartcarAuth = new SmartcarAuth(clientId, redirectUri, scope, null);
-        smartcarAuth.launchAuthFlow(context);
-
-        // Verify mocks
-        String expectedUrl = smartcarAuth.new AuthUrlBuilder().build();
-        verify(intent, times(1))
-                .putExtra("URI", expectedUrl);
-        verify(intent, times(1))
-                .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-        verify(intent, times(1))
-                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        verify(context, times(1))
-                .startActivity(Mockito.any(Intent.class));
-
-    }
-
-    @Test
-    public void smartcarAuth_launchAuthFlow_withAuthUrl() throws Exception {
-
-        // Setup mocks
-        Context context = mock(Context.class);
-
-        CustomTabsIntent.Builder builder = mock(CustomTabsIntent.Builder.class);
-        CustomTabsIntent customTabsIntent = mock(CustomTabsIntent.class);
-        whenNew(CustomTabsIntent.Builder.class).withNoArguments().thenReturn(builder);
-        when(builder.build()).thenReturn(customTabsIntent);
-
-        Intent intent = customTabsIntent.intent;
-
-
-        // Execute method
-        SmartcarAuth smartcarAuth = new SmartcarAuth(clientId, redirectUri, scope, null);
-        String authUrl = smartcarAuth.new AuthUrlBuilder()
-                .setState("foo")
-                .setMakeBypass("TESLA")
-                .setSingleSelect(false)
-                .build();
-        smartcarAuth.launchAuthFlow(context, authUrl);
-
-        // Verify mocks
-        verify(intent, times(1))
-                .putExtra("URI", authUrl);
-        verify(intent, times(1))
-                .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-        verify(intent, times(1))
-                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        verify(context, times(1))
-                .startActivity(Mockito.any(Intent.class));
-
     }
 
     @Test
