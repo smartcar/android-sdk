@@ -1,12 +1,18 @@
 package com.smartcar.sdk;
 
+import android.content.Context;
 import android.net.Uri;
+import android.view.View;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.robolectric.RobolectricTestRunner;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @RunWith(RobolectricTestRunner.class)
 public class SmartcarAuthTest {
@@ -75,6 +81,56 @@ public class SmartcarAuthTest {
 
         assertEquals(expectedUri, requestUri);
     }
+
+    @Test
+    public void smartcarAuth_addClickHandler() {
+
+        // Setup mocks
+        Context context = mock(Context.class);
+        View view = mock(View.class);
+
+        // Execute methods
+        SmartcarAuth smartcarAuth = new SmartcarAuth(
+                "client123",
+                "scclient123://test",
+                new String[] {"read_odometer", "read_vin"},
+                null
+        );
+        smartcarAuth.addClickHandler(context, view);
+
+        // Verify mocks
+        verify(view, times(1))
+                .setOnClickListener(Mockito.any(View.OnClickListener.class));
+
+    }
+
+    @Test
+    public void smartcarAuth_addClickHandler_withAuthUrl() {
+
+        // Setup mocks
+        Context context = mock(Context.class);
+        View view = mock(View.class);
+
+        // Execute methods
+        SmartcarAuth smartcarAuth = new SmartcarAuth(
+                "client123",
+                "scclient123://test",
+                new String[] {"read_odometer", "read_vin"},
+                null
+        );
+        String authUrl = smartcarAuth.new AuthUrlBuilder()
+                .setState("foo")
+                .setMakeBypass("TESLA")
+                .setSingleSelect(false)
+                .build();
+        smartcarAuth.addClickHandler(context, view, authUrl);
+
+        // Verify mocks
+        verify(view, times(1))
+                .setOnClickListener(Mockito.any(View.OnClickListener.class));
+
+    }
+
     @Test
     public void smartcarAuth_receiveResponse() {
         String clientId = "client123";

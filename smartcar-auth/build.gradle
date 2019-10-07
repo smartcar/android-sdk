@@ -78,9 +78,6 @@ dependencies {
     testAnnotationProcessor 'com.google.auto.service:auto-service:1.0-rc4'
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.mockito:mockito-core:3.1.0'
-    testImplementation 'org.powermock:powermock-core:2.0.2'
-    testImplementation 'org.powermock:powermock-api-mockito2:2.0.2'
-    testImplementation 'org.powermock:powermock-module-junit4:2.0.2'
     testImplementation 'org.robolectric:robolectric:4.3'
 }
 
