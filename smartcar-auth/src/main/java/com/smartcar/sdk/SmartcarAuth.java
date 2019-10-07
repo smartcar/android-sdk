@@ -28,8 +28,6 @@ import android.view.View;
 
 import androidx.browser.customtabs.CustomTabsIntent;
 
-import okhttp3.HttpUrl;
-
 /**
  * Main class that provides SDK access methods.
  */
@@ -37,10 +35,10 @@ public class SmartcarAuth {
 
     private static final String BASE_AUTHORIZATION_URL = "https://connect.smartcar.com/oauth/authorize";
 
-    protected static String clientId;
-    protected static String redirectUri;
-    protected static String[] scope;
-    protected static Boolean testMode;
+    private static String clientId;
+    private static String redirectUri;
+    private static String[] scope;
+    private static Boolean testMode;
     private static SmartcarCallback callback;
 
     /**
@@ -53,11 +51,7 @@ public class SmartcarAuth {
      */
     public SmartcarAuth(String clientId, String redirectUri, String[] scope,
                         SmartcarCallback callback) {
-        this.clientId = clientId;
-        this.redirectUri = redirectUri;
-        this.scope = scope;
-        this.testMode = false;
-        this.callback = callback;
+        this(clientId, redirectUri, scope, false, callback);
     }
 
     /**
@@ -82,15 +76,15 @@ public class SmartcarAuth {
      * A builder used for generating Smartcar Connect authorization URLs.
      */
     public class AuthUrlBuilder {
-        private HttpUrl.Builder urlBuilder;
+        private Uri.Builder uriBuilder;
 
         public AuthUrlBuilder() {
-            urlBuilder = HttpUrl.parse(BASE_AUTHORIZATION_URL).newBuilder()
-                    .addQueryParameter("response_type", "code")
-                    .addQueryParameter("client_id", clientId)
-                    .addQueryParameter("redirect_uri", redirectUri)
-                    .addQueryParameter("mode", testMode ? "test" : "live")
-                    .addQueryParameter("scope", TextUtils.join(" ", scope));
+            uriBuilder = Uri.parse(BASE_AUTHORIZATION_URL).buildUpon()
+                    .appendQueryParameter("response_type", "code")
+                    .appendQueryParameter("client_id", clientId)
+                    .appendQueryParameter("redirect_uri", redirectUri)
+                    .appendQueryParameter("mode", testMode ? "test" : "live")
+                    .appendQueryParameter("scope", TextUtils.join(" ", scope));
         }
 
         /**
@@ -102,7 +96,7 @@ public class SmartcarAuth {
          */
         public AuthUrlBuilder setState(String state) {
             if (!state.equals("")) {
-                urlBuilder.addQueryParameter("state", state);
+                uriBuilder.appendQueryParameter("state", state);
             }
             return this;
         }
@@ -118,7 +112,7 @@ public class SmartcarAuth {
          * @return a reference to this object
          */
         public AuthUrlBuilder setForcePrompt(boolean forcePrompt) {
-            urlBuilder.addQueryParameter("approval_prompt", forcePrompt ? "force" : "auto");
+            uriBuilder.appendQueryParameter("approval_prompt", forcePrompt ? "force" : "auto");
             return this;
         }
 
@@ -132,7 +126,7 @@ public class SmartcarAuth {
          * @return a reference to this object
          */
         public AuthUrlBuilder setMakeBypass(String make) {
-            urlBuilder.addQueryParameter("make", make);
+            uriBuilder.appendQueryParameter("make", make);
             return this;
         }
 
@@ -147,7 +141,7 @@ public class SmartcarAuth {
          * @return a reference to this object
          */
         public AuthUrlBuilder setSingleSelect(boolean singleSelect) {
-            urlBuilder.addQueryParameter("single_select", Boolean.toString(singleSelect));
+            uriBuilder.appendQueryParameter("single_select", Boolean.toString(singleSelect));
             return this;
         }
 
@@ -163,7 +157,7 @@ public class SmartcarAuth {
          * @return a reference to this object
          */
         public AuthUrlBuilder setSingleSelectVin(String vin) {
-            urlBuilder.addQueryParameter("single_select_vin", vin);
+            uriBuilder.appendQueryParameter("single_select_vin", vin);
             return this;
         }
 
@@ -173,7 +167,7 @@ public class SmartcarAuth {
          * @return A built url which can be used in {@link SmartcarAuth#launchAuthFlow(Context, String)} or {@link SmartcarAuth#addClickHandler(Context, View, String)}
          */
         public String build() {
-            return urlBuilder.build().toString();
+            return uriBuilder.build().toString();
         }
     }
 
@@ -252,24 +246,25 @@ public class SmartcarAuth {
             SmartcarResponse.Builder responseBuilder = new SmartcarResponse.Builder();
 
             if (receivedCode) {
+
                 SmartcarResponse smartcarResponse = responseBuilder
                         .code(queryCode)
                         .errorDescription(queryErrorDescription)
                         .state(queryState)
                         .build();
                 callback.handleResponse(smartcarResponse);
-            }
 
-            else if (receivedError) {
+            } else if (receivedError) {
+
                 SmartcarResponse smartcarResponse = responseBuilder
                         .error(queryError)
                         .errorDescription(queryErrorDescription)
                         .state(queryState)
                         .build();
                 callback.handleResponse(smartcarResponse);
-            }
 
-            else if (receivedErrorWithVehicle) {
+            } else if (receivedErrorWithVehicle) {
+
                 String make = uri.getQueryParameter("make");
                 String model = uri.getQueryParameter("model");
                 int year = Integer.parseInt(uri.getQueryParameter("year"));
@@ -287,14 +282,15 @@ public class SmartcarAuth {
                         .vehicleInfo(responseVehicle)
                         .build();
                 callback.handleResponse(smartcarResponse);
-            }
 
-            else {
+            } else {
+
                 SmartcarResponse smartcarResponse = responseBuilder
                         .errorDescription("Unable to fetch code. Please try again")
                         .state(queryState)
                         .build();
                 callback.handleResponse(smartcarResponse);
+
             }
 
         }
