@@ -30,8 +30,7 @@ public class SmartcarAuthTest {
 
 
         SmartcarAuth smartcarAuth = new SmartcarAuth(clientId, redirectUri, scope, null);
-        String requestUri = smartcarAuth.new AuthUrlBuilder()
-                .build();
+        String requestUri = smartcarAuth.authUrlBuilder().build();
 
         assertEquals(expectedUri, requestUri);
     }
@@ -49,8 +48,7 @@ public class SmartcarAuthTest {
 
 
         SmartcarAuth smartcarAuth = new SmartcarAuth(clientId, redirectUri, scope, true, null);
-        String requestUri = smartcarAuth.new AuthUrlBuilder()
-                .build();
+        String requestUri = smartcarAuth.authUrlBuilder().build();
 
         assertEquals(expectedUri, requestUri);
     }
@@ -71,7 +69,7 @@ public class SmartcarAuthTest {
                 "&single_select_vin=" + vin;
 
         SmartcarAuth smartcarAuth = new SmartcarAuth(clientId, redirectUri, scope, null);
-        String requestUri = smartcarAuth.new AuthUrlBuilder()
+        String requestUri = smartcarAuth.authUrlBuilder()
                 .setForcePrompt(true)
                 .setMakeBypass("BMW")
                 .setState("some state")
@@ -118,7 +116,7 @@ public class SmartcarAuthTest {
                 new String[] {"read_odometer", "read_vin"},
                 null
         );
-        String authUrl = smartcarAuth.new AuthUrlBuilder()
+        String authUrl = smartcarAuth.authUrlBuilder()
                 .setState("foo")
                 .setMakeBypass("TESLA")
                 .setSingleSelect(false)
@@ -128,6 +126,47 @@ public class SmartcarAuthTest {
         // Verify mocks
         verify(view, times(1))
                 .setOnClickListener(Mockito.any(View.OnClickListener.class));
+
+    }
+
+    @Test
+    public void smartcarAuth_launchAuthFlow() {
+
+        // Setup mocks
+        Context context = mock(Context.class);
+
+        // Execute methods
+        SmartcarAuth smartcarAuth = new SmartcarAuth(
+                "client123",
+                "scclient123://test",
+                new String[] {"read_odometer", "read_vin"},
+                null
+        );
+
+        smartcarAuth.launchAuthFlow(context);
+
+    }
+
+    @Test
+    public void smartcarAuth_launchAuthFlow_withAuthUrl() {
+
+        // Setup mocks
+        Context context = mock(Context.class);
+
+        // Execute methods
+        SmartcarAuth smartcarAuth = new SmartcarAuth(
+                "client123",
+                "scclient123://test",
+                new String[] {"read_odometer", "read_vin"},
+                null
+        );
+        String authUrl = smartcarAuth.authUrlBuilder()
+                .setState("foo")
+                .setMakeBypass("TESLA")
+                .setSingleSelect(false)
+                .build();
+        smartcarAuth.launchAuthFlow(context, authUrl);
+
 
     }
 

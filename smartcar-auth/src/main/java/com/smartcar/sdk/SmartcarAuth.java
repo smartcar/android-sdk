@@ -73,6 +73,15 @@ public class SmartcarAuth {
     }
 
     /**
+     * Build a Smartcar Connect authorization URL.
+     *
+     * Use the built string with {@link SmartcarAuth#launchAuthFlow(Context, String)} or {@link SmartcarAuth#addClickHandler(Context, View, String)}.
+     */
+    public AuthUrlBuilder authUrlBuilder() {
+      return new AuthUrlBuilder();
+    }
+
+    /**
      * A builder used for generating Smartcar Connect authorization URLs.
      */
     public class AuthUrlBuilder {

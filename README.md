@@ -90,7 +90,7 @@ smartcarAuth.addClickHandler(getApplicationContext(), connectButton);
 3. Use the [`AuthUrlBuilder`](https://smartcar.github.io/android-sdk/com/smartcar/sdk/SmartcarAuth.AuthUrlBuilder.html) for additional configuration:
 
 ```java
-String authUrl = smartcarAuth.new AuthUrlBuilder()
+String authUrl = smartcarAuth.authUrlBuilder()
     .setState("foo")
     .setForcePrompt(true)
     .setMakeBypass("TESLA")
