@@ -61,6 +61,17 @@ public class SmartcarResponse {
 
     public VehicleInfo getVehicleInfo() { return this.vehicleInfo; }
 
+    @Override
+    public String toString() {
+        return "SmartcarResponse{" +
+                "code='" + code + '\'' +
+                ", error='" + error + '\'' +
+                ", errorDescription='" + errorDescription + '\'' +
+                ", state='" + state + '\'' +
+                ", vehicleInfo=" + vehicleInfo +
+                '}';
+    }
+
     public static class Builder {
         private String code;
         private String error;
