@@ -91,7 +91,7 @@ String authUrl = smartcarAuth.authUrlBuilder()
 smartcarAuth.launchAuthFlow(getApplicationContext(), authUrl);
 
 // Alternatively attach a click handler
-Button connectButton = (Button) findViewById(R.id.connect_button);
+Button connectButton = findViewById(R.id.connect_button);
 smartcarAuth.addClickHandler(getApplicationContext(), button, authUrl);
 ```
 
