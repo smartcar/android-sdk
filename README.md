@@ -8,22 +8,14 @@ The SmartcarAuth Android SDK makes it easy to integrate with Smartcar Connect fr
 
 ## Installation
 
-The recommended method for obtaining the SDK is via Gradle or Maven.
+Add `smartcar-auth` to your application's `build.gradle` dependencies:
 
 ### Gradle
 
-```groovy
-compile "com.smartcar.sdk:smartcar-auth:3.0.0"
 ```
-
-### Maven
-
-```xml
-<dependency>
-    <groupId>com.smartcar.sdk</groupId>
-    <artifactId>smartcar-auth</artifactId>
-    <version>3.0.0</version>
-</dependency>
+dependencies {
+    implementation "com.smartcar.sdk:smartcar-auth:3.0.0"
+}
 ```
 
 ## Redirect URI Setup
@@ -80,7 +72,7 @@ SmartcarAuth smartcarAuth = new SmartcarAuth(
 smartcarAuth.launchAuthFlow(getApplicationContext());
 ```
 
-Alternatively, add a click handler to any button to launch the Smartcar Connect flow.
+Alternatively, add a click handler to any view to launch the Smartcar Connect flow.
 
 ```java
 Button connectButton = findViewById(R.id.connect_button);
