@@ -20,24 +20,25 @@
 
 package com.smartcar.sdk;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 /**
+ *
  * Activity that receives the response sent to the custom URL scheme defined by the application.
  */
-@SuppressLint("Registered")
 public class SmartcarCodeReceiver extends AppCompatActivity {
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Intent intent = getIntent();
         Uri uri = intent.getData();
-        Log.d("SmartcarCodeReceiver ", uri.toString());
         SmartcarAuth.receiveResponse(uri);
         finish();
     }
+
 }

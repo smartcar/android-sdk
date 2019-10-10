@@ -11,19 +11,19 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0'
         classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'
-        classpath 'com.dicedmelon.gradle:jacoco-android:0.1.1'
+        classpath 'com.dicedmelon.gradle:jacoco-android:0.1.4'
     }
 }
 
 android {
-    compileSdkVersion 25
+    compileSdkVersion 29
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 25
+        targetSdkVersion 29
 
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     lintOptions {
         disable 'UnusedResources'
@@ -39,6 +39,9 @@ android {
         }
     }
     testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
         unitTests.all {
             jacoco {
                 includeNoLocationClasses = true
@@ -67,14 +70,15 @@ task compositeCoverageReport(type: JacocoReport, dependsOn: ['testDebugUnitTest'
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.android.support:appcompat-v7:25.2.0'
-    implementation 'com.squareup.okhttp3:okhttp:3.12.0'
-    androidTestImplementation 'com.android.support:support-annotations:27.1.1'
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test:rules:1.0.2'
+    implementation "androidx.appcompat:appcompat:1.1.0"
+    implementation 'androidx.browser:browser:1.0.0'
+    androidTestImplementation 'androidx.annotation:annotation:1.1.0'
+    androidTestImplementation 'androidx.test:runner:1.2.0'
+    androidTestImplementation 'androidx.test:rules:1.2.0'
+    testAnnotationProcessor 'com.google.auto.service:auto-service:1.0-rc4'
     testImplementation 'junit:junit:4.12'
-    testImplementation 'org.mockito:mockito-core:1.10.19'
-    testImplementation 'org.robolectric:robolectric:3.2.2'
+    testImplementation 'org.mockito:mockito-core:3.1.0'
+    testImplementation 'org.robolectric:robolectric:4.3'
 }
 
 task javadoc(type: Javadoc) {
@@ -83,6 +87,7 @@ task javadoc(type: Javadoc) {
     destinationDir = file('../docs')
     options.header = project.name
     options.windowTitle = "${project.name} - ${project.version}"
+    options.memberLevel = JavadocMemberLevel.PUBLIC
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {

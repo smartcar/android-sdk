@@ -1,7 +1,7 @@
 package com.smartcar.sdk;
 
 /**
- * A class that creates a custom VehicleInfo object.
+ * A class that stores vehicle data returned in {@link SmartcarResponse}.
  */
 public class VehicleInfo {
     private String vin;
@@ -55,6 +55,16 @@ public class VehicleInfo {
      */
     public Integer getYear() {
         return this.year;
+    }
+
+    @Override
+    public String toString() {
+        return "VehicleInfo{" +
+                "vin='" + vin + '\'' +
+                ", make='" + make + '\'' +
+                ", model='" + model + '\'' +
+                ", year=" + year +
+                '}';
     }
 
     /**

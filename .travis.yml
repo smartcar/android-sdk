@@ -7,29 +7,28 @@ branches:
 
 env:
   global:
-    - ANDROID_TARGET=android-21
-    - ANDROID_ABI=armeabi-v7a
-    - ADB_INSTALL_TIMEOUT=10
+    - BUILD_TOOLS_VERSION=29.0.2
+    - ANDROID_API_LEVEL=29
 
 android:
-  update_sdk: true
   components:
     - tools
     - platform-tools
-    - tools
-    - build-tools-27.0.3
-    - android-21
-    - android-25
+    - build-tools-$BUILD_TOOLS
+    - android-$ANDROID_API_LEVEL
+    - extra-google-google_play_services
+    - extra-google-m2repository
     - extra-android-m2repository
-    - sys-img-${ANDROID_ABI}-${ANDROID_TARGET}
+    - addon-google_apis-google-$ANDROID_API_LEVEL
+  licenses:
+    - 'android-sdk-preview-license-.+'
+    - 'android-sdk-license-.+'
+    - 'google-gdk-license-.+'
 
 script:
-  - ./gradlew build jacocoTestReport assembleAndroidTest
-  - echo no | android create avd --force --name test --target $ANDROID_TARGET --abi $ANDROID_ABI
-  - emulator -avd test -no-skin -no-audio -no-window &
-  - android-wait-for-emulator
-  - adb shell setprop dalvik.vm.dexopt-flags v=n,o=v
-  - ./gradlew connectedCheck
+  # accept sdk licenses and build/test the project
+  - yes | sdkmanager --update
+  - ./gradlew build jacocoTestReport
 
   # report coverage
   - bash <(curl -s https://codecov.io/bash)
