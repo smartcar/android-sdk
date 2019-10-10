@@ -12,7 +12,7 @@ Add the following to your application's `build.gradle` dependencies:
 
 ```
 dependencies {
-    implementation "com.smartcar.sdk:smartcar-auth:3.0.0"
+    implementation 'com.smartcar.sdk:smartcar-auth:3.0.0'
     implementation 'androidx.browser:browser:1.0.0'
 }
 ```
