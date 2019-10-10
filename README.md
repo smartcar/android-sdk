@@ -8,11 +8,12 @@ The SmartcarAuth Android SDK makes it easy to integrate with Smartcar Connect fr
 
 ## Installation
 
-Add `smartcar-auth` to your application's `build.gradle` dependencies:
+Add the following to your application's `build.gradle` dependencies:
 
 ```
 dependencies {
     implementation "com.smartcar.sdk:smartcar-auth:3.0.0"
+    implementation 'androidx.browser:browser:1.0.0'
 }
 ```
 
