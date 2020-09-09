@@ -171,6 +171,18 @@ public class SmartcarAuth {
         }
 
         /**
+         * Enable early access features.
+         *
+         * @param flags List of early access features to enable. The naming of the flags is colon
+         * separated for any sub-options the flag may have (ex: country:DE).
+         * @return a reference to this object
+         */
+        public AuthUrlBuilder setFlags(String[] flags) {
+            uriBuilder.appendQueryParameter("flags", TextUtils.join(" ", flags));
+            return this;
+        }
+
+        /**
          * Build a Smartcar Connect authorization url.
          *
          * @return A built url which can be used in {@link SmartcarAuth#launchAuthFlow(Context, String)} or {@link SmartcarAuth#addClickHandler(Context, View, String)}
