@@ -173,8 +173,7 @@ public class SmartcarAuth {
         /**
          * Enable early access features.
          *
-         * @param flags List of early access features to enable. The naming of the flags is colon
-         * separated for any sub-options the flag may have (ex: country:DE).
+         * @param flags List of feature flags that your application has early access to.
          * @return a reference to this object
          */
         public AuthUrlBuilder setFlags(String[] flags) {
