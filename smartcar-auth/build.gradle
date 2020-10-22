@@ -4,7 +4,6 @@ apply plugin: 'jacoco-android'
 apply plugin: 'com.github.dcendents.android-maven'
 
 group = libGroup
-version = libVersion
 
 buildscript {
     repositories {
@@ -85,9 +84,10 @@ task javadoc(type: Javadoc) {
     source = android.sourceSets.main.java.srcDirs
     classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
     destinationDir = file('../docs')
-    options.header = project.name
-    options.windowTitle = "${project.name} - ${project.version}"
+    options.header = libDescription
+    options.windowTitle = "${libName} - ${libVersion}"
     options.memberLevel = JavadocMemberLevel.PUBLIC
+    options.addBooleanOption('notimestamp', true)
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
