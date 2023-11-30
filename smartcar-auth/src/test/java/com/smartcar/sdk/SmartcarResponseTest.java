@@ -32,11 +32,13 @@ public class SmartcarResponseTest {
                 .code("testcode")
                 .errorDescription("Just a testmessage")
                 .state("teststate")
+                .virtualKeyUrl("https://www.tesla.com/_ak/smartcar.com")
                 .build();
 
         assertEquals(smartcarResponse.getCode(), "testcode");
         assertEquals(smartcarResponse.getErrorDescription(), "Just a testmessage");
         assertEquals(smartcarResponse.getState(), "teststate");
+        assertEquals(smartcarResponse.getVirtualKeyUrl(), "https://www.tesla.com/_ak/smartcar.com");
     }
 
     @Test
