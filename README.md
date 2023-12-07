@@ -105,7 +105,7 @@ Please use Android Studio 3.5 to develop on the Smartcar Android SDK.
 [smartcar-docs]: https://smartcar.com/docs
 [ci-image]: https://travis-ci.com/smartcar/android-sdk.svg?token=6Yrkze1DNb8WHnHxrCy6&branch=master
 [ci-url]: https://travis-ci.com/smartcar/android-sdk
-[javadoc-image]: https://img.shields.io/badge/javadoc-3.0.0-brightgreen.svg
+[javadoc-image]: https://img.shields.io/badge/javadoc-3.1.2-brightgreen.svg
 [javadoc-url]: https://smartcar.github.io/android-sdk
 [maven-image]: https://img.shields.io/maven-central/v/com.smartcar.sdk/smartcar-auth.svg?label=Maven%20Central
 [maven-url]: https://central.sonatype.com/artifact/com.smartcar.sdk/smartcar-auth
