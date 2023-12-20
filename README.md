@@ -1,10 +1,12 @@
-# Smartcar Android Auth SDK [![Build Status][ci-image]][ci-url] [![Coverage][coverage-image]][coverage-url] [![Download][bintray-image]][bintray-url]
+# Smartcar Android Auth SDK [![Build Status][ci-image]][ci-url] [![JavaDoc][javadoc-image]][javadoc-url] [![Maven Central][maven-image]][maven-url]
 
 The SmartcarAuth Android SDK makes it easy to integrate with Smartcar Connect from Android.
 
 ## Reference Documentation
 
-- [Javadoc Reference Documentation](https://smartcar.github.io/android-sdk)
+- [Smartcar Android Auth SDK JavaDoc][javadoc-url]
+- [Smartcar Developer Dashboard][smartcar-dashboard]
+- [Smartcar Documentation][smartcar-docs]
 
 ## Installation
 
@@ -19,7 +21,7 @@ dependencies {
 
 ## Redirect URI Setup
 
-Your application must register a custom URI scheme in order to receive Connect's response. Smartcar requires the custom URI scheme to be in the format of `"sc" + clientId + "://" + hostname`. This URI must also be registered in [Smartcar's developer portal](https://developer.smartcar.com) for your application. You may append an optional path component or TLD. For example, a redirect uri could be: 
+Your application must register a custom URI scheme in order to receive Connect's response. Smartcar requires the custom URI scheme to be in the format of `"sc" + clientId + "://" + hostname`. This URI must also be registered in [Smartcar's developer portal](https://dashboard.smartcar.com) for your application. You may append an optional path component or TLD. For example, a redirect uri could be:
 
 ```
 sc4a1b01e5-0497-417c-a30e-6df6ba33ba46://myapp.com/callback
@@ -99,9 +101,11 @@ smartcarAuth.addClickHandler(getApplicationContext(), button, authUrl);
 
 Please use Android Studio 3.5 to develop on the Smartcar Android SDK.
 
+[smartcar-dashboard]: https://dashboard.smartcar.com/login/
+[smartcar-docs]: https://smartcar.com/docs
 [ci-image]: https://travis-ci.com/smartcar/android-sdk.svg?token=6Yrkze1DNb8WHnHxrCy6&branch=master
 [ci-url]: https://travis-ci.com/smartcar/android-sdk
-[coverage-image]: https://codecov.io/gh/smartcar/android-sdk/branch/master/graph/badge.svg?token=RhacvrisiW
-[coverage-url]: https://codecov.io/gh/smartcar/android-sdk
-[bintray-image]: https://api.bintray.com/packages/smartcar/library/smartcar-auth/images/download.svg
-[bintray-url]: https://bintray.com/smartcar/library/smartcar-auth/_latestVersion
+[javadoc-image]: https://img.shields.io/badge/javadoc-3.1.2-brightgreen.svg
+[javadoc-url]: https://smartcar.github.io/android-sdk
+[maven-image]: https://img.shields.io/maven-central/v/com.smartcar.sdk/smartcar-auth.svg?label=Maven%20Central
+[maven-url]: https://central.sonatype.com/artifact/com.smartcar.sdk/smartcar-auth
