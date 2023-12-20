@@ -258,6 +258,7 @@ public class SmartcarAuth {
             String queryCode = uri.getQueryParameter("code");
             String queryError = uri.getQueryParameter("error");
             String queryVin = uri.getQueryParameter("vin");
+            String queryVirtualKeyUrl = uri.getQueryParameter("virtual_key_url");
 
             boolean receivedCode = queryCode != null;
             boolean receivedError = queryError != null && queryVin == null;
@@ -271,6 +272,7 @@ public class SmartcarAuth {
                         .code(queryCode)
                         .errorDescription(queryErrorDescription)
                         .state(queryState)
+                        .virtualKeyUrl(queryVirtualKeyUrl)
                         .build();
                 callback.handleResponse(smartcarResponse);
 

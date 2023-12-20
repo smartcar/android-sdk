@@ -29,6 +29,7 @@ public class SmartcarResponse {
     private String errorDescription;
     private String state;
     private VehicleInfo vehicleInfo;
+    private String virtualKeyUrl;
 
     /**
      * Assigns properties on the SmartcarResponse object.
@@ -41,6 +42,7 @@ public class SmartcarResponse {
         this.errorDescription = builder.errorDescription;
         this.state = builder.state;
         this.vehicleInfo = builder.vehicleInfo;
+        this.virtualKeyUrl = builder.virtualKeyUrl;
     }
 
     public String getCode() {
@@ -61,6 +63,10 @@ public class SmartcarResponse {
 
     public VehicleInfo getVehicleInfo() { return this.vehicleInfo; }
 
+    public String getVirtualKeyUrl() {
+      return this.virtualKeyUrl;
+    }
+
     @Override
     public String toString() {
         return "SmartcarResponse{" +
@@ -68,7 +74,8 @@ public class SmartcarResponse {
                 ", error='" + error + '\'' +
                 ", errorDescription='" + errorDescription + '\'' +
                 ", state='" + state + '\'' +
-                ", vehicleInfo=" + vehicleInfo +
+                ", vehicleInfo=" + vehicleInfo + '\'' +
+                ", virtualKeyUrl=" + virtualKeyUrl +
                 '}';
     }
 
@@ -78,6 +85,7 @@ public class SmartcarResponse {
         private String errorDescription;
         private String state;
         private VehicleInfo vehicleInfo;
+        private String virtualKeyUrl;
 
         public Builder errorDescription(String errorDescription) {
             this.errorDescription = errorDescription;
@@ -101,6 +109,11 @@ public class SmartcarResponse {
 
         public Builder vehicleInfo(VehicleInfo vehicle) {
             this.vehicleInfo = vehicle;
+            return this;
+        }
+
+        public Builder virtualKeyUrl(String virtualKeyUrl) {
+            this.virtualKeyUrl = virtualKeyUrl;
             return this;
         }
 

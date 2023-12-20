@@ -325,4 +325,22 @@ public class SmartcarAuthTest {
 
         SmartcarAuth.receiveResponse(Uri.parse(redirectUri + "?code=testCode&state=testState"));
     }
+
+    @Test
+    public void smartcarAuth_receiveResponse_codeWithVirtualKeyUrl() {
+        String clientId = "client123";
+        String redirectUri = "scclient123://test";
+        String[] scope = {"read_odometer", "read_vin"};
+
+        new SmartcarAuth(clientId, redirectUri, scope, new SmartcarCallback() {
+            @Override
+            public void handleResponse(SmartcarResponse smartcarResponse) {
+                assertEquals(smartcarResponse.getCode(), "testCode");
+                assertEquals(smartcarResponse.getState(), null);
+                assertEquals(smartcarResponse.getVirtualKeyUrl(), "https://www.tesla.com/_ak/smartcar.com");
+            }
+        });
+
+        SmartcarAuth.receiveResponse(Uri.parse(redirectUri + "?code=testCode&virtual_key_url=https://www.tesla.com/_ak/smartcar.com"));
+    }
 }
