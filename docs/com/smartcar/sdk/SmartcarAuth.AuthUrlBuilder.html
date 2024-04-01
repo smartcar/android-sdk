@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -191,6 +191,13 @@ extends java.lang.Object</pre>
 <div class="block">Set an optional state parameter.</div>
 </td>
 </tr>
+<tr id="i7" class="rowColor">
+<td class="colFirst"><code><a href="../../../com/smartcar/sdk/SmartcarAuth.AuthUrlBuilder.html" title="class in com.smartcar.sdk">SmartcarAuth.AuthUrlBuilder</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/smartcar/sdk/SmartcarAuth.AuthUrlBuilder.html#setUser-java.lang.String-">setUser</a></span>(java.lang.String&nbsp;user)</code>
+<div class="block">Specify a unique identifier for the vehicle owner to track their progress through
+ Smartcar Connect.</div>
+</td>
+</tr>
 </table>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
@@ -341,6 +348,24 @@ extends java.lang.Object</pre>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>flags</code> - List of feature flags that your application has early access to.</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>a reference to this object</dd>
+</dl>
+</li>
+</ul>
+<a name="setUser-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setUser</h4>
+<pre>public&nbsp;<a href="../../../com/smartcar/sdk/SmartcarAuth.AuthUrlBuilder.html" title="class in com.smartcar.sdk">SmartcarAuth.AuthUrlBuilder</a>&nbsp;setUser(java.lang.String&nbsp;user)</pre>
+<div class="block">Specify a unique identifier for the vehicle owner to track their progress through
+ Smartcar Connect.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>user</code> - An optional unique identifier for a vehicle owner. This identifier is used to aggregate
+ analytics across Connect sessions for each vehicle owner.</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>a reference to this object</dd>
 </dl>

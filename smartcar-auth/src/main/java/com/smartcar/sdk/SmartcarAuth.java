@@ -182,6 +182,19 @@ public class SmartcarAuth {
         }
 
         /**
+         * Specify a unique identifier for the vehicle owner to track their progress through
+         * Smartcar Connect.
+         *
+         * @param user An optional unique identifier for a vehicle owner. This identifier is used to aggregate
+         * analytics across Connect sessions for each vehicle owner.
+         * @return a reference to this object
+         */
+        public AuthUrlBuilder setUser(String user) {
+            uriBuilder.appendQueryParameter("user", user);
+            return this;
+        }
+
+        /**
          * Build a Smartcar Connect authorization url.
          *
          * @return A built url which can be used in {@link SmartcarAuth#launchAuthFlow(Context, String)} or {@link SmartcarAuth#addClickHandler(Context, View, String)}
