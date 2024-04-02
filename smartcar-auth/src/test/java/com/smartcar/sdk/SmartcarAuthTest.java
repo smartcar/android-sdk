@@ -61,6 +61,7 @@ public class SmartcarAuthTest {
         String[] scope = {"read_odometer", "read_vin"};
         String vin = "1234567890ABCDEFG";
         String[] flags = {"flag:suboption", "feature3"};
+        String user = "e9b24987-52e8-4d40-8417-bfa4402c9e16";
         String expectedUri = "https://connect.smartcar.com/oauth/authorize?response_type=code" +
                 "&client_id=" + clientId +
                 "&redirect_uri=" + redirectUriEncoded +
@@ -68,7 +69,8 @@ public class SmartcarAuthTest {
                 "&approval_prompt=force&make=BMW&state=some%20state" +
                 "&single_select=true" +
                 "&single_select_vin=" + vin +
-                "&flags=flag%3Asuboption%20feature3";
+                "&flags=flag%3Asuboption%20feature3" +
+                "&user=e9b24987-52e8-4d40-8417-bfa4402c9e16";
 
         SmartcarAuth smartcarAuth = new SmartcarAuth(clientId, redirectUri, scope, null);
         String requestUri = smartcarAuth.authUrlBuilder()
@@ -78,6 +80,7 @@ public class SmartcarAuthTest {
                 .setSingleSelect(true)
                 .setSingleSelectVin(vin)
                 .setFlags(flags)
+                .setUser(user)
                 .build();
 
         assertEquals(expectedUri, requestUri);
