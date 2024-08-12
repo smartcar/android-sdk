@@ -19,30 +19,6 @@ dependencies {
 }
 ```
 
-## Redirect URI Setup
-
-Your application must register a custom URI scheme in order to receive Connect's response. Smartcar requires the custom URI scheme to be in the format of `"sc" + clientId + "://" + hostname`. This URI must also be registered in [Smartcar's developer portal](https://dashboard.smartcar.com) for your application. You may append an optional path component or TLD. For example, a redirect uri could be:
-
-```
-sc4a1b01e5-0497-417c-a30e-6df6ba33ba46://myapp.com/callback
-```
-
-You will then need to register the URI in the `AndroidManifest.xml` by inserting a new activity with an intent filter. More information on the [data element](https://developer.android.com/guide/topics/manifest/data-element.html).
-
-```xml
-<activity android:name="com.smartcar.sdk.SmartcarCodeReceiver">
-    <intent-filter>
-        <action android:name="android.intent.action.VIEW" />
-        <category android:name="android.intent.category.DEFAULT" />
-        <category android:name="android.intent.category.BROWSABLE" />
-        <data
-            android:scheme="sc4a1b01e5-0497-417c-a30e-6df6ba33ba46"
-            android:host="myapp.com"
-            android:path="/callback" />
-    </intent-filter>
-</activity>
-```
-
 ## Usage
 
 1. Instantiate a new [`SmartcarAuth`](https://smartcar.github.io/android-sdk/com/smartcar/sdk/SmartcarAuth.html) instance with a [`SmartcarCallback`](https://smartcar.github.io/android-sdk/com/smartcar/sdk/SmartcarCallback.html) handler:

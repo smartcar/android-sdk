@@ -1,21 +1,27 @@
-apply plugin: 'com.android.library'
-apply plugin: 'maven-publish'
-apply plugin: 'signing'
-
 buildscript {
     repositories {
         mavenCentral()
     }
 }
 
+plugins {
+    id 'org.jetbrains.kotlin.plugin.serialization' version '2.0.10'
+    id 'com.android.library'
+    id 'maven-publish'
+    id 'signing'
+    id 'org.jetbrains.kotlin.android'
+}
+
 group = libGroup
 version = libVersion
 
 android {
-    compileSdkVersion 29
+    namespace "com.smartcar.sdk"
+
+    compileSdkVersion 34
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 29
+        targetSdkVersion 34
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -37,12 +43,19 @@ android {
             includeAndroidResources = true
         }
     }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
 }
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation "androidx.appcompat:appcompat:1.1.0"
-    implementation 'androidx.browser:browser:1.0.0'
+    implementation "androidx.core:core-ktx:1.13.1"
+    implementation "androidx.activity:activity-ktx:1.9.1"
+    implementation "org.jetbrains.kotlinx:kotlinx-rpc-krpc-server:0.2.2"
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.1"
+    implementation "com.google.code.gson:gson:2.11.0"
     androidTestImplementation 'androidx.annotation:annotation:1.1.0'
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test:rules:1.2.0'
@@ -52,7 +65,7 @@ dependencies {
     testImplementation 'org.robolectric:robolectric:4.3'
 }
 
-task javadoc(type: Javadoc) {
+tasks.register('javadoc', Javadoc) {
     source = android.sourceSets.main.java.srcDirs
     classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
     destinationDir = file('../docs')
@@ -62,12 +75,13 @@ task javadoc(type: Javadoc) {
     options.addBooleanOption('notimestamp', true)
 }
 
-task javadocJar(type: Jar, dependsOn: javadoc) {
+tasks.register('javadocJar', Jar) {
+    dependsOn javadoc
     archiveClassifier.set('javadoc')
     from javadoc.destinationDir
 }
 
-task androidSourcesJar(type: Jar) {
+tasks.register('androidSourcesJar', Jar) {
     archiveClassifier.set('sources')
     from android.sourceSets.main.java.srcDirs
 }
@@ -92,8 +106,8 @@ afterEvaluate {
                 artifactId libName
                 version libVersion
 
-                artifact androidSourcesJar
-                artifact javadocJar
+                //artifact androidSourcesJar
+                //artifact javadocJar
 
                 pom {
                     // https://central.sonatype.org/publish/requirements/#sufficient-metadata
@@ -137,8 +151,10 @@ afterEvaluate {
  * @see https://docs.gradle.org/current/userguide/signing_plugin.html#sec:in-memory-keys
  */
 afterEvaluate {
-    signing {
-        useInMemoryPgpKeys findProperty("signingKey"), findProperty("signingPassword")
-        sign publishing.publications.release
+    if (!project.gradle.startParameter.taskNames.any { it.contains('publishToMavenLocal') }) {
+        signing {
+            useInMemoryPgpKeys findProperty("signingKey"), findProperty("signingPassword")
+            sign publishing.publications.release
+        }
     }
 }

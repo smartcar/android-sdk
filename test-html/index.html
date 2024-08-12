@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebView Button Example</title>
+    <style>
+        .link-button {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            color: white;
+            background-color: #ff0033;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Android WebView JavaScript Interface Example</h1>
+    <a class="link-button" onclick="sendMessageToAndroid()">Send Message</a>
+    <div id="result"></div>
+
+    <script>
+        var id = 0;
+
+        // Function to be called when the button is clicked
+        function sendMessageToAndroid() {
+            let startUrl = `${window.location.protocol}//${window.location.host}/authorize.html`;
+            let message = {
+                "jsonrpc": "2.0",
+                "method": "oauth",
+                "params": {
+                    "startUrl": startUrl,
+                    "interceptPrefix": "susapp://"
+                },
+                "id": id++
+            }
+
+            if (typeof SmartcarSDK !== "undefined" && SmartcarSDK.sendMessage) {
+                SmartcarSDK.sendMessage(JSON.stringify(message));
+            } else {
+                console.error("SmartcarSDK or sendMessage method is not available.");
+            }
+        }
+
+        addEventListener("SmartcarSDKResponse", function(event) {
+            document.querySelector("#result").textContent = JSON.stringify(event.detail);
+        });
+    </script>
+</body>
+</html>
