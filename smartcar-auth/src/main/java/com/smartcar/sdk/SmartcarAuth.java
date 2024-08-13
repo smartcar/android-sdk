@@ -89,6 +89,8 @@ public class SmartcarAuth {
         public AuthUrlBuilder() {
             uriBuilder = Uri.parse(BASE_AUTHORIZATION_URL).buildUpon()
                     .appendQueryParameter("response_type", "code")
+                    .appendQueryParameter("sdk_platform", "android")
+                    .appendQueryParameter("sdk_version", BuildConfig.VERSION_NAME)
                     .appendQueryParameter("client_id", clientId)
                     .appendQueryParameter("redirect_uri", redirectUri)
                     .appendQueryParameter("mode", testMode ? "test" : "live")

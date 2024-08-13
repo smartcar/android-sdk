@@ -21,7 +21,7 @@ const val RESPONSE_CHANNEL = "SmartcarSDKResponse"
 data class OAuthParams(val startUrl: String, val interceptPrefix: String)
 
 @Serializable
-data class OAuthResult(val uri: String)
+data class OAuthResult(val returnUri: String)
 
 @Serializable
 sealed class JsonRpcRequest {
@@ -93,7 +93,7 @@ class RPCInterface(
                         val response = JsonRpcErrorResponse(error = error, id = request.id)
                         sendErrorResponse(response)
                     } else {
-                        val oAuthResult = OAuthResult(uri = returnUri)
+                        val oAuthResult = OAuthResult(returnUri = returnUri)
                         val response = JsonRpcResponse(result = oAuthResult, id = request.id)
                         sendResponse(JsonRpcResponse.serializer(OAuthResult.serializer()), response)
                     }

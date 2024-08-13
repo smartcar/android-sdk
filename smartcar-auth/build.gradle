@@ -23,7 +23,12 @@ android {
         minSdkVersion 21
         targetSdkVersion 34
 
+        buildConfigField("String", "VERSION_NAME", "\"${project.version}\"")
+
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+    buildFeatures {
+        buildConfig true
     }
     lintOptions {
         disable 'UnusedResources'
