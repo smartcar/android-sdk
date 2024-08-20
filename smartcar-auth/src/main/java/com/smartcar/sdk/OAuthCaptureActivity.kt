@@ -12,6 +12,7 @@ import android.webkit.WebViewClient
 import androidx.activity.ComponentActivity
 
 open class OAuthCaptureActivity : ComponentActivity() {
+    private var headerConfig: List<HeaderConfig>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,12 +34,38 @@ open class OAuthCaptureActivity : ComponentActivity() {
         val startUrl = intent.getStringExtra("start_url")
         val interceptPrefix = intent.getStringExtra("intercept_prefix")
         val allowedHost = intent.getStringExtra("allowed_host")
+        val headerConfigJson = intent.getStringExtra("header_config")
+        headerConfigJson?.let { headerConfig = json.decodeFromString(it) }
 
         // Set a custom WebViewClient
         webView.webViewClient = CustomWebViewClient(interceptPrefix, allowedHost)
 
         // Load the URL
-        startUrl?.let { webView.loadUrl(it) }
+        startUrl?.let {
+            val headers = getAdditionalHeaders(it)
+            // Set the user agent if specified
+            getUserAgentFromHeaders(headers)?.let { userAgent ->
+                webView.settings.userAgentString = userAgent
+            }
+            // Load the URL with all headers including User-Agent
+            webView.loadUrl(it, headers)
+        }
+    }
+
+    private fun getAdditionalHeaders(url: String): Map<String, String> {
+        for (config in headerConfig ?: emptyList()) {
+            val regex = Regex(config.pattern)
+            if (regex.matches(url)) {
+                return config.headers
+            }
+        }
+        return emptyMap()
+    }
+
+    private fun getUserAgentFromHeaders(headers: Map<String, String>): String? {
+        return headers.entries.firstOrNull {
+            entry -> entry.key.equals("User-Agent", ignoreCase = true)
+        }?.value
     }
 
     open fun onInterceptUri(uri: Uri) {
@@ -67,6 +94,18 @@ open class OAuthCaptureActivity : ComponentActivity() {
                     Intent(Intent.ACTION_VIEW, url).apply {
                         startActivity(this)
                     }
+                    return true
+                }
+
+                // Load with custom headers if applicable
+                val headers = getAdditionalHeaders(url.toString())
+                if (headers.isNotEmpty()) {
+                    // Set the user agent if specified
+                    getUserAgentFromHeaders(headers)?.let { userAgent ->
+                        view?.settings?.userAgentString = userAgent
+                    }
+                    // Load the URL with all headers including User-Agent
+                    view?.loadUrl(url.toString(), headers)
                     return true
                 }
             }

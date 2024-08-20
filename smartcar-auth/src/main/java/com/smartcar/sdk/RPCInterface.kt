@@ -18,7 +18,17 @@ import kotlinx.serialization.json.Json
 const val RESPONSE_CHANNEL = "SmartcarSDKResponse"
 
 @Serializable
-data class OAuthParams(val startUrl: String, val interceptPrefix: String)
+data class OAuthParams(
+    val startUrl: String,
+    val interceptPrefix: String,
+    val headerConfig: List<HeaderConfig>? = null
+)
+
+@Serializable
+data class HeaderConfig(
+    val pattern: String,
+    val headers: Map<String, String>
+)
 
 @Serializable
 data class OAuthResult(val returnUri: String)
@@ -83,6 +93,7 @@ class RPCInterface(
                 val intent = Intent(context, OAuthCaptureActivity::class.java)
                 intent.putExtra("start_url", request.params.startUrl)
                 intent.putExtra("intercept_prefix", request.params.interceptPrefix)
+                intent.putExtra("header_config", json.encodeToString(request.params.headerConfig))
                 getResult.launch(intent)
 
                 // Set callback to handle activity result
