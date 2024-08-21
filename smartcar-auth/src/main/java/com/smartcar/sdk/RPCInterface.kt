@@ -19,7 +19,7 @@ const val RESPONSE_CHANNEL = "SmartcarSDKResponse"
 
 @Serializable
 data class OAuthParams(
-    val startUrl: String,
+    val authorizeURL: String,
     val interceptPrefix: String,
     val headerConfig: List<HeaderConfig>? = null
 )
@@ -91,7 +91,7 @@ class RPCInterface(
             is JsonRpcRequest.OAuthRequest -> {
                 // Start OAuthCaptureActivity
                 val intent = Intent(context, OAuthCaptureActivity::class.java)
-                intent.putExtra("start_url", request.params.startUrl)
+                intent.putExtra("authorize_url", request.params.authorizeURL)
                 intent.putExtra("intercept_prefix", request.params.interceptPrefix)
                 intent.putExtra("header_config", json.encodeToString(request.params.headerConfig))
                 getResult.launch(intent)

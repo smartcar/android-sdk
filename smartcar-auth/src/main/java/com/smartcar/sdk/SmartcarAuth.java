@@ -250,7 +250,7 @@ public class SmartcarAuth {
      */
     public void launchAuthFlow(final Context context, final String authUrl) {
         Intent intent = new Intent(context, ConnectActivity.class);
-        intent.putExtra("start_url", authUrl);
+        intent.putExtra("authorize_url", authUrl);
         intent.putExtra("intercept_prefix", redirectUri);
         intent.putExtra("allowed_host", AUTHORIZATION_HOST);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

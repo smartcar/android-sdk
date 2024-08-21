@@ -30,12 +30,12 @@
 
         // Function to be called when the button is clicked
         function sendMessageToAndroid() {
-            let startUrl = `${window.location.protocol}//${window.location.host}/authorize.html`;
+            let authorizeURL = `${window.location.protocol}//${window.location.host}/authorize.html`;
             let message = {
                 "jsonrpc": "2.0",
                 "method": "oauth",
                 "params": {
-                    "startUrl": startUrl,
+                    authorizeURL,
                     "interceptPrefix": "susapp://",
                     /*"headerConfig": [
                         {

@@ -31,7 +31,7 @@ open class OAuthCaptureActivity : ComponentActivity() {
         webView.settings.cacheMode = LOAD_NO_CACHE
 
         // Get the URL and optional hostname from the Intent
-        val startUrl = intent.getStringExtra("start_url")
+        val authorizeURL = intent.getStringExtra("authorize_url")
         val interceptPrefix = intent.getStringExtra("intercept_prefix")
         val allowedHost = intent.getStringExtra("allowed_host")
         val headerConfigJson = intent.getStringExtra("header_config")
@@ -41,7 +41,7 @@ open class OAuthCaptureActivity : ComponentActivity() {
         webView.webViewClient = CustomWebViewClient(interceptPrefix, allowedHost)
 
         // Load the URL
-        startUrl?.let {
+        authorizeURL?.let {
             val headers = getAdditionalHeaders(it)
             // Set the user agent if specified
             getUserAgentFromHeaders(headers)?.let { userAgent ->
