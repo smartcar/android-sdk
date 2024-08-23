@@ -14,6 +14,7 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import kotlinx.serialization.*
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonPrimitive
 
 const val RESPONSE_CHANNEL = "SmartcarSDKResponse"
 
@@ -36,13 +37,13 @@ data class OAuthResult(val returnUri: String)
 @Serializable
 sealed class JsonRpcRequest {
     abstract val jsonrpc: String
-    abstract val id: Int
+    abstract val id: JsonPrimitive
 
     @Serializable
     @SerialName("oauth")
     data class OAuthRequest(
         override val jsonrpc: String,
-        override val id: Int,
+        override val id: JsonPrimitive,
         val params: OAuthParams
     ) : JsonRpcRequest()
 }
@@ -51,14 +52,14 @@ sealed class JsonRpcRequest {
 data class JsonRpcResponse<T>(
     val jsonrpc: String = "2.0",
     val result: T,
-    val id: Int
+    val id: JsonPrimitive
 )
 
 @Serializable
 data class JsonRpcErrorResponse(
     val jsonrpc: String = "2.0",
     val error: JsonRpcError,
-    val id: Int?
+    val id: JsonPrimitive?
 )
 
 @Serializable
@@ -100,9 +101,7 @@ class RPCInterface(
                 callback = ActivityResultCallback { result ->
                     val returnUri = result.data?.getStringExtra("return_uri")
                     if (returnUri == null) {
-                        val error = JsonRpcError(code = -32000, message = "OAuth capture cancelled")
-                        val response = JsonRpcErrorResponse(error = error, id = request.id)
-                        sendErrorResponse(response)
+                        sendErrorResponse(-32000, "OAuth capture cancelled", request.id)
                     } else {
                         val oAuthResult = OAuthResult(returnUri = returnUri)
                         val response = JsonRpcResponse(result = oAuthResult, id = request.id)
@@ -113,13 +112,18 @@ class RPCInterface(
         }
     }
 
-    private fun <T> sendResponse(serializer: SerializationStrategy<JsonRpcResponse<T>>, response: JsonRpcResponse<T>) {
+    private fun <T> sendResponse(
+        serializer: SerializationStrategy<JsonRpcResponse<T>>,
+        response: JsonRpcResponse<T>
+    ) {
         val jsonStr = json.encodeToString(serializer, response)
         Log.d("RPCInterface", "RPC response: $jsonStr")
         sendJSONResponse(jsonStr)
     }
 
-    private fun sendErrorResponse(response: JsonRpcErrorResponse) {
+    private fun sendErrorResponse(code: Int, message: String, id: JsonPrimitive?) {
+        val error = JsonRpcError(code, message)
+        val response = JsonRpcErrorResponse(error = error, id = id)
         val jsonStr = json.encodeToString(response)
         Log.d("RPCInterface", "RPC error response: $jsonStr")
         sendJSONResponse(jsonStr)
