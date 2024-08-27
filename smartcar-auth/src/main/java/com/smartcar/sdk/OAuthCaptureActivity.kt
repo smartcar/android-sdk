@@ -6,21 +6,29 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.webkit.WebResourceRequest
-import android.webkit.WebSettings.LOAD_NO_CACHE
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.activity.ComponentActivity
 
 open class OAuthCaptureActivity : ComponentActivity() {
     private var headerConfig: List<HeaderConfig>? = null
+    private lateinit var webView: WebView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         // Create a WebView programmatically
-        val webView = WebView(this)
+        webView = WebView(this)
         setContentView(webView)
         initWebView(webView)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        onDestroyWebView(webView)
+    }
+
+    open fun onDestroyWebView(webView: WebView) {
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -28,7 +36,6 @@ open class OAuthCaptureActivity : ComponentActivity() {
         // Enable JavaScript and DOM storage
         webView.settings.javaScriptEnabled = true
         webView.settings.domStorageEnabled = true
-        webView.settings.cacheMode = LOAD_NO_CACHE
 
         // Get the URL and optional hostname from the Intent
         val authorizeURL = intent.getStringExtra("authorize_url")
