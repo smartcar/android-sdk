@@ -72,12 +72,21 @@ dependencies {
 
 tasks.register('javadoc', Javadoc) {
     source = android.sourceSets.main.java.srcDirs
-    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    android.libraryVariants.configureEach { variant ->
+        if (variant.name == 'release') {
+            owner.classpath += variant.javaCompileProvider.get().classpath
+        }
+    }
+    exclude '**/*.kt'
     destinationDir = file('../docs')
     options.header = libDescription
     options.windowTitle = "${libName} - ${libVersion}"
     options.memberLevel = JavadocMemberLevel.PUBLIC
     options.addBooleanOption('notimestamp', true)
+}
+
+afterEvaluate {
+    tasks.javadoc.classpath += project.files(android.getBootClasspath())
 }
 
 tasks.register('javadocJar', Jar) {
@@ -111,8 +120,8 @@ afterEvaluate {
                 artifactId libName
                 version libVersion
 
-                //artifact androidSourcesJar
-                //artifact javadocJar
+                artifact androidSourcesJar
+                artifact javadocJar
 
                 pom {
                     // https://central.sonatype.org/publish/requirements/#sufficient-metadata
