@@ -26,14 +26,13 @@ import android.net.Uri;
 import android.text.TextUtils;
 import android.view.View;
 
-import androidx.browser.customtabs.CustomTabsIntent;
-
 /**
  * Main class that provides SDK access methods.
  */
 public class SmartcarAuth {
 
     private static final String BASE_AUTHORIZATION_URL = "https://connect.smartcar.com/oauth/authorize";
+    private static final String AUTHORIZATION_HOST = "connect.smartcar.com";
 
     private static String clientId;
     private static String redirectUri;
@@ -90,6 +89,8 @@ public class SmartcarAuth {
         public AuthUrlBuilder() {
             uriBuilder = Uri.parse(BASE_AUTHORIZATION_URL).buildUpon()
                     .appendQueryParameter("response_type", "code")
+                    .appendQueryParameter("sdk_platform", "android")
+                    .appendQueryParameter("sdk_version", BuildConfig.VERSION_NAME)
                     .appendQueryParameter("client_id", clientId)
                     .appendQueryParameter("redirect_uri", redirectUri)
                     .appendQueryParameter("mode", testMode ? "test" : "live")
@@ -248,14 +249,12 @@ public class SmartcarAuth {
      * @param authUrl Use {@link AuthUrlBuilder} to generate the authorization url
      */
     public void launchAuthFlow(final Context context, final String authUrl) {
-
-        CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-        CustomTabsIntent customTabsIntent = builder.build();
-        Intent intent = customTabsIntent.intent;
-        intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+        Intent intent = new Intent(context, ConnectActivity.class);
+        intent.putExtra("authorize_url", authUrl);
+        intent.putExtra("intercept_prefix", redirectUri);
+        intent.putExtra("allowed_host", AUTHORIZATION_HOST);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        customTabsIntent.launchUrl(context, Uri.parse(authUrl));
-
+        context.startActivity(intent);
     }
 
     /**
