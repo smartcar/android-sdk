@@ -14,14 +14,13 @@ Add the following to your application's `build.gradle` dependencies:
 
 ```
 dependencies {
-    implementation 'com.smartcar.sdk:smartcar-auth:3.0.0'
-    implementation 'androidx.browser:browser:1.0.0'
+    implementation 'com.smartcar.sdk:smartcar-auth:4.0.0'
 }
 ```
 
 ## Usage
 
-1. Instantiate a new [`SmartcarAuth`](https://smartcar.github.io/android-sdk/com/smartcar/sdk/SmartcarAuth.html) instance with a [`SmartcarCallback`](https://smartcar.github.io/android-sdk/com/smartcar/sdk/SmartcarCallback.html) handler:
+1. Instantiate a new [`SmartcarAuth`](https://javadoc.io/doc/com.smartcar.sdk/smartcar-auth/latest/com/smartcar/sdk/SmartcarAuth.html) instance with a [`SmartcarCallback`](https://javadoc.io/doc/com.smartcar.sdk/smartcar-auth/latest/com/smartcar/sdk/SmartcarCallback.html) handler:
 
 ```java
 import com.smartcar.sdk.SmartcarAuth;
@@ -56,7 +55,7 @@ Button connectButton = findViewById(R.id.connect_button);
 smartcarAuth.addClickHandler(getApplicationContext(), connectButton);
 ```
 
-3. Use the [`AuthUrlBuilder`](https://smartcar.github.io/android-sdk/com/smartcar/sdk/SmartcarAuth.AuthUrlBuilder.html) for additional configuration:
+3. Use the [`AuthUrlBuilder`](https://javadoc.io/doc/com.smartcar.sdk/smartcar-auth/latest/com/smartcar/sdk/SmartcarAuth.AuthUrlBuilder.html) for additional configuration:
 
 ```java
 String authUrl = smartcarAuth.authUrlBuilder()
@@ -79,9 +78,9 @@ Please use Android Studio 3.5 to develop on the Smartcar Android SDK.
 
 [smartcar-dashboard]: https://dashboard.smartcar.com/login/
 [smartcar-docs]: https://smartcar.com/docs
-[ci-image]: https://travis-ci.com/smartcar/android-sdk.svg?token=6Yrkze1DNb8WHnHxrCy6&branch=master
-[ci-url]: https://travis-ci.com/smartcar/android-sdk
-[javadoc-image]: https://img.shields.io/badge/javadoc-3.1.2-brightgreen.svg
-[javadoc-url]: https://smartcar.github.io/android-sdk
+[ci-image]: https://app.buddy.works/smartcar/android-sdk/pipelines/pipeline/504649/badge.svg?token=97cfcc42803fd12732976ed9738a7a119d87532ffdd2686b5513bbaef42bad93
+[ci-url]: https://app.buddy.works/smartcar/android-sdk/pipelines/pipeline/504649
+[javadoc-image]: https://javadoc.io/badge2/com.smartcar.sdk/smartcar-auth/javadoc.svg
+[javadoc-url]: https://javadoc.io/doc/com.smartcar.sdk/smartcar-auth
 [maven-image]: https://img.shields.io/maven-central/v/com.smartcar.sdk/smartcar-auth.svg?label=Maven%20Central
 [maven-url]: https://central.sonatype.com/artifact/com.smartcar.sdk/smartcar-auth
