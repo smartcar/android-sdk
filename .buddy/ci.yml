@@ -1,0 +1,33 @@
+- pipeline: "CI"
+  events:
+  - type: "PUSH"
+    refs:
+    - "refs/heads/*"
+  fail_on_prepare_env_warning: true
+  actions:
+  - action: "Build"
+    type: "BUILD"
+    docker_image_name: "library/openjdk"
+    docker_image_tag: "20"
+    execute_commands:
+    - "export ANDROID_HOME=\"/opt/android/sdk\""
+    - "export PATH=$PATH:/opt/android/sdk/cmdline-tools/tools/bin"
+    - "if [ ! -d \"$ANDROID_HOME/cmdline-tools\" ]; then"
+    - " curl -o sdk.zip https://dl.google.com/android/repository/commandlinetools-linux-7583922_latest.zip"
+    - " unzip sdk.zip"
+    - " rm sdk.zip"
+    - " mkdir \"$ANDROID_HOME/cmdline-tools\""
+    - " mv cmdline-tools \"$ANDROID_HOME/cmdline-tools/tools\""
+    - " yes | \"$ANDROID_HOME/cmdline-tools/tools/bin/sdkmanager\" --licenses"
+    - "fi"
+    - ""
+    - "chmod +x gradlew"
+    - "./gradlew build check"
+    - "# ./gradlew assembleDebug"
+    - "# ./gradlew assembleRelease"
+    setup_commands:
+    - "microdnf install unzip findutils"
+    cached_dirs:
+    - "/root/.gradle"
+    - "/opt/android/sdk"
+    shell: "BASH"
