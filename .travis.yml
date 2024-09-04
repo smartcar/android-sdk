@@ -28,6 +28,8 @@ android:
     - 'google-gdk-license-.+'
 
 script:
+  - export PATH=/usr/local/android-sdk/platform-tools:$PATH
+
   # accept sdk licenses and build/test the project
   - yes | sdkmanager --update
   - ./gradlew build check
