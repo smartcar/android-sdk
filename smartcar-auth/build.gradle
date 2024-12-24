@@ -18,8 +18,8 @@ version = libVersion
 android {
     namespace "com.smartcar.sdk"
 
-    compileSdkVersion 34
     defaultConfig {
+        compileSdk 34
         minSdkVersion 21
         targetSdkVersion 34
 
@@ -60,11 +60,12 @@ android {
 }
 
 dependencies {
+    implementation "com.github.weliem:blessed-android-coroutines:0.4.2"
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation "androidx.core:core-ktx:1.13.1"
     implementation "androidx.activity:activity-ktx:1.9.2"
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.1"
-    androidTestImplementation 'androidx.annotation:annotation:1.8.2'
+    androidTestImplementation 'androidx.annotation:annotation:1.9.1'
     androidTestImplementation 'androidx.test:runner:1.6.2'
     androidTestImplementation 'androidx.test:rules:1.6.1'
     testAnnotationProcessor 'com.google.auto.service:auto-service:1.0-rc4'

@@ -5,10 +5,13 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.view.ViewGroup
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.activity.ComponentActivity
+import com.smartcar.sdk.rpc.oauth.HeaderConfig
+import kotlinx.serialization.json.Json
 
 open class OAuthCaptureActivity : ComponentActivity() {
     private var headerConfig: List<HeaderConfig>? = null
@@ -28,7 +31,19 @@ open class OAuthCaptureActivity : ComponentActivity() {
         onDestroyWebView(webView)
     }
 
+    /**
+     * Frees up resources from the WebView.
+     */
     open fun onDestroyWebView(webView: WebView) {
+        webView.stopLoading()
+        webView.loadUrl("about:blank")
+
+        // Remove the WebView from its parent if it has one
+        val parent = webView.parent
+        if (parent is ViewGroup) {
+            parent.removeView(webView)
+        }
+        webView.destroy()
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -42,7 +57,7 @@ open class OAuthCaptureActivity : ComponentActivity() {
         val interceptPrefix = intent.getStringExtra("intercept_prefix")
         val allowedHost = intent.getStringExtra("allowed_host")
         val headerConfigJson = intent.getStringExtra("header_config")
-        headerConfigJson?.let { headerConfig = json.decodeFromString(it) }
+        headerConfigJson?.let { headerConfig = Json.decodeFromString(it) }
 
         // Set a custom WebViewClient
         webView.webViewClient = CustomWebViewClient(interceptPrefix, allowedHost)
