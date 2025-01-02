@@ -6,8 +6,6 @@ package com.smartcar.sdk;
 public class VehicleInfo {
     private String vin;
     private String make;
-    private String model;
-    private Integer year;
 
     /**
      * Assigns properties on the VehicleInfo object.
@@ -17,8 +15,6 @@ public class VehicleInfo {
     private VehicleInfo (Builder builder) {
         this.vin = builder.vin;
         this.make = builder.make;
-        this.model = builder.model;
-        this.year = builder.year;
     }
 
     /**
@@ -39,31 +35,11 @@ public class VehicleInfo {
         return this.vin;
     }
 
-    /**
-     * Returns the model assigned to VehicleInfo
-     *
-     * @return the model of the vehicle
-     */
-    public String getModel() {
-        return this.model;
-    }
-
-    /**
-     * Returns the year assigned to VehicleInfo
-     *
-     * @return the year of the vehicle
-     */
-    public Integer getYear() {
-        return this.year;
-    }
-
     @Override
     public String toString() {
         return "VehicleInfo{" +
                 "vin='" + vin + '\'' +
                 ", make='" + make + '\'' +
-                ", model='" + model + '\'' +
-                ", year=" + year +
                 '}';
     }
 
@@ -73,8 +49,6 @@ public class VehicleInfo {
     public static class Builder {
         private String vin;
         private String make;
-        private String model;
-        private Integer year;
 
         /**
          * Sets the make on the Builder. Including a make allows the user to bypass the car brand
@@ -98,30 +72,6 @@ public class VehicleInfo {
          */
         public Builder vin(String vin) {
             this.vin = vin;
-            return this;
-        }
-
-        /**
-         * Sets the model on the Builder.
-         *
-         * @param model model of the vehicle
-         *
-         * @return the builder with a `model` property added
-         */
-        public Builder model(String model) {
-            this.model = model;
-            return this;
-        }
-
-        /**
-         * Sets the year on the Builder.
-         *
-         * @param year year of the vehicle
-         *
-         * @return the builder with a `year` property added
-         */
-        public Builder year(Integer year) {
-            this.year = year;
             return this;
         }
 

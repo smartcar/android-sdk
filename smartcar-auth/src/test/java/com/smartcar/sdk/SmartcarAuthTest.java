@@ -286,14 +286,12 @@ public class SmartcarAuthTest {
                 assertEquals(smartcarResponse.getErrorDescription(), "The user's vehicle is not compatible.");
                 assertEquals(responseVehicle.getVin(), "1FDKE30G4JHA04964");
                 assertEquals(responseVehicle.getMake(), "FORD");
-                assertEquals(responseVehicle.getModel(), "E-350");
-                assertEquals(responseVehicle.getYear(), new Integer(1988));
             }
         });
 
         SmartcarAuth.receiveResponse(Uri.parse(redirectUri + "?error=vehicle_incompatible" +
                 "&error_description=The%20user%27s%20vehicle%20is%20not%20compatible." +
-                "&vin=1FDKE30G4JHA04964&make=FORD&model=E-350&year=1988"));
+                "&vin=1FDKE30G4JHA04964&make=FORD"));
     }
 
     @Test
