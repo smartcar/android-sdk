@@ -70,7 +70,7 @@ dependencies {
     testAnnotationProcessor 'com.google.auto.service:auto-service:1.0-rc4'
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.mockito:mockito-core:3.1.0'
-    testImplementation 'org.robolectric:robolectric:4.3'
+    testImplementation 'org.robolectric:robolectric:4.13'
 }
 
 /**

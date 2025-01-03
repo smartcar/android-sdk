@@ -23,7 +23,8 @@ public class SmartcarAuthTest {
         String redirectUri = "scclient123://test";
         String redirectUriEncoded = "scclient123%3A%2F%2Ftest";
         String[] scope = {"read_odometer", "read_vin"};
-        String expectedUri = "https://connect.smartcar.com/oauth/authorize?response_type=code" +
+        String expectedUri = "https://connect.smartcar.com/oauth/authorize?response_type=code&sdk_platform=android" +
+                "&sdk_version=" + BuildConfig.VERSION_NAME +
                 "&client_id=" + clientId +
                 "&redirect_uri=" + redirectUriEncoded +
                 "&mode=live&scope=read_odometer%20read_vin";
@@ -41,7 +42,8 @@ public class SmartcarAuthTest {
         String redirectUri = "scclient123://test";
         String redirectUriEncoded = "scclient123%3A%2F%2Ftest";
         String[] scope = {"read_odometer", "read_vin"};
-        String expectedUri = "https://connect.smartcar.com/oauth/authorize?response_type=code" +
+        String expectedUri = "https://connect.smartcar.com/oauth/authorize?response_type=code&sdk_platform=android" +
+                "&sdk_version=" + BuildConfig.VERSION_NAME +
                 "&client_id=" + clientId +
                 "&redirect_uri=" + redirectUriEncoded +
                 "&mode=test&scope=read_odometer%20read_vin";
@@ -62,7 +64,8 @@ public class SmartcarAuthTest {
         String vin = "1234567890ABCDEFG";
         String[] flags = {"flag:suboption", "feature3"};
         String user = "e9b24987-52e8-4d40-8417-bfa4402c9e16";
-        String expectedUri = "https://connect.smartcar.com/oauth/authorize?response_type=code" +
+        String expectedUri = "https://connect.smartcar.com/oauth/authorize?response_type=code&sdk_platform=android" +
+                "&sdk_version=" + BuildConfig.VERSION_NAME +
                 "&client_id=" + clientId +
                 "&redirect_uri=" + redirectUriEncoded +
                 "&mode=live&scope=read_odometer%20read_vin" +
@@ -286,14 +289,12 @@ public class SmartcarAuthTest {
                 assertEquals(smartcarResponse.getErrorDescription(), "The user's vehicle is not compatible.");
                 assertEquals(responseVehicle.getVin(), "1FDKE30G4JHA04964");
                 assertEquals(responseVehicle.getMake(), "FORD");
-                assertEquals(responseVehicle.getModel(), "E-350");
-                assertEquals(responseVehicle.getYear(), new Integer(1988));
             }
         });
 
         SmartcarAuth.receiveResponse(Uri.parse(redirectUri + "?error=vehicle_incompatible" +
                 "&error_description=The%20user%27s%20vehicle%20is%20not%20compatible." +
-                "&vin=1FDKE30G4JHA04964&make=FORD&model=E-350&year=1988"));
+                "&vin=1FDKE30G4JHA04964&make=FORD"));
     }
 
     @Test

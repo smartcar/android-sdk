@@ -14,7 +14,7 @@ Add the following to your application's `build.gradle` dependencies:
 
 ```
 dependencies {
-    implementation 'com.smartcar.sdk:smartcar-auth:4.0.0'
+    implementation 'com.smartcar.sdk:smartcar-auth:4.0.2'
 }
 ```
 

@@ -59,8 +59,6 @@ public class SmartcarResponseTest {
         VehicleInfo vehicle = new VehicleInfo.Builder()
                 .vin("0000")
                 .make("TESLA")
-                .model("Model S")
-                .year(2019)
                 .build();
 
         SmartcarResponse smartcarResponse = new SmartcarResponse.Builder()
