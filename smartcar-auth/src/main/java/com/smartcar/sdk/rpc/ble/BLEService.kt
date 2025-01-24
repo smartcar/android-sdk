@@ -51,6 +51,7 @@ class BLEService(
     }
 ) {
     private var central = BluetoothCentralManager(activity)
+    private var pendingPeripherals = mutableListOf<BluetoothPeripheral>()
 
     @ExperimentalStdlibApi
     override suspend fun handleRequest(request: JsonRpcRequest): JsonRpcResult {
@@ -66,7 +67,13 @@ class BLEService(
             }
             is ConnectRequest -> {
                 val peripheral = central.getPeripheral(request.params.address)
-                central.connectPeripheral(peripheral)
+                pendingPeripherals.add(peripheral)
+                try {
+                    central.connectPeripheral(peripheral)
+                    peripheral.requestMtu(BluetoothPeripheral.MAX_MTU)
+                } finally {
+                    pendingPeripherals.remove(peripheral)
+                }
                 SuccessResult()
             }
             is DisconnectRequest -> {
@@ -157,7 +164,7 @@ class BLEService(
         val advertisedServiceUUIDs = scanRecord?.serviceUuids?.map { it.toString() } ?: emptyList()
 
         // Create DeviceInfo instance
-        val deviceInfo = DeviceInfoRequest(method = "deviceFound",
+        val deviceInfo = DeviceInfoRequest(method = "deviceInfo",
             params = DeviceInfoRequest.DeviceInfoParams(
                 name = device.name.orEmpty(),
                 address = device.address,
@@ -203,7 +210,11 @@ class BLEService(
     }
 
     override fun onDestroy(owner: LifecycleOwner) {
-        central.close()
         super.onDestroy(owner)
+            central.stopScan()
+            (central.getConnectedPeripherals() + pendingPeripherals).forEach {
+                it.disconnectWhenBluetoothOff()
+            }
+            central.close()
     }
 }
