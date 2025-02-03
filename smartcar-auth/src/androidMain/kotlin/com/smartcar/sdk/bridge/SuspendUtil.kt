@@ -1,4 +1,4 @@
-package com.smartcar.sdk.util
+package com.smartcar.sdk.bridge
 
 import android.content.Intent
 import androidx.activity.ComponentActivity

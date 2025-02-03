@@ -1,32 +1,31 @@
 package com.smartcar.sdk
 
+import com.smartcar.sdk.bridge.OAuthCaptureBridgeImpl
 import android.net.Uri
 import android.webkit.CookieManager
 import android.webkit.WebStorage
 import android.webkit.WebView
+import com.smartcar.sdk.bridge.WebViewBridgeImpl
 import com.smartcar.sdk.rpc.ble.BLEService
 import com.smartcar.sdk.rpc.oauth.OAuthService
 
 class ConnectActivity : OAuthCaptureActivity() {
+    private lateinit var oauthService: OAuthService
+    private lateinit var bleService: BLEService
 
     override fun initWebView(webView: WebView) {
         clearWebViewData(webView)
 
-        val rpcService = OAuthService(this, webView)
-        val bleService = BLEService(this, webView)
-
-        // Add lifecycle observers
-        lifecycle.addObserver(rpcService)
-        lifecycle.addObserver(bleService)
-
-        // Attach interfaces to WebView
-        webView.addJavascriptInterface(rpcService, rpcService.channelName)
-        webView.addJavascriptInterface(bleService, bleService.channelName)
+        oauthService = OAuthService(OAuthCaptureBridgeImpl(this), WebViewBridgeImpl(webView, "SmartcarSDK"))
+        bleService = BLEService(WebViewBridgeImpl(webView, "SmartcarSDKBLE"))
 
         super.initWebView(webView)
     }
 
     override fun onDestroyWebView(webView: WebView) {
+        oauthService.dispose()
+        bleService.dispose()
+
         clearWebViewData(webView)
         super.onDestroyWebView(webView)
     }

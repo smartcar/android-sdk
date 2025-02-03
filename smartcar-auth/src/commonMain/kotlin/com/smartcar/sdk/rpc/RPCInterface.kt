@@ -1,10 +1,7 @@
 package com.smartcar.sdk.rpc
 
-import android.util.Log
-import android.webkit.JavascriptInterface
-import android.webkit.WebView
-import androidx.lifecycle.DefaultLifecycleObserver
-import androidx.lifecycle.LifecycleOwner
+import co.touchlab.kermit.Logger
+import com.smartcar.sdk.bridge.WebViewBridge
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
@@ -54,12 +51,15 @@ class RpcException(
     constructor(errorCode: Int, cause: Throwable?) : this(errorCode, null, cause)
 }
 
-// TODO: deal with jitpack dependency
 abstract class RPCInterface(
-    val channelName: String,
-    private val webView: WebView,
+    private val channelName: String,
+    private val webView: WebViewBridge,
     private val serializersModule: SerializersModule
-): DefaultLifecycleObserver {
+) {
+    init {
+        webView.onMessageFromJS = ::acceptMessage
+    }
+
     private val json = Json {
         classDiscriminator = "method"
         encodeDefaults = true
@@ -70,7 +70,7 @@ abstract class RPCInterface(
         encodeDefaults = true
         serializersModule = this@RPCInterface.serializersModule
     }
-    private val scope = CoroutineScope(Dispatchers.Main)
+    protected val scope = CoroutineScope(Dispatchers.Main)
 
     abstract suspend fun handleRequest(request: JsonRpcRequest): JsonRpcResult
 
@@ -79,7 +79,7 @@ abstract class RPCInterface(
         response: JsonRpcResponse
     ) {
         val jsonStr = responseSerializer.encodeToString(serializer, response)
-        Log.d("RPCInterface", "RPC response: $jsonStr")
+        Logger.d("RPCInterface") { "RPC response: $jsonStr" }
         sendToWebView(jsonStr)
     }
 
@@ -87,7 +87,7 @@ abstract class RPCInterface(
         val error = JsonRpcErrorResponse.JsonRpcError(code, message)
         val response = JsonRpcErrorResponse(error = error, id = id)
         val jsonStr = json.encodeToString(response)
-        Log.d("RPCInterface", "RPC error response: $jsonStr")
+        Logger.d("RPCInterface") { "RPC error response: $jsonStr" }
         sendToWebView(jsonStr)
     }
 
@@ -95,7 +95,7 @@ abstract class RPCInterface(
         val escaped = json.encodeToString(jsonStr)
         val js = "dispatchEvent(new CustomEvent('${channelName}Response', { detail: JSON.parse($escaped) }))"
         scope.launch {
-            webView.evaluateJavascript(js, null)
+            webView.evaluateJavaScript(js) {}
         }
     }
 
@@ -103,9 +103,8 @@ abstract class RPCInterface(
      * Function exposed to the WebView through JavaScript interface
      * which accepts JSON-RPC requests
      */
-    @JavascriptInterface
-    fun sendMessage(jsonStr: String) {
-        Log.d("RPCInterface", "RPC request: $jsonStr")
+    private fun acceptMessage(jsonStr: String) {
+        Logger.d("RPCInterface") { "RPC request: $jsonStr" }
         val request = json.decodeFromString(JsonRpcRequest.serializer(), jsonStr)
 
         scope.launch {
@@ -117,13 +116,13 @@ abstract class RPCInterface(
             } catch (e: RpcException) {
                 sendErrorResponse(e.errorCode, e.message.orEmpty(), request.id)
             } catch (e: Exception) {
-                Log.e("RPCInterface", "Unhandled exception", e)
+                Logger.d("RPCInterface", e) { "Unhandled exception" }
                 sendErrorResponse(-32099, e.message.orEmpty(), request.id)
             }
         }
     }
 
-    override fun onDestroy(owner: LifecycleOwner) {
+    open fun dispose() {
         scope.cancel()
     }
 }
