@@ -6,7 +6,7 @@ import com.smartcar.sdk.rpc.JsonRpcResult
 import com.smartcar.sdk.rpc.RPCInterface
 import com.smartcar.sdk.rpc.RpcException
 import com.smartcar.sdk.bridge.WebViewBridge
-import com.smartcar.sdk.bridge.OAuthCaptureBridge
+import com.smartcar.sdk.bridge.ContextBridge
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
@@ -14,7 +14,7 @@ import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
 
 class OAuthService(
-    private val captureBridge: OAuthCaptureBridge,
+    private val captureBridge: ContextBridge,
     webView: WebViewBridge,
 ) : RPCInterface(
     "SmartcarSDK",
@@ -35,7 +35,7 @@ class OAuthService(
             is OAuthRequest -> {
                 Logger.d("OAuthCapture") { "Starting capture with URL " + request.params.authorizeURL }
 
-                val returnUri = captureBridge.start(
+                val returnUri = captureBridge.startOAuthCapture(
                     request.params.authorizeURL,
                     request.params.interceptPrefix,
                     Json.encodeToString(request.params.headerConfig)

@@ -1,6 +1,6 @@
 /**
  * Copyright (c) 2017-present, Smartcar, Inc. All rights reserved.
-
+ *
  * You are hereby granted a limited, non-exclusive, worldwide, royalty-free
  * license to use, copy, modify, and distribute this software in source code or
  * binary form, for the limited purpose of this software's use in connection
@@ -17,14 +17,12 @@
  * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-
-package com.smartcar.sdk;
+package com.smartcar.sdk
 
 /**
  * Callback interface that should be implemented by the application.
  * Defines a single method that will be used to send the response data back to the application.
  */
-@FunctionalInterface
-public interface SmartcarCallback {
-    void handleResponse(SmartcarResponse smartcarResponse);
+fun interface SmartcarCallback {
+    fun handleResponse(smartcarResponse: SmartcarResponse?)
 }

@@ -13,7 +13,7 @@ class WebViewBridgeImpl(
     // Define a JavaScript interface for receiving messages from the webpage.
     private inner class JSInterface {
         @JavascriptInterface
-        fun postMessage(message: String) {
+        fun sendMessage(message: String) {
             onMessageFromJS.invoke(message)
         }
     }

@@ -1,54 +1,26 @@
-package com.smartcar.sdk;
+package com.smartcar.sdk
 
 /**
  * A class that stores vehicle data returned in {@link SmartcarResponse}.
  */
-public class VehicleInfo {
-    private String vin;
-    private String make;
+class VehicleInfo private constructor(builder: Builder) {
 
-    /**
-     * Assigns properties on the VehicleInfo object.
-     *
-     * @param builder the builder to obtain the properties from
-     */
-    private VehicleInfo (Builder builder) {
-        this.vin = builder.vin;
-        this.make = builder.make;
-    }
+    val vin: String? = builder.vin
+    val make: String? = builder.make
 
-    /**
-     * Returns the make assigned to VehicleInfo
-     *
-     * @return the make of the vehicle
-     */
-    public String getMake() {
-        return this.make;
-    }
-
-    /**
-     * Returns the vin assigned to VehicleInfo
-     *
-     * @return the vin of the vehicle
-     */
-    public String getVin() {
-        return this.vin;
-    }
-
-    @Override
-    public String toString() {
+    override fun toString(): String {
         return "VehicleInfo{" +
                 "vin='" + vin + '\'' +
                 ", make='" + make + '\'' +
-                '}';
+                '}'
     }
 
     /**
      * Builder class that allows for optional properties that can be null on VehicleInfo
      */
-    public static class Builder {
-        private String vin;
-        private String make;
+    class Builder {
+        internal var vin: String? = null
+        internal var make: String? = null
 
         /**
          * Sets the make on the Builder. Including a make allows the user to bypass the car brand
@@ -58,9 +30,9 @@ public class VehicleInfo {
          *
          * @return the builder with a `make` property added
          */
-        public Builder make(String make) {
-            this.make = make;
-            return this;
+        fun make(make: String?): Builder {
+            this.make = make
+            return this
         }
 
         /**
@@ -70,9 +42,9 @@ public class VehicleInfo {
          *
          * @return the builder with a `vin` property added
          */
-        public Builder vin(String vin) {
-            this.vin = vin;
-            return this;
+        fun vin(vin: String?): Builder {
+            this.vin = vin
+            return this
         }
 
         /**
@@ -81,8 +53,8 @@ public class VehicleInfo {
          *
          * @return a new instantiation of the VehicleInfo class
          */
-        public VehicleInfo build() {
-            return new VehicleInfo(this);
+        fun build(): VehicleInfo {
+            return VehicleInfo(this)
         }
     }
 }

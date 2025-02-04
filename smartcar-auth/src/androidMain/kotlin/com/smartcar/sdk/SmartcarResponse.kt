@@ -1,6 +1,8 @@
+package com.smartcar.sdk
+
 /**
  * Copyright (c) 2017-present, Smartcar, Inc. All rights reserved.
-
+ *
  * You are hereby granted a limited, non-exclusive, worldwide, royalty-free
  * license to use, copy, modify, and distribute this software in source code or
  * binary form, for the limited purpose of this software's use in connection
@@ -18,57 +20,19 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.smartcar.sdk;
-
 /**
  * A class that creates the response from Smartcar Connect.
  */
-public class SmartcarResponse {
-    private String code;
-    private String error;
-    private String errorDescription;
-    private String state;
-    private VehicleInfo vehicleInfo;
-    private String virtualKeyUrl;
+class SmartcarResponse private constructor(
+    val code: String?,
+    val error: String?,
+    val errorDescription: String?,
+    val state: String?,
+    val vehicleInfo: VehicleInfo?,
+    val virtualKeyUrl: String?
+) {
 
-    /**
-     * Assigns properties on the SmartcarResponse object.
-     *
-     * @param builder the builder to obtain the properties from
-     */
-    private SmartcarResponse(Builder builder) {
-        this.code = builder.code;
-        this.error = builder.error;
-        this.errorDescription = builder.errorDescription;
-        this.state = builder.state;
-        this.vehicleInfo = builder.vehicleInfo;
-        this.virtualKeyUrl = builder.virtualKeyUrl;
-    }
-
-    public String getCode() {
-        return this.code;
-    }
-
-    public String getError() {
-        return this.error;
-    }
-
-    public String getErrorDescription() {
-        return this.errorDescription;
-    }
-
-    public String getState() {
-        return this.state;
-    }
-
-    public VehicleInfo getVehicleInfo() { return this.vehicleInfo; }
-
-    public String getVirtualKeyUrl() {
-      return this.virtualKeyUrl;
-    }
-
-    @Override
-    public String toString() {
+    override fun toString(): String {
         return "SmartcarResponse{" +
                 "code='" + code + '\'' +
                 ", error='" + error + '\'' +
@@ -76,45 +40,45 @@ public class SmartcarResponse {
                 ", state='" + state + '\'' +
                 ", vehicleInfo=" + vehicleInfo + '\'' +
                 ", virtualKeyUrl=" + virtualKeyUrl +
-                '}';
+                '}'
     }
 
-    public static class Builder {
-        private String code;
-        private String error;
-        private String errorDescription;
-        private String state;
-        private VehicleInfo vehicleInfo;
-        private String virtualKeyUrl;
+    class Builder {
+        private var code: String? = null
+        private var error: String? = null
+        private var errorDescription: String? = null
+        private var state: String? = null
+        private var vehicleInfo: VehicleInfo? = null
+        private var virtualKeyUrl: String? = null
 
-        public Builder errorDescription(String errorDescription) {
-            this.errorDescription = errorDescription;
-            return this;
+        fun errorDescription(errorDescription: String?): Builder {
+            this.errorDescription = errorDescription
+            return this
         }
 
-        public Builder state(String state) {
-            this.state = state;
-            return this;
+        fun state(state: String?): Builder {
+            this.state = state
+            return this
         }
 
-        public Builder code(String code) {
-            this.code = code;
-            return this;
+        fun code(code: String?): Builder {
+            this.code = code
+            return this
         }
 
-        public Builder error(String error) {
-            this.error = error;
-            return this;
+        fun error(error: String?): Builder {
+            this.error = error
+            return this
         }
 
-        public Builder vehicleInfo(VehicleInfo vehicle) {
-            this.vehicleInfo = vehicle;
-            return this;
+        fun vehicleInfo(vehicle: VehicleInfo?): Builder {
+            this.vehicleInfo = vehicle
+            return this
         }
 
-        public Builder virtualKeyUrl(String virtualKeyUrl) {
-            this.virtualKeyUrl = virtualKeyUrl;
-            return this;
+        fun virtualKeyUrl(virtualKeyUrl: String?): Builder {
+            this.virtualKeyUrl = virtualKeyUrl
+            return this
         }
 
         /**
@@ -123,8 +87,8 @@ public class SmartcarResponse {
          *
          * @return a new instantiation of the SmartcarResponse class
          */
-        public SmartcarResponse build() {
-            return new SmartcarResponse(this);
+        fun build(): SmartcarResponse {
+            return SmartcarResponse(code, error, errorDescription, state, vehicleInfo, virtualKeyUrl)
         }
     }
 }

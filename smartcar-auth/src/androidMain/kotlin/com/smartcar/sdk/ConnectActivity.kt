@@ -1,6 +1,6 @@
 package com.smartcar.sdk
 
-import com.smartcar.sdk.bridge.OAuthCaptureBridgeImpl
+import com.smartcar.sdk.bridge.ContextBridgeImpl
 import android.net.Uri
 import android.webkit.CookieManager
 import android.webkit.WebStorage
@@ -16,8 +16,8 @@ class ConnectActivity : OAuthCaptureActivity() {
     override fun initWebView(webView: WebView) {
         clearWebViewData(webView)
 
-        oauthService = OAuthService(OAuthCaptureBridgeImpl(this), WebViewBridgeImpl(webView, "SmartcarSDK"))
-        bleService = BLEService(WebViewBridgeImpl(webView, "SmartcarSDKBLE"))
+        oauthService = OAuthService(ContextBridgeImpl(this), WebViewBridgeImpl(webView, "SmartcarSDK"))
+        bleService = BLEService(ContextBridgeImpl(this), WebViewBridgeImpl(webView, "SmartcarSDKBLE"))
 
         super.initWebView(webView)
     }

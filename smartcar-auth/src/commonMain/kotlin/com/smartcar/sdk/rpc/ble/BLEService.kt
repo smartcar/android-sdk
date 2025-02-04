@@ -5,11 +5,13 @@ import com.juul.kable.Advertisement
 import com.juul.kable.Peripheral
 import com.juul.kable.Scanner
 import com.juul.kable.characteristicOf
+import com.smartcar.sdk.bridge.ContextBridge
 import com.smartcar.sdk.rpc.JsonRpcRequest
 import com.smartcar.sdk.rpc.JsonRpcResult
 import com.smartcar.sdk.rpc.RPCInterface
 import com.smartcar.sdk.rpc.RpcException
 import com.smartcar.sdk.bridge.WebViewBridge
+import com.smartcar.sdk.bridge.requestMtuIfAvailable
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
@@ -24,6 +26,7 @@ import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
 
 class BLEService(
+    private val context: ContextBridge,
     webView: WebViewBridge,
 ) : RPCInterface(
     "SmartcarSDKBLE",
@@ -55,6 +58,10 @@ class BLEService(
     override suspend fun handleRequest(request: JsonRpcRequest): JsonRpcResult {
         return when (request) {
             is StartScanRequest -> {
+                if (!context.checkBLEPermissions()) {
+                    throw RpcException(-32099, "Bluetooth permission not granted")
+                }
+
                 // TODO convert to requestDevice
                 scanJob = scope.launch {
                     val scanner = Scanner {}
@@ -74,7 +81,7 @@ class BLEService(
             is ConnectRequest -> {
                 val peripheral = getPeripheral(request.params.address)
                 peripheral.connect()
-                // TODO: max mtu
+                peripheral.requestMtuIfAvailable()
                 SuccessResult()
             }
             is DisconnectRequest -> {
@@ -132,7 +139,7 @@ class BLEService(
                 val peripheral = getPeripheral(request.params.address)
                 val characteristic = characteristicOf(request.params.serviceUUID,
                     request.params.characteristicUUID)
-                //peripheral.o
+                //
                 SuccessResult()
             }
             else -> {

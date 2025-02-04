@@ -1,6 +1,14 @@
+package com.smartcar.sdk
+
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.text.TextUtils
+import android.view.View
+
 /**
  * Copyright (c) 2017-present, Smartcar, Inc. All rights reserved.
-
+ *
  * You are hereby granted a limited, non-exclusive, worldwide, royalty-free
  * license to use, copy, modify, and distribute this software in source code or
  * binary form, for the limited purpose of this software's use in connection
@@ -17,28 +25,85 @@
  * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+class SmartcarAuth {
 
-package com.smartcar.sdk;
+    companion object {
+        private const val BASE_AUTHORIZATION_URL = "https://connect.smartcar.com/oauth/authorize"
+        private const val AUTHORIZATION_HOST = "connect.smartcar.com"
 
-import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
-import android.text.TextUtils;
-import android.view.View;
+        private lateinit var clientId: String
+        private lateinit var redirectUri: String
+        private lateinit var scope: Array<String>
+        private var testMode: Boolean = false
+        private lateinit var callback: SmartcarCallback
 
-/**
- * Main class that provides SDK access methods.
- */
-public class SmartcarAuth {
+        /**
+         * Receives the response from Connect and sends it back to the calling function
+         * via the callback method. The code is packed in a Bundle with the key "code".
+         *
+         * @param uri The response data as a Uri
+         */
+        fun receiveResponse(uri: Uri?) {
+            if (uri != null && uri.toString().startsWith(redirectUri)) {
+                val queryState = uri.getQueryParameter("state")
+                val queryErrorDescription = uri.getQueryParameter("error_description")
+                val queryCode = uri.getQueryParameter("code")
+                val queryError = uri.getQueryParameter("error")
+                val queryVin = uri.getQueryParameter("vin")
+                val queryVirtualKeyUrl = uri.getQueryParameter("virtual_key_url")
 
-    private static final String BASE_AUTHORIZATION_URL = "https://connect.smartcar.com/oauth/authorize";
-    private static final String AUTHORIZATION_HOST = "connect.smartcar.com";
+                val receivedCode = queryCode != null
+                val receivedError = queryError != null && queryVin == null
+                val receivedErrorWithVehicle = queryError != null && queryVin != null
 
-    private static String clientId;
-    private static String redirectUri;
-    private static String[] scope;
-    private static Boolean testMode;
-    private static SmartcarCallback callback;
+                val responseBuilder = SmartcarResponse.Builder()
+
+                if (receivedCode) {
+
+                    val smartcarResponse = responseBuilder
+                            .code(queryCode)
+                            .errorDescription(queryErrorDescription)
+                            .state(queryState)
+                            .virtualKeyUrl(queryVirtualKeyUrl)
+                            .build()
+                    callback.handleResponse(smartcarResponse)
+
+                } else if (receivedError) {
+
+                    val smartcarResponse = responseBuilder
+                            .error(queryError)
+                            .errorDescription(queryErrorDescription)
+                            .state(queryState)
+                            .build()
+                    callback.handleResponse(smartcarResponse)
+
+                } else if (receivedErrorWithVehicle) {
+
+                    val make = uri.getQueryParameter("make")
+                    val responseVehicle = VehicleInfo.Builder()
+                            .vin(queryVin)
+                            .make(make)
+                            .build()
+
+                    val smartcarResponse = responseBuilder
+                            .error(queryError)
+                            .errorDescription(queryErrorDescription)
+                            .state(queryState)
+                            .vehicleInfo(responseVehicle)
+                            .build()
+                    callback.handleResponse(smartcarResponse)
+
+                } else {
+
+                    val smartcarResponse = responseBuilder
+                            .errorDescription("Unable to fetch code. Please try again")
+                            .state(queryState)
+                            .build()
+                    callback.handleResponse(smartcarResponse)
+                }
+            }
+        }
+    }
 
     /**
      * Constructs an instance with the given parameters.
@@ -48,10 +113,7 @@ public class SmartcarAuth {
      * @param scope       An array of authorization scopes
      * @param callback    Handler to a Callback for receiving the Smartcar Connect response
      */
-    public SmartcarAuth(String clientId, String redirectUri, String[] scope,
-                        SmartcarCallback callback) {
-        this(clientId, redirectUri, scope, false, callback);
-    }
+    constructor(clientId: String, redirectUri: String, scope: Array<String>, callback: SmartcarCallback) : this(clientId, redirectUri, scope, false, callback)
 
     /**
      * Constructs an instance with the given parameters.
@@ -62,13 +124,12 @@ public class SmartcarAuth {
      * @param testMode    Set to true to run Smartcar Connect in test mode
      * @param callback    Handler to a Callback for receiving the Smartcar Connect response
      */
-    public SmartcarAuth(String clientId, String redirectUri, String[] scope, boolean testMode,
-                        SmartcarCallback callback) {
-        this.clientId = clientId;
-        this.redirectUri = redirectUri;
-        this.scope = scope;
-        this.testMode = testMode;
-        this.callback = callback;
+    constructor(clientId: String, redirectUri: String, scope: Array<String>, testMode: Boolean, callback: SmartcarCallback) {
+        Companion.clientId = clientId
+        Companion.redirectUri = redirectUri
+        Companion.scope = scope
+        Companion.testMode = testMode
+        Companion.callback = callback
     }
 
     /**
@@ -76,26 +137,22 @@ public class SmartcarAuth {
      *
      * Use the built string with {@link SmartcarAuth#launchAuthFlow(Context, String)} or {@link SmartcarAuth#addClickHandler(Context, View, String)}.
      */
-    public AuthUrlBuilder authUrlBuilder() {
-      return new AuthUrlBuilder();
+    fun authUrlBuilder(): AuthUrlBuilder {
+        return AuthUrlBuilder()
     }
 
     /**
      * A builder used for generating Smartcar Connect authorization URLs.
      */
-    public class AuthUrlBuilder {
-        private Uri.Builder uriBuilder;
-
-        public AuthUrlBuilder() {
-            uriBuilder = Uri.parse(BASE_AUTHORIZATION_URL).buildUpon()
-                    .appendQueryParameter("response_type", "code")
-                    .appendQueryParameter("sdk_platform", "android")
-                    .appendQueryParameter("sdk_version", BuildConfig.VERSION_NAME)
-                    .appendQueryParameter("client_id", clientId)
-                    .appendQueryParameter("redirect_uri", redirectUri)
-                    .appendQueryParameter("mode", testMode ? "test" : "live")
-                    .appendQueryParameter("scope", TextUtils.join(" ", scope));
-        }
+    inner class AuthUrlBuilder {
+        private val uriBuilder = Uri.parse(BASE_AUTHORIZATION_URL).buildUpon()
+                .appendQueryParameter("response_type", "code")
+                .appendQueryParameter("sdk_platform", "android")
+                .appendQueryParameter("sdk_version", BuildConfig.VERSION_NAME)
+                .appendQueryParameter("client_id", SmartcarAuth.clientId)
+                .appendQueryParameter("redirect_uri", SmartcarAuth.redirectUri)
+                .appendQueryParameter("mode", if (SmartcarAuth.testMode) "test" else "live")
+                .appendQueryParameter("scope", TextUtils.join(" ", SmartcarAuth.scope))
 
         /**
          * Set an optional state parameter.
@@ -104,11 +161,11 @@ public class SmartcarAuth {
          *              to the {@link SmartcarCallback}
          * @return a reference to this object
          */
-        public AuthUrlBuilder setState(String state) {
-            if (!state.equals("")) {
-                uriBuilder.appendQueryParameter("state", state);
+        fun setState(state: String): AuthUrlBuilder {
+            if (state != "") {
+                uriBuilder.appendQueryParameter("state", state)
             }
-            return this;
+            return this
         }
 
         /**
@@ -121,9 +178,9 @@ public class SmartcarAuth {
          * @param forcePrompt Set to true to ensure the grant approval dialog is always shown
          * @return a reference to this object
          */
-        public AuthUrlBuilder setForcePrompt(boolean forcePrompt) {
-            uriBuilder.appendQueryParameter("approval_prompt", forcePrompt ? "force" : "auto");
-            return this;
+        fun setForcePrompt(forcePrompt: Boolean): AuthUrlBuilder {
+            uriBuilder.appendQueryParameter("approval_prompt", if (forcePrompt) "force" else "auto")
+            return this
         }
 
         /**
@@ -135,9 +192,9 @@ public class SmartcarAuth {
          * @param make The selected make
          * @return a reference to this object
          */
-        public AuthUrlBuilder setMakeBypass(String make) {
-            uriBuilder.appendQueryParameter("make", make);
-            return this;
+        fun setMakeBypass(make: String): AuthUrlBuilder {
+            uriBuilder.appendQueryParameter("make", make)
+            return this
         }
 
         /**
@@ -150,9 +207,9 @@ public class SmartcarAuth {
          * @param singleSelect Set to true to ensure only a single vehicle is authorized
          * @return a reference to this object
          */
-        public AuthUrlBuilder setSingleSelect(boolean singleSelect) {
-            uriBuilder.appendQueryParameter("single_select", Boolean.toString(singleSelect));
-            return this;
+        fun setSingleSelect(singleSelect: Boolean): AuthUrlBuilder {
+            uriBuilder.appendQueryParameter("single_select", singleSelect.toString())
+            return this
         }
 
         /**
@@ -166,9 +223,9 @@ public class SmartcarAuth {
          * @param vin The specific VIN to authorize
          * @return a reference to this object
          */
-        public AuthUrlBuilder setSingleSelectVin(String vin) {
-            uriBuilder.appendQueryParameter("single_select_vin", vin);
-            return this;
+        fun setSingleSelectVin(vin: String): AuthUrlBuilder {
+            uriBuilder.appendQueryParameter("single_select_vin", vin)
+            return this
         }
 
         /**
@@ -177,9 +234,9 @@ public class SmartcarAuth {
          * @param flags List of feature flags that your application has early access to.
          * @return a reference to this object
          */
-        public AuthUrlBuilder setFlags(String[] flags) {
-            uriBuilder.appendQueryParameter("flags", TextUtils.join(" ", flags));
-            return this;
+        fun setFlags(flags: Array<String>): AuthUrlBuilder {
+            uriBuilder.appendQueryParameter("flags", TextUtils.join(" ", flags))
+            return this
         }
 
         /**
@@ -190,9 +247,9 @@ public class SmartcarAuth {
          * analytics across Connect sessions for each vehicle owner.
          * @return a reference to this object
          */
-        public AuthUrlBuilder setUser(String user) {
-            uriBuilder.appendQueryParameter("user", user);
-            return this;
+        fun setUser(user: String): AuthUrlBuilder {
+            uriBuilder.appendQueryParameter("user", user)
+            return this
         }
 
         /**
@@ -200,8 +257,8 @@ public class SmartcarAuth {
          *
          * @return A built url which can be used in {@link SmartcarAuth#launchAuthFlow(Context, String)} or {@link SmartcarAuth#addClickHandler(Context, View, String)}
          */
-        public String build() {
-            return uriBuilder.build().toString();
+        fun build(): String {
+            return uriBuilder.build().toString()
         }
     }
 
@@ -211,8 +268,8 @@ public class SmartcarAuth {
      * @param context The client application's context
      * @param view The view to attach the click listener
      */
-    public void addClickHandler(final Context context, final View view) {
-        addClickHandler(context, view, (new AuthUrlBuilder()).build());
+    fun addClickHandler(context: Context, view: View) {
+        addClickHandler(context, view, AuthUrlBuilder().build())
     }
 
     /**
@@ -222,13 +279,9 @@ public class SmartcarAuth {
      * @param view The view to attach the click listener
      * @param authUrl Use {@link AuthUrlBuilder} to generate the authorization url
      */
-    public void addClickHandler(final Context context, final View view, final String authUrl) {
-        View.OnClickListener listener = new View.OnClickListener() {
-            public void onClick(View v) {
-                launchAuthFlow(context, authUrl);
-            }
-        };
-        view.setOnClickListener(listener);
+    fun addClickHandler(context: Context, view: View, authUrl: String) {
+        val listener = View.OnClickListener { launchAuthFlow(context, authUrl) }
+        view.setOnClickListener(listener)
     }
 
     /**
@@ -237,8 +290,8 @@ public class SmartcarAuth {
      *
      * @param context The client application's context
      */
-    public void launchAuthFlow(final Context context) {
-        launchAuthFlow(context, (new AuthUrlBuilder()).build());
+    fun launchAuthFlow(context: Context) {
+        launchAuthFlow(context, AuthUrlBuilder().build())
     }
 
     /**
@@ -248,81 +301,12 @@ public class SmartcarAuth {
      * @param context The client application's context
      * @param authUrl Use {@link AuthUrlBuilder} to generate the authorization url
      */
-    public void launchAuthFlow(final Context context, final String authUrl) {
-        Intent intent = new Intent(context, ConnectActivity.class);
-        intent.putExtra("authorize_url", authUrl);
-        intent.putExtra("intercept_prefix", redirectUri);
-        intent.putExtra("allowed_host", AUTHORIZATION_HOST);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.startActivity(intent);
-    }
-
-    /**
-     * Receives the response from Connect and sends it back to the calling function
-     * via the callback method. The code is packed in a Bundle with the key "code".
-     *
-     * @param uri The response data as a Uri
-     */
-    protected static void receiveResponse(Uri uri) {
-        if (uri != null && uri.toString().startsWith(redirectUri)) {
-            String queryState = uri.getQueryParameter("state");
-            String queryErrorDescription = uri.getQueryParameter("error_description");
-            String queryCode = uri.getQueryParameter("code");
-            String queryError = uri.getQueryParameter("error");
-            String queryVin = uri.getQueryParameter("vin");
-            String queryVirtualKeyUrl = uri.getQueryParameter("virtual_key_url");
-
-            boolean receivedCode = queryCode != null;
-            boolean receivedError = queryError != null && queryVin == null;
-            boolean receivedErrorWithVehicle = queryError != null && queryVin != null;
-
-            SmartcarResponse.Builder responseBuilder = new SmartcarResponse.Builder();
-
-            if (receivedCode) {
-
-                SmartcarResponse smartcarResponse = responseBuilder
-                        .code(queryCode)
-                        .errorDescription(queryErrorDescription)
-                        .state(queryState)
-                        .virtualKeyUrl(queryVirtualKeyUrl)
-                        .build();
-                callback.handleResponse(smartcarResponse);
-
-            } else if (receivedError) {
-
-                SmartcarResponse smartcarResponse = responseBuilder
-                        .error(queryError)
-                        .errorDescription(queryErrorDescription)
-                        .state(queryState)
-                        .build();
-                callback.handleResponse(smartcarResponse);
-
-            } else if (receivedErrorWithVehicle) {
-
-                String make = uri.getQueryParameter("make");
-                VehicleInfo responseVehicle = new VehicleInfo.Builder()
-                    .vin(queryVin)
-                    .make(make)
-                    .build();
-
-                SmartcarResponse smartcarResponse = responseBuilder
-                        .error(queryError)
-                        .errorDescription(queryErrorDescription)
-                        .state(queryState)
-                        .vehicleInfo(responseVehicle)
-                        .build();
-                callback.handleResponse(smartcarResponse);
-
-            } else {
-
-                SmartcarResponse smartcarResponse = responseBuilder
-                        .errorDescription("Unable to fetch code. Please try again")
-                        .state(queryState)
-                        .build();
-                callback.handleResponse(smartcarResponse);
-
-            }
-
-        }
+    fun launchAuthFlow(context: Context, authUrl: String) {
+        val intent = Intent(context, ConnectActivity::class.java)
+        intent.putExtra("authorize_url", authUrl)
+        intent.putExtra("intercept_prefix", SmartcarAuth.redirectUri)
+        intent.putExtra("allowed_host", AUTHORIZATION_HOST)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        context.startActivity(intent)
     }
 }

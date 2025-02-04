@@ -35,10 +35,10 @@ public class SmartcarResponseTest {
                 .virtualKeyUrl("https://www.tesla.com/_ak/smartcar.com")
                 .build();
 
-        assertEquals(smartcarResponse.getCode(), "testcode");
-        assertEquals(smartcarResponse.getErrorDescription(), "Just a testmessage");
-        assertEquals(smartcarResponse.getState(), "teststate");
-        assertEquals(smartcarResponse.getVirtualKeyUrl(), "https://www.tesla.com/_ak/smartcar.com");
+        assertEquals(smartcarResponse.code, "testcode");
+        assertEquals(smartcarResponse.errorDescription, "Just a testmessage");
+        assertEquals(smartcarResponse.state, "teststate");
+        assertEquals(smartcarResponse.virtualKeyUrl, "https://www.tesla.com/_ak/smartcar.com");
     }
 
     @Test
@@ -49,9 +49,9 @@ public class SmartcarResponseTest {
                 .state("errorstate")
                 .build();
 
-        assertEquals(smartcarResponse.getError(), "error");
-        assertEquals(smartcarResponse.getErrorDescription(), "Error message");
-        assertEquals(smartcarResponse.getState(), "errorstate");
+        assertEquals(smartcarResponse.error, "error");
+        assertEquals(smartcarResponse.errorDescription, "Error message");
+        assertEquals(smartcarResponse.state, "errorstate");
     }
 
     @Test
@@ -68,10 +68,10 @@ public class SmartcarResponseTest {
                 .vehicleInfo(vehicle)
                 .build();
 
-        assertEquals(smartcarResponse.getError(), "error");
-        assertEquals(smartcarResponse.getErrorDescription(), "Error message");
-        assertEquals(smartcarResponse.getState(), "errorstate");
-        assertEquals(smartcarResponse.getVehicleInfo(), vehicle);
+        assertEquals(smartcarResponse.error, "error");
+        assertEquals(smartcarResponse.errorDescription, "Error message");
+        assertEquals(smartcarResponse.state, "errorstate");
+        assertEquals(smartcarResponse.vehicleInfo, vehicle);
     }
 
 }
