@@ -52,7 +52,7 @@ class BLEService(
 ) {
     private var scanJob: Job? = null
     private var peripherals = mutableMapOf<String, Peripheral>()
-    private var observations = mutableMapOf<String, Peripheral>()
+    private val notificationJobs = mutableMapOf<String, Job>()
 
     @ExperimentalStdlibApi
     override suspend fun handleRequest(request: JsonRpcRequest): JsonRpcResult {
@@ -62,7 +62,6 @@ class BLEService(
                     throw RpcException(-32099, "Bluetooth permission not granted")
                 }
 
-                // TODO convert to requestDevice
                 scanJob = scope.launch {
                     val scanner = Scanner {}
                     scanner.advertisements.collect { advertisement ->
@@ -91,55 +90,69 @@ class BLEService(
             }
             is ReadCharacteristicRequest -> {
                 val peripheral = getPeripheral(request.params.address)
-                val characteristic = characteristicOf(request.params.serviceUUID,
-                    request.params.characteristicUUID)
+                val characteristic = characteristicOf(
+                    request.params.serviceUUID,
+                    request.params.characteristicUUID
+                )
                 val bytes = peripheral.read(characteristic)
                 ReadCharacteristicResult(bytes.toHexString())
             }
             is WriteCharacteristicRequest -> {
                 val peripheral = getPeripheral(request.params.address)
-                val characteristic = characteristicOf(request.params.serviceUUID,
-                    request.params.characteristicUUID)
+                val characteristic = characteristicOf(
+                    request.params.serviceUUID,
+                    request.params.characteristicUUID
+                )
                 val bytes = request.params.value.hexToByteArray()
                 peripheral.write(characteristic, bytes, com.juul.kable.WriteType.WithResponse)
                 SuccessResult()
             }
             is StartNotificationsRequest -> {
                 val peripheral = getPeripheral(request.params.address)
-                val characteristic = characteristicOf(request.params.serviceUUID,
-                    request.params.characteristicUUID)
+                val characteristic = characteristicOf(
+                    request.params.serviceUUID,
+                    request.params.characteristicUUID
+                )
 
                 val observationEstablished = CompletableDeferred<Unit>()
 
-                peripheral.launch {
+                // Create a unique key for this notifications subscription.
+                val key = "${request.params.address}:${request.params.serviceUUID}:${request.params.characteristicUUID}"
+
+                // Launch a coroutine to collect notifications and store its Job.
+                val job = peripheral.launch {
                     peripheral.observe(characteristic).onStart {
                         observationEstablished.complete(Unit)
                     }.catch {
                         observationEstablished.completeExceptionally(
                             RpcException(-32099, it.message)
                         )
-                    }.collect {
+                    }.collect { value ->
                         val req = NotifyRequest(
                             method = "notify",
                             params = NotifyRequest.NotifyParams(
                                 address = request.params.address,
                                 serviceUUID = request.params.serviceUUID,
                                 characteristicUUID = request.params.characteristicUUID,
-                                value=it.toHexString(),
+                                value = value.toHexString(),
                             )
                         )
                         sendToWebView(Json.encodeToString(req))
                     }
                 }
+                notificationJobs[key] = job
 
+                // Wait until the observation has started.
                 observationEstablished.await()
                 SuccessResult()
             }
             is StopNotificationsRequest -> {
-                val peripheral = getPeripheral(request.params.address)
-                val characteristic = characteristicOf(request.params.serviceUUID,
-                    request.params.characteristicUUID)
-                //
+                // Build the same key used in StartNotificationsRequest.
+                val key = "${request.params.address}:${request.params.serviceUUID}:${request.params.characteristicUUID}"
+
+                // Retrieve and cancel the corresponding notifications job, if it exists.
+                notificationJobs[key]?.cancel()
+                notificationJobs.remove(key)
                 SuccessResult()
             }
             else -> {
@@ -149,7 +162,8 @@ class BLEService(
     }
 
     private fun getPeripheral(address: String): Peripheral {
-        return peripherals[address] ?: throw RpcException(-32099, "Peripheral not found for address: $address")
+        return peripherals[address]
+            ?: throw RpcException(-32099, "Peripheral not found for address: $address")
     }
 
     @ExperimentalStdlibApi
