@@ -46,14 +46,15 @@ kotlin {
         framework {
             // Required properties
             // Framework name configuration. Use this property instead of deprecated 'frameworkName'
-            baseName = "SmartcarSDK"
+            baseName = "SmartcarFramework"
 
             // Optional properties
             // Specify the framework linking type. It's dynamic by default.
-            isStatic = true
+            isStatic = false
             // Dependency export
             // Uncomment and specify another project module if you have one:
             // export(project(":<your other KMP module>"))
+            @OptIn(ExperimentalKotlinGradlePluginApi::class)
             transitiveExport = false // This is default.
         }
 
@@ -74,6 +75,13 @@ kotlin {
         val commonTest by getting {
             dependencies {
                 implementation(libs.kotlin.test)
+            }
+        }
+        val androidUnitTest by getting {
+            dependencies {
+                implementation("junit:junit:4.13.2")
+                implementation("org.mockito:mockito-core:3.1.0")
+                implementation("org.robolectric:robolectric:4.13")
             }
         }
     }
@@ -100,7 +108,8 @@ android {
 
     buildTypes {
         getByName("debug") {
-            isTestCoverageEnabled = true
+            enableUnitTestCoverage = true
+            enableAndroidTestCoverage = true
         }
         getByName("release") {
             isMinifyEnabled = false
