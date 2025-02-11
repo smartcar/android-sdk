@@ -17,6 +17,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
@@ -24,7 +26,10 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
+@OptIn(ExperimentalStdlibApi::class, ExperimentalUuidApi::class)
 class BLEService(
     private val context: ContextBridge,
     webView: WebViewBridge,
@@ -46,15 +51,21 @@ class BLEService(
         // Register result classes
         polymorphic(JsonRpcResult::class) {
             subclass(SuccessResult::class)
+            subclass(ConnectResult::class)
             subclass(ReadCharacteristicResult::class)
         }
     }
 ) {
     private var scanJob: Job? = null
     private var peripherals = mutableMapOf<String, Peripheral>()
-    private val notificationJobs = mutableMapOf<String, Job>()
 
-    @ExperimentalStdlibApi
+    private val notificationJobs = mutableMapOf<NotificationKey, Job>()
+    data class NotificationKey(
+        val address: String,
+        val serviceUuid: Uuid,
+        val characteristicUuid: Uuid
+    )
+
     override suspend fun handleRequest(request: JsonRpcRequest): JsonRpcResult {
         return when (request) {
             is StartScanRequest -> {
@@ -81,7 +92,20 @@ class BLEService(
                 val peripheral = getPeripheral(request.params.address)
                 peripheral.connect()
                 peripheral.requestMtuIfAvailable()
-                SuccessResult()
+
+                // Return service discovery results
+                val services = peripheral.services.value!!.map { s ->
+                    ConnectResult.Service(
+                        s.serviceUuid.toString(),
+                        s.characteristics.map { c ->
+                            ConnectResult.Characteristic(
+                                c.characteristicUuid.toString(),
+                                c.properties.value
+                            )
+                        }
+                    )
+                }
+                ConnectResult(services)
             }
             is DisconnectRequest -> {
                 val peripheral = getPeripheral(request.params.address)
@@ -91,8 +115,8 @@ class BLEService(
             is ReadCharacteristicRequest -> {
                 val peripheral = getPeripheral(request.params.address)
                 val characteristic = characteristicOf(
-                    request.params.serviceUUID,
-                    request.params.characteristicUUID
+                    Uuid.parse(request.params.serviceUUID),
+                    Uuid.parse(request.params.characteristicUUID)
                 )
                 val bytes = peripheral.read(characteristic)
                 ReadCharacteristicResult(bytes.toHexString())
@@ -100,8 +124,8 @@ class BLEService(
             is WriteCharacteristicRequest -> {
                 val peripheral = getPeripheral(request.params.address)
                 val characteristic = characteristicOf(
-                    request.params.serviceUUID,
-                    request.params.characteristicUUID
+                    Uuid.parse(request.params.serviceUUID),
+                    Uuid.parse(request.params.characteristicUUID)
                 )
                 val bytes = request.params.value.hexToByteArray()
                 peripheral.write(characteristic, bytes, com.juul.kable.WriteType.WithResponse)
@@ -110,24 +134,28 @@ class BLEService(
             is StartNotificationsRequest -> {
                 val peripheral = getPeripheral(request.params.address)
                 val characteristic = characteristicOf(
-                    request.params.serviceUUID,
-                    request.params.characteristicUUID
+                    Uuid.parse(request.params.serviceUUID),
+                    Uuid.parse(request.params.characteristicUUID)
                 )
 
                 val observationEstablished = CompletableDeferred<Unit>()
 
                 // Create a unique key for this notifications subscription.
-                val key = "${request.params.address}:${request.params.serviceUUID}:${request.params.characteristicUUID}"
+                val key = NotificationKey(
+                    request.params.address,
+                    Uuid.parse(request.params.serviceUUID),
+                    Uuid.parse(request.params.characteristicUUID)
+                )
 
                 // Launch a coroutine to collect notifications and store its Job.
-                val job = peripheral.launch {
-                    peripheral.observe(characteristic).onStart {
+                val job = peripheral.observe(characteristic)
+                    .onStart {
                         observationEstablished.complete(Unit)
                     }.catch {
                         observationEstablished.completeExceptionally(
                             RpcException(-32099, it.message)
                         )
-                    }.collect { value ->
+                    }.onEach { value ->
                         val req = NotifyRequest(
                             method = "notify",
                             params = NotifyRequest.NotifyParams(
@@ -138,8 +166,8 @@ class BLEService(
                             )
                         )
                         sendToWebView(Json.encodeToString(req))
-                    }
-                }
+                    }.launchIn(peripheral.scope)
+
                 notificationJobs[key] = job
 
                 // Wait until the observation has started.
@@ -148,7 +176,11 @@ class BLEService(
             }
             is StopNotificationsRequest -> {
                 // Build the same key used in StartNotificationsRequest.
-                val key = "${request.params.address}:${request.params.serviceUUID}:${request.params.characteristicUUID}"
+                val key = NotificationKey(
+                    request.params.address,
+                    Uuid.parse(request.params.serviceUUID),
+                    Uuid.parse(request.params.characteristicUUID)
+                )
 
                 // Retrieve and cancel the corresponding notifications job, if it exists.
                 notificationJobs[key]?.cancel()
@@ -166,8 +198,7 @@ class BLEService(
             ?: throw RpcException(-32099, "Peripheral not found for address: $address")
     }
 
-    @ExperimentalStdlibApi
-    fun onAdvertisement(advertisement: Advertisement) {
+    private fun onAdvertisement(advertisement: Advertisement) {
         // Extract device name (fallback to empty if null)
         val deviceName = advertisement.name.orEmpty()
 
@@ -218,9 +249,9 @@ class BLEService(
     override fun dispose() {
         super.dispose()
         peripherals.values.forEach {
-            it.launch {
+            it.scope.launch {
                 it.disconnect()
-                it.cancel()
+                it.scope.cancel()
             }
         }
         scanJob?.cancel()

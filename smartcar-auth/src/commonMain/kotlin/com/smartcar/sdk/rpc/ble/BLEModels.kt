@@ -78,6 +78,22 @@ data class DisconnectRequest(
 ) : JsonRpcRequest()
 
 @Serializable
+data class ConnectResult(
+    val services: List<Service>
+) : JsonRpcResult() {
+    @Serializable
+    data class Service(
+        val uuid: String,
+        val characteristics: List<Characteristic>
+    )
+    @Serializable
+    data class Characteristic(
+        val uuid: String,
+        val properties: Int
+    )
+}
+
+@Serializable
 data class AddressParams(
     val address: String,
 )
