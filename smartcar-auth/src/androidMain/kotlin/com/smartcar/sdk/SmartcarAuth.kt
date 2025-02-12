@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.text.TextUtils
 import android.view.View
+import com.smartcar.sdk.activity.ConnectActivity
 
 /**
  * Copyright (c) 2017-present, Smartcar, Inc. All rights reserved.
@@ -149,10 +150,10 @@ class SmartcarAuth {
                 .appendQueryParameter("response_type", "code")
                 .appendQueryParameter("sdk_platform", "android")
                 .appendQueryParameter("sdk_version", BuildConfig.VERSION_NAME)
-                .appendQueryParameter("client_id", SmartcarAuth.clientId)
-                .appendQueryParameter("redirect_uri", SmartcarAuth.redirectUri)
-                .appendQueryParameter("mode", if (SmartcarAuth.testMode) "test" else "live")
-                .appendQueryParameter("scope", TextUtils.join(" ", SmartcarAuth.scope))
+                .appendQueryParameter("client_id", clientId)
+                .appendQueryParameter("redirect_uri", redirectUri)
+                .appendQueryParameter("mode", if (testMode) "test" else "live")
+                .appendQueryParameter("scope", TextUtils.join(" ", scope))
 
         /**
          * Set an optional state parameter.
@@ -304,7 +305,7 @@ class SmartcarAuth {
     fun launchAuthFlow(context: Context, authUrl: String) {
         val intent = Intent(context, ConnectActivity::class.java)
         intent.putExtra("authorize_url", authUrl)
-        intent.putExtra("intercept_prefix", SmartcarAuth.redirectUri)
+        intent.putExtra("intercept_prefix", redirectUri)
         intent.putExtra("allowed_host", AUTHORIZATION_HOST)
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         context.startActivity(intent)

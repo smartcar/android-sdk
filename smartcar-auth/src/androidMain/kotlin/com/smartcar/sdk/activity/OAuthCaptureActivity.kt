@@ -1,4 +1,4 @@
-package com.smartcar.sdk
+package com.smartcar.sdk.activity
 
 import android.annotation.SuppressLint
 import android.content.Intent

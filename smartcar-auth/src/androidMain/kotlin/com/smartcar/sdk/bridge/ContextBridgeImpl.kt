@@ -5,7 +5,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import androidx.activity.ComponentActivity
 import androidx.core.content.ContextCompat
-import com.smartcar.sdk.OAuthCaptureActivity
+import com.smartcar.sdk.activity.OAuthCaptureActivity
 import com.smartcar.sdk.activity.awaitActivityResult
 import com.smartcar.sdk.activity.awaitMultiplePermissionsResult
 

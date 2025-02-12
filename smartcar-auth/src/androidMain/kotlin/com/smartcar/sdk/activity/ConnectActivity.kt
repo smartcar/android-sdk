@@ -1,10 +1,11 @@
-package com.smartcar.sdk
+package com.smartcar.sdk.activity
 
 import com.smartcar.sdk.bridge.ContextBridgeImpl
 import android.net.Uri
 import android.webkit.CookieManager
 import android.webkit.WebStorage
 import android.webkit.WebView
+import com.smartcar.sdk.SmartcarAuth
 import com.smartcar.sdk.bridge.WebViewBridgeImpl
 import com.smartcar.sdk.rpc.ble.BLEService
 import com.smartcar.sdk.rpc.oauth.OAuthService
