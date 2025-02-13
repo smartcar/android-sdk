@@ -148,25 +148,24 @@ class BLEService(
                 )
 
                 // Launch a coroutine to collect notifications and store its Job.
-                val job = peripheral.observe(characteristic)
-                    .onStart {
-                        observationEstablished.complete(Unit)
-                    }.catch {
-                        observationEstablished.completeExceptionally(
-                            RpcException(-32099, it.message)
+                val job = peripheral.observe(characteristic) {
+                    observationEstablished.complete(Unit)
+                }.catch {
+                    observationEstablished.completeExceptionally(
+                        RpcException(-32099, it.message)
+                    )
+                }.onEach { value ->
+                    val req = NotifyRequest(
+                        method = "notify",
+                        params = NotifyRequest.NotifyParams(
+                            address = request.params.address,
+                            serviceUUID = request.params.serviceUUID,
+                            characteristicUUID = request.params.characteristicUUID,
+                            value = value.toHexString(),
                         )
-                    }.onEach { value ->
-                        val req = NotifyRequest(
-                            method = "notify",
-                            params = NotifyRequest.NotifyParams(
-                                address = request.params.address,
-                                serviceUUID = request.params.serviceUUID,
-                                characteristicUUID = request.params.characteristicUUID,
-                                value = value.toHexString(),
-                            )
-                        )
-                        sendToWebView(Json.encodeToString(req))
-                    }.launchIn(peripheral.scope)
+                    )
+                    sendToWebView(Json.encodeToString(req))
+                }.launchIn(peripheral.scope)
 
                 notificationJobs[key] = job
 
