@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.kotlinCocoapods)
+    alias(libs.plugins.dokka)
     `maven-publish`
     signing
 }
@@ -22,7 +23,6 @@ version = libVersion
 kotlin {
     androidTarget {
         publishLibraryVariants("release")
-        @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_1_8)
         }
@@ -66,7 +66,6 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                //put your multiplatform dependencies here
                 implementation(libs.kermit)
                 implementation(libs.kable.core)
                 implementation(libs.kotlinx.serialization.json)
@@ -77,11 +76,17 @@ kotlin {
                 implementation(libs.kotlin.test)
             }
         }
+        val androidMain by getting {
+            dependencies {
+                implementation(libs.android.ktx)
+                implementation(libs.android.activity)
+            }
+        }
         val androidUnitTest by getting {
             dependencies {
-                implementation("junit:junit:4.13.2")
-                implementation("org.mockito:mockito-core:3.1.0")
-                implementation("org.robolectric:robolectric:4.13")
+                implementation(libs.junit)
+                implementation(libs.mockito.core)
+                implementation(libs.robolectric)
             }
         }
     }
@@ -119,33 +124,6 @@ android {
             )
         }
     }
-
-    testOptions {
-        unitTests {
-            isIncludeAndroidResources = true
-        }
-    }
-
-    publishing {
-        // Configuring the release variant for publishing artifacts
-        singleVariant("release") {
-            withSourcesJar()
-            withJavadocJar()
-        }
-    }
-}
-
-dependencies {
-    implementation("androidx.core:core-ktx:1.13.1")
-    implementation("androidx.activity:activity-ktx:1.9.2")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.1")
-    androidTestImplementation("androidx.annotation:annotation:1.9.1")
-    androidTestImplementation("androidx.test:runner:1.6.2")
-    androidTestImplementation("androidx.test:rules:1.6.1")
-    testAnnotationProcessor("com.google.auto.service:auto-service:1.0-rc4")
-    testImplementation("junit:junit:4.13.2")
-    testImplementation("org.mockito:mockito-core:3.1.0")
-    testImplementation("org.robolectric:robolectric:4.13")
 }
 
 /**
@@ -155,46 +133,51 @@ dependencies {
  */
 publishing {
     publications {
-        create<MavenPublication>("release") {
-            // This block is deferred until after evaluation to configure components
-            afterEvaluate {
-                from(components["release"])
-            }
+        afterEvaluate {
+            named<MavenPublication>("androidRelease") {
+                groupId = libGroup
+                artifactId = libName
+                version = libVersion
 
-            groupId = libGroup
-            artifactId = libName
-            version = libVersion
+                artifact(javadocJar)
 
-            pom {
-                // https://central.sonatype.org/publish/requirements/#sufficient-metadata
-                name.set(libName)
-                description.set(libDescription)
-                url.set("https://github.com/smartcar/android-sdk")
-                packaging = "aar"
+                pom {
+                    // https://central.sonatype.org/publish/requirements/#sufficient-metadata
+                    name.set(libName)
+                    description.set(libDescription)
+                    url.set("https://github.com/smartcar/android-sdk")
+                    packaging = "aar"
 
-                licenses {
-                    license {
-                        name.set("MIT License")
-                        url.set("https://opensource.org/licenses/MIT")
+                    licenses {
+                        license {
+                            name.set("MIT License")
+                            url.set("https://opensource.org/licenses/MIT")
+                        }
                     }
-                }
 
-                developers {
-                    developer {
-                        id.set("smartcar")
-                        name.set("Smartcar")
-                        email.set("hello@smartcar.com")
+                    developers {
+                        developer {
+                            id.set("smartcar")
+                            name.set("Smartcar")
+                            email.set("hello@smartcar.com")
+                        }
                     }
-                }
 
-                scm {
-                    connection.set("scm:git:git://github.com/smartcar/android-sdk.git")
-                    developerConnection.set("scm:git:ssh://github.com:smartcar/android-sdk.git")
-                    url.set("https://github.com/smartcar/android-sdk.git")
+                    scm {
+                        connection.set("scm:git:git://github.com/smartcar/android-sdk.git")
+                        developerConnection.set("scm:git:ssh://github.com:smartcar/android-sdk.git")
+                        url.set("https://github.com/smartcar/android-sdk.git")
+                    }
                 }
             }
         }
     }
+}
+
+// Task to generate documentation with Dokka and package it as a JAR
+val javadocJar by tasks.registering(Jar::class) {
+    archiveClassifier.set("javadoc")
+    from(tasks.dokkaGeneratePublicationHtml.flatMap { it.outputDirectory })
 }
 
 /**
@@ -205,15 +188,14 @@ publishing {
  * @see https://docs.gradle.org/current/userguide/signing_plugin.html#sec:in-memory-keys
  */
 afterEvaluate {
-    // Only configure signing if not running publishToMavenLocal
-    if (!gradle.startParameter.taskNames.any { it.contains("publishToMavenLocal") }) {
-        signing {
-            // Cast findProperty results to String? as needed.
-            useInMemoryPgpKeys(
-                findProperty("signingKey") as String?,
-                findProperty("signingPassword") as String?
-            )
-            sign(publishing.publications["release"])
+    signing {
+        // Only configure signing for public release
+        setRequired {
+            gradle.taskGraph.hasTask("publishAndroidReleasePublicationToSonatypeRepository")
         }
+        val signingKey: String? by project
+        val signingPassword: String? by project
+        useInMemoryPgpKeys(signingKey, signingPassword)
+        sign(publishing.publications["androidRelease"])
     }
 }
