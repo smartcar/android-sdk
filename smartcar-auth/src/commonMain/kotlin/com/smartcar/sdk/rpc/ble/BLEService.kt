@@ -2,24 +2,25 @@ package com.smartcar.sdk.rpc.ble
 
 import co.touchlab.kermit.Logger
 import com.juul.kable.Advertisement
+import com.juul.kable.Bluetooth
 import com.juul.kable.Peripheral
 import com.juul.kable.Scanner
 import com.juul.kable.characteristicOf
 import com.smartcar.sdk.bridge.ContextBridge
+import com.smartcar.sdk.bridge.WebViewBridge
+import com.smartcar.sdk.bridge.requestMtuIfAvailable
 import com.smartcar.sdk.rpc.JsonRpcRequest
 import com.smartcar.sdk.rpc.JsonRpcResult
 import com.smartcar.sdk.rpc.RPCInterface
 import com.smartcar.sdk.rpc.RpcException
-import com.smartcar.sdk.bridge.WebViewBridge
-import com.smartcar.sdk.bridge.requestMtuIfAvailable
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -72,15 +73,20 @@ class BLEService(
                 if (!context.checkBLEPermissions()) {
                     throw RpcException(-32099, "Bluetooth permission not granted")
                 }
+                if (Bluetooth.availability.first() != Bluetooth.Availability.Available) {
+                    throw RpcException(-32099, "Bluetooth not available")
+                }
 
                 scanJob = scope.launch {
                     val scanner = Scanner {}
-                    scanner.advertisements.collect { advertisement ->
-                        onAdvertisement(advertisement)
-                        if (!peripherals.contains(advertisement.identifier.toString())) {
-                            peripherals[advertisement.identifier.toString()] = Peripheral(advertisement)
+                    scanner.advertisements
+                        .catch { }
+                        .collect { advertisement ->
+                            onAdvertisement(advertisement)
+                            if (!peripherals.contains(advertisement.identifier.toString())) {
+                                peripherals[advertisement.identifier.toString()] = Peripheral(advertisement)
+                            }
                         }
-                    }
                 }
                 SuccessResult()
             }
