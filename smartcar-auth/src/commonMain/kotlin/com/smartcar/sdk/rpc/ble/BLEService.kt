@@ -71,10 +71,10 @@ class BLEService(
         return when (request) {
             is StartScanRequest -> {
                 if (!context.checkBLEPermissions()) {
-                    throw RpcException(-32099, "Bluetooth permission not granted")
+                    throw RpcException(-32011, "Bluetooth permission not granted")
                 }
                 if (Bluetooth.availability.first() != Bluetooth.Availability.Available) {
-                    throw RpcException(-32099, "Bluetooth not available")
+                    throw RpcException(-32011, "Bluetooth not available")
                 }
 
                 scanJob = scope.launch {
