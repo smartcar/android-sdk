@@ -15,7 +15,6 @@ import com.smartcar.sdk.rpc.RPCInterface
 import com.smartcar.sdk.rpc.RpcException
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
@@ -116,6 +115,9 @@ class BLEService(
             is DisconnectRequest -> {
                 val peripheral = getPeripheral(request.params.address)
                 peripheral.disconnect()
+                // Remove peripheral state
+                peripheral.close()
+                peripherals.remove(request.params.address)
                 SuccessResult()
             }
             is ReadCharacteristicRequest -> {
@@ -153,6 +155,11 @@ class BLEService(
                     Uuid.parse(request.params.characteristicUUID)
                 )
 
+                // Ignore if already observing
+                if (notificationJobs.contains(key)) {
+                    throw RpcException(-32099, "Already observing characteristic")
+                }
+
                 // Launch a coroutine to collect notifications and store its Job.
                 val job = peripheral.observe(characteristic) {
                     observationEstablished.complete(Unit)
@@ -173,7 +180,11 @@ class BLEService(
                     sendToWebView(Json.encodeToString(req))
                 }.launchIn(peripheral.scope)
 
+                // Keep track of notification job
                 notificationJobs[key] = job
+                job.invokeOnCompletion {
+                    notificationJobs.remove(key)
+                }
 
                 // Wait until the observation has started.
                 observationEstablished.await()
@@ -189,7 +200,6 @@ class BLEService(
 
                 // Retrieve and cancel the corresponding notifications job, if it exists.
                 notificationJobs[key]?.cancel()
-                notificationJobs.remove(key)
                 SuccessResult()
             }
             else -> {
@@ -256,7 +266,7 @@ class BLEService(
         peripherals.values.forEach {
             it.scope.launch {
                 it.disconnect()
-                it.scope.cancel()
+                it.close()
             }
         }
         scanJob?.cancel()
