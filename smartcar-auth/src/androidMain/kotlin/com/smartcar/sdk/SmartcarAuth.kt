@@ -306,7 +306,8 @@ class SmartcarAuth {
         val intent = Intent(context, ConnectActivity::class.java)
         intent.putExtra("authorize_url", authUrl)
         intent.putExtra("intercept_prefix", redirectUri)
-        intent.putExtra("allowed_host", AUTHORIZATION_HOST)
+        if (authUrl.startsWith(BASE_AUTHORIZATION_URL))
+            intent.putExtra("allowed_host", AUTHORIZATION_HOST)
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         context.startActivity(intent)
     }
