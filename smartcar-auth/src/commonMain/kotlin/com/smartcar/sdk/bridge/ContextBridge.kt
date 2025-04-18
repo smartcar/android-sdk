@@ -1,5 +1,7 @@
 package com.smartcar.sdk.bridge
 
+import com.smartcar.sdk.rpc.ble.Availability
+
 /**
  * Interface providing actions that require a context i.e. Activity on android
  */
@@ -9,5 +11,5 @@ interface ContextBridge {
         headerConfig: String
     ) : String?
 
-    suspend fun checkBLEPermissions(): Boolean
+    suspend fun getBLEAvailability(): Availability
 }

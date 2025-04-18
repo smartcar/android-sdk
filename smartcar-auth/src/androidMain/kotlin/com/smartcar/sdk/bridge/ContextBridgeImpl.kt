@@ -1,13 +1,18 @@
 package com.smartcar.sdk.bridge
 
+import android.bluetooth.BluetoothManager
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.os.Build
+import android.location.LocationManager
+import android.os.Build.VERSION.SDK_INT
+import android.os.Build.VERSION_CODES.S
 import androidx.activity.ComponentActivity
 import androidx.core.content.ContextCompat
+import androidx.core.location.LocationManagerCompat
 import com.smartcar.sdk.activity.OAuthCaptureActivity
 import com.smartcar.sdk.activity.awaitActivityResult
 import com.smartcar.sdk.activity.awaitMultiplePermissionsResult
+import com.smartcar.sdk.rpc.ble.Availability
 
 class ContextBridgeImpl(
     private val activity: ComponentActivity
@@ -30,10 +35,23 @@ class ContextBridgeImpl(
         return returnUri
     }
 
-    override suspend fun checkBLEPermissions(): Boolean {
+    override suspend fun getBLEAvailability(): Availability {
+        if (!hasBluetoothPermissions()) {
+            return Availability.PermissionDenied
+        }
+        if (!isBluetoothOn()) {
+            return Availability.BluetoothOff
+        }
+        if (SDK_INT < S && !areLocationServicesEnabled()) {
+            return Availability.LocationServicesDisabled
+        }
+        return Availability.Available
+    }
+
+    private suspend fun hasBluetoothPermissions(): Boolean {
         // Define the required permissions based on SDK version
         val requiredPermissions = mutableListOf<String>().apply {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            if (SDK_INT >= S) {
                 add(android.Manifest.permission.BLUETOOTH_SCAN)
                 add(android.Manifest.permission.BLUETOOTH_CONNECT)
             } else {
@@ -48,10 +66,21 @@ class ContextBridgeImpl(
             ContextCompat.checkSelfPermission(activity, it) != PackageManager.PERMISSION_GRANTED
         }
 
-        if (permissionsToRequest.isEmpty()) return true;
+        if (permissionsToRequest.isEmpty()) return true
 
         // Request permissions if any are missing
         return activity.awaitMultiplePermissionsResult(
             permissionsToRequest.toTypedArray()).all { it.value }
+    }
+
+    private fun isBluetoothOn(): Boolean {
+        val manager = ContextCompat.getSystemService(activity, BluetoothManager::class.java)
+        val adapter = manager?.adapter
+        return adapter?.isEnabled ?: false
+    }
+
+    private fun areLocationServicesEnabled(): Boolean {
+        val manager = ContextCompat.getSystemService(activity, LocationManager::class.java)
+        return manager?.let { LocationManagerCompat.isLocationEnabled(it) } ?: false
     }
 }

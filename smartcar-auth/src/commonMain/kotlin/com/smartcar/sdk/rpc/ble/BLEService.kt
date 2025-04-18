@@ -2,7 +2,6 @@ package com.smartcar.sdk.rpc.ble
 
 import co.touchlab.kermit.Logger
 import com.juul.kable.Advertisement
-import com.juul.kable.Bluetooth
 import com.juul.kable.Peripheral
 import com.juul.kable.Scanner
 import com.juul.kable.characteristicOf
@@ -17,7 +16,6 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -69,11 +67,16 @@ class BLEService(
     override suspend fun handleRequest(request: JsonRpcRequest): JsonRpcResult {
         return when (request) {
             is StartScanRequest -> {
-                if (!context.checkBLEPermissions()) {
-                    throw RpcException(-32011, "Bluetooth permission not granted")
-                }
-                if (Bluetooth.availability.first() != Bluetooth.Availability.Available) {
-                    throw RpcException(-32011, "Bluetooth not available")
+                when (context.getBLEAvailability()) {
+                    Availability.BluetoothOff ->
+                        throw RpcException(-32011, "Bluetooth turned off")
+                    Availability.PermissionDenied ->
+                        throw RpcException(-32012, "Bluetooth permission not granted")
+                    Availability.Unknown ->
+                        throw RpcException(-32013, "Bluetooth not available")
+                    Availability.LocationServicesDisabled ->
+                        throw RpcException(-32014, "Location services disabled")
+                    Availability.Available -> {}
                 }
 
                 scanJob = scope.launch {
@@ -146,8 +149,6 @@ class BLEService(
                     Uuid.parse(request.params.characteristicUUID)
                 )
 
-                val observationEstablished = CompletableDeferred<Unit>()
-
                 // Create a unique key for this notifications subscription.
                 val key = NotificationKey(
                     request.params.address,
@@ -161,6 +162,7 @@ class BLEService(
                 }
 
                 // Launch a coroutine to collect notifications and store its Job.
+                val observationEstablished = CompletableDeferred<Unit>()
                 val job = peripheral.observe(characteristic) {
                     observationEstablished.complete(Unit)
                 }.catch {
