@@ -2,21 +2,17 @@ package com.smartcar.sdk.activity
 
 import com.smartcar.sdk.bridge.ContextBridgeImpl
 import android.net.Uri
-import android.webkit.CookieManager
-import android.webkit.WebStorage
 import android.webkit.WebView
 import com.smartcar.sdk.SmartcarAuth
 import com.smartcar.sdk.bridge.WebViewBridgeImpl
 import com.smartcar.sdk.rpc.ble.BLEService
 import com.smartcar.sdk.rpc.oauth.OAuthService
 
-class ConnectActivity : OAuthCaptureActivity() {
+class ConnectActivity : WebViewActivity() {
     private lateinit var oauthService: OAuthService
     private lateinit var bleService: BLEService
 
     override fun initWebView(webView: WebView) {
-        clearWebViewData(webView)
-
         oauthService = OAuthService(ContextBridgeImpl(this), WebViewBridgeImpl(webView, "SmartcarSDK"))
         bleService = BLEService(ContextBridgeImpl(this), WebViewBridgeImpl(webView, "SmartcarSDKBLE"))
 
@@ -27,17 +23,7 @@ class ConnectActivity : OAuthCaptureActivity() {
         oauthService.dispose()
         bleService.dispose()
 
-        clearWebViewData(webView)
         super.onDestroyWebView(webView)
-    }
-
-    /**
-     * Used to ensure we clear any lingering OEM login sessions.
-     */
-    private fun clearWebViewData(webView: WebView) {
-        webView.clearCache(true)
-        CookieManager.getInstance().removeAllCookies(null)
-        WebStorage.getInstance().deleteAllData()
     }
 
     override fun onInterceptUri(uri: Uri) {

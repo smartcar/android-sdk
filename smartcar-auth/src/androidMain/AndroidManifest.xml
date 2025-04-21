@@ -13,11 +13,12 @@
     <application>
         <activity android:name=".activity.OAuthCaptureActivity"
                   android:exported="false"
+                  android:process=":smartcar_oauth"
                   android:configChanges="screenSize|smallestScreenSize|orientation|screenLayout">
         </activity>
         <activity android:name=".activity.ConnectActivity"
-            android:exported="false"
-            android:configChanges="screenSize|smallestScreenSize|orientation|screenLayout">
+                  android:exported="false"
+                  android:configChanges="screenSize|smallestScreenSize|orientation|screenLayout">
         </activity>
     </application>
 
