@@ -106,16 +106,16 @@ abstract class WebViewActivity : ComponentActivity() {
         private val allowedHost: String?
     ) : WebViewClient() {
         override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
-            request?.url.let { url ->
+            request?.url?.let { url ->
                 // Check if the URL should be intercepted
                 if (interceptPrefix != null && url.toString().startsWith(interceptPrefix)) {
                     Log.d("OAuthCapture", "Intercepted URL: $url")
-                    request?.let { onInterceptUri(it.url) }
+                    onInterceptUri(url)
                     return true
                 }
 
                 // Check if the URL matches the allowed hostname, if specified
-                if (allowedHost != null && url?.host != allowedHost) {
+                if (allowedHost != null && url.host != allowedHost) {
                     Log.d("OAuthCapture", "Opening external URL: $url")
                     Intent(Intent.ACTION_VIEW, url).apply {
                         startActivity(this)
