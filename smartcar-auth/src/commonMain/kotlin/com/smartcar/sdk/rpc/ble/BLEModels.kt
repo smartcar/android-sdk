@@ -79,6 +79,7 @@ data class DisconnectRequest(
 
 @Serializable
 data class ConnectResult(
+    val mtu: Int,
     val services: List<Service>
 ) : JsonRpcResult() {
     @Serializable

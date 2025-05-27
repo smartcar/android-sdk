@@ -4,6 +4,7 @@ import co.touchlab.kermit.Logger
 import com.juul.kable.Advertisement
 import com.juul.kable.Peripheral
 import com.juul.kable.Scanner
+import com.juul.kable.WriteType
 import com.juul.kable.characteristicOf
 import com.smartcar.sdk.bridge.ContextBridge
 import com.smartcar.sdk.bridge.WebViewBridge
@@ -99,7 +100,10 @@ class BLEService(
             is ConnectRequest -> {
                 val peripheral = getPeripheral(request.params.address)
                 peripheral.connect()
+
+                // Negotiate and return MTU
                 peripheral.requestMtuIfAvailable()
+                val mtu = peripheral.maximumWriteValueLengthForType(WriteType.WithResponse)
 
                 // Return service discovery results
                 val services = peripheral.services.value!!.map { s ->
@@ -113,7 +117,8 @@ class BLEService(
                         }
                     )
                 }
-                ConnectResult(services)
+
+                ConnectResult(mtu, services)
             }
             is DisconnectRequest -> {
                 val peripheral = getPeripheral(request.params.address)
@@ -139,7 +144,7 @@ class BLEService(
                     Uuid.parse(request.params.characteristicUUID)
                 )
                 val bytes = request.params.value.hexToByteArray()
-                peripheral.write(characteristic, bytes, com.juul.kable.WriteType.WithResponse)
+                peripheral.write(characteristic, bytes, WriteType.WithResponse)
                 SuccessResult()
             }
             is StartNotificationsRequest -> {
