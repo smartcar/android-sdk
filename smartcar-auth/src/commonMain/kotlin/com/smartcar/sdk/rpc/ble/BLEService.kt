@@ -1,6 +1,5 @@
 package com.smartcar.sdk.rpc.ble
 
-import co.touchlab.kermit.Logger
 import com.juul.kable.Advertisement
 import com.juul.kable.Peripheral
 import com.juul.kable.Scanner
@@ -259,9 +258,6 @@ class BLEService(
                 advertisedServiceUUIDs = advertisedServiceUUIDs,
             )
         )
-
-        // Log or print if desired
-        Logger.d("BLEService") { "Found device: $deviceName - $deviceAddress" }
 
         // Send to WebView
         val jsonResponse = Json.encodeToString(deviceInfo)
