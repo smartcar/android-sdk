@@ -1,12 +1,14 @@
 package com.smartcar.sdk.rpc.ble
 
 import com.juul.kable.Advertisement
+import com.juul.kable.NotConnectedException
 import com.juul.kable.Peripheral
 import com.juul.kable.Scanner
 import com.juul.kable.WriteType
 import com.juul.kable.characteristicOf
 import com.smartcar.sdk.bridge.ContextBridge
 import com.smartcar.sdk.bridge.WebViewBridge
+import com.smartcar.sdk.bridge.isPeerRemovedState
 import com.smartcar.sdk.bridge.requestMtuIfAvailable
 import com.smartcar.sdk.rpc.JsonRpcRequest
 import com.smartcar.sdk.rpc.JsonRpcResult
@@ -98,7 +100,16 @@ class BLEService(
             }
             is ConnectRequest -> {
                 val peripheral = getPeripheral(request.params.address)
-                peripheral.connect()
+                try {
+                    peripheral.connect()
+                } catch (e: NotConnectedException) {
+                    // Handle "Peer removed pairing information" on iOS
+                    val st = peripheral.state.value
+                    if (st.isPeerRemovedState()) {
+                        throw RpcException(-32015, "Peer removed pairing information")
+                    }
+                    throw e
+                }
 
                 // Negotiate and return MTU
                 peripheral.requestMtuIfAvailable()
