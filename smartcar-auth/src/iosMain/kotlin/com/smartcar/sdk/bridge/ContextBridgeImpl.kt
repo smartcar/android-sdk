@@ -7,6 +7,9 @@ import platform.CoreBluetooth.CBCentralManagerDelegateProtocol
 import platform.CoreBluetooth.CBManagerStatePoweredOff
 import platform.CoreBluetooth.CBManagerStatePoweredOn
 import platform.CoreBluetooth.CBManagerStateUnauthorized
+import platform.Foundation.NSURL
+import platform.UIKit.UIApplication
+import platform.UIKit.UIApplicationOpenSettingsURLString
 import platform.darwin.NSObject
 import kotlin.coroutines.resume
 
@@ -46,6 +49,15 @@ class ContextBridgeImpl: ContextBridge {
         cont.invokeOnCancellation {
             managerRef = null
             delegateRef = null
+        }
+    }
+
+    override fun openSystemPage(page: String) {
+        when (page) {
+            "bluetooth_settings" -> {
+                val url = NSURL(string = UIApplicationOpenSettingsURLString)
+                UIApplication.sharedApplication.openURL(url)
+            }
         }
     }
 }

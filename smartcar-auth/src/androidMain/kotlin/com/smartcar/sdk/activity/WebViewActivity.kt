@@ -10,6 +10,7 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.activity.ComponentActivity
+import com.smartcar.sdk.bridge.ContextBridgeImpl
 import com.smartcar.sdk.rpc.oauth.HeaderConfig
 import kotlinx.serialization.json.Json
 
@@ -107,6 +108,13 @@ abstract class WebViewActivity : ComponentActivity() {
     ) : WebViewClient() {
         override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
             request?.url?.let { url ->
+                // Intercept sc-sdk URLs and open system page
+                if (url.toString().startsWith("sc-sdk://")) {
+                    val systemPage = url.toString().substringAfter("sc-sdk://")
+                    // Call the system page handler
+                    ContextBridgeImpl(this@WebViewActivity).openSystemPage(systemPage)
+                    return true
+                }
                 // Check if the URL should be intercepted
                 if (interceptPrefix != null && url.toString().startsWith(interceptPrefix)) {
                     Log.d("OAuthCapture", "Intercepted URL: $url")

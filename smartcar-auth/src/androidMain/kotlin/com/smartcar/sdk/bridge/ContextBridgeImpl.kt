@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.os.Build.VERSION.SDK_INT
 import android.os.Build.VERSION_CODES.S
+import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.core.content.ContextCompat
 import androidx.core.location.LocationManagerCompat
@@ -82,5 +83,14 @@ class ContextBridgeImpl(
     private fun areLocationServicesEnabled(): Boolean {
         val manager = ContextCompat.getSystemService(activity, LocationManager::class.java)
         return manager?.let { LocationManagerCompat.isLocationEnabled(it) } ?: false
+    }
+
+    override fun openSystemPage(page: String) {
+        when (page) {
+            "bluetooth_settings" ->
+                activity.startActivity(Intent(Settings.ACTION_BLUETOOTH_SETTINGS))
+            "location_settings" ->
+                activity.startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+        }
     }
 }

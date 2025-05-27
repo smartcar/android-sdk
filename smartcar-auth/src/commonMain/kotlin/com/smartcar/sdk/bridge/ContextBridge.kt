@@ -12,4 +12,6 @@ interface ContextBridge {
     ) : String?
 
     suspend fun getBLEAvailability(): Availability
+
+    fun openSystemPage(page: String)
 }
