@@ -113,6 +113,7 @@ data class DeviceInfoRequest(
         val serviceData: Map<String, String>,
         val manufacturerData: Map<Int, String>,
         val advertisedServiceUUIDs: List<String>,
+        val isBonded: Boolean?,
     )
 }
 

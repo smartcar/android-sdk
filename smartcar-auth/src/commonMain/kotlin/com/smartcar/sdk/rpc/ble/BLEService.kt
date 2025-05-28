@@ -8,6 +8,7 @@ import com.juul.kable.WriteType
 import com.juul.kable.characteristicOf
 import com.smartcar.sdk.bridge.ContextBridge
 import com.smartcar.sdk.bridge.WebViewBridge
+import com.smartcar.sdk.bridge.isBonded
 import com.smartcar.sdk.bridge.isPeerRemovedState
 import com.smartcar.sdk.bridge.requestMtuIfAvailable
 import com.smartcar.sdk.rpc.JsonRpcRequest
@@ -267,6 +268,7 @@ class BLEService(
                 manufacturerData = manufacturerDataMap,
                 serviceData = serviceDataMap,
                 advertisedServiceUUIDs = advertisedServiceUUIDs,
+                isBonded = advertisement.isBonded,  // only available on Android
             )
         )
 
