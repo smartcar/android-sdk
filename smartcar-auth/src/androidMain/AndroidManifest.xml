@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-
     <uses-permission android:name="android.permission.INTERNET" />
     <application>
-        <activity android:name=".OAuthCaptureActivity"
+        <activity android:name=".activity.OAuthCaptureActivity"
+                  android:exported="false"
+                  android:process=":smartcar_oauth"
+                  android:configChanges="screenSize|smallestScreenSize|orientation|screenLayout">
+        </activity>
+        <activity android:name=".activity.ConnectActivity"
                   android:exported="false"
                   android:configChanges="screenSize|smallestScreenSize|orientation|screenLayout">
         </activity>
-        <activity android:name=".ConnectActivity"
-            android:exported="false"
-            android:configChanges="screenSize|smallestScreenSize|orientation|screenLayout">
-        </activity>
     </application>
-
 </manifest>
