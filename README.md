@@ -12,10 +12,30 @@ The SmartcarAuth Android SDK makes it easy to integrate with Smartcar Connect fr
 
 Add the following to your application's `build.gradle` dependencies:
 
-```
+```kotlin
 dependencies {
-    implementation 'com.smartcar.sdk:smartcar-auth:4.1.0'
+    implementation("com.smartcar.sdk:smartcar-auth:4.1.0")
 }
+```
+
+### Bluetooth support
+For Bluetooth pairing support, add the permissions to AndroidManifest.xml:
+```
+<manifest>
+    <!-- Request legacy Bluetooth permissions on older devices. -->
+    <uses-permission android:name="android.permission.BLUETOOTH"
+                     android:maxSdkVersion="30" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"
+                     android:maxSdkVersion="30" />
+
+    <!-- Assert that Bluetooth scan results are not used to derive
+         physical location information -->
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN"
+        android:usesPermissionFlags="neverForLocation"
+        tools:targetApi="s" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    ...
+</manifest>
 ```
 
 ## Usage
