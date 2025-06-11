@@ -29,7 +29,7 @@ import androidx.core.net.toUri
  */
 class SmartcarAuth {
 
-    companion object {
+    internal companion object {
         private const val BASE_AUTHORIZATION_URL = "https://connect.smartcar.com/oauth/authorize"
         private const val AUTHORIZATION_HOST = "connect.smartcar.com"
 

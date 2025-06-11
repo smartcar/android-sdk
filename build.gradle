@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlinCocoapods) apply false
     alias(libs.plugins.dokka) apply false
     alias(libs.plugins.nexusPublishPlugin)
+    // id("org.jetbrains.kotlinx.binary-compatibility-validator") version "0.17.0"
 }
 
 /**

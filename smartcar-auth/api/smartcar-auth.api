@@ -1,0 +1,69 @@
+public final class com/smartcar/sdk/BuildConfig {
+	public static final field BUILD_TYPE Ljava/lang/String;
+	public static final field DEBUG Z
+	public static final field LIBRARY_PACKAGE_NAME Ljava/lang/String;
+	public static final field VERSION_NAME Ljava/lang/String;
+	public fun <init> ()V
+}
+
+public class com/smartcar/sdk/SmartcarAuth {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;Lcom/smartcar/sdk/SmartcarCallback;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;ZLcom/smartcar/sdk/SmartcarCallback;)V
+	public fun addClickHandler (Landroid/content/Context;Landroid/view/View;)V
+	public fun addClickHandler (Landroid/content/Context;Landroid/view/View;Ljava/lang/String;)V
+	public fun authUrlBuilder ()Lcom/smartcar/sdk/SmartcarAuth$AuthUrlBuilder;
+	public fun launchAuthFlow (Landroid/content/Context;)V
+	public fun launchAuthFlow (Landroid/content/Context;Ljava/lang/String;)V
+	protected static fun receiveResponse (Landroid/net/Uri;)V
+}
+
+public class com/smartcar/sdk/SmartcarAuth$AuthUrlBuilder {
+	public fun <init> (Lcom/smartcar/sdk/SmartcarAuth;)V
+	public fun build ()Ljava/lang/String;
+	public fun setFlags ([Ljava/lang/String;)Lcom/smartcar/sdk/SmartcarAuth$AuthUrlBuilder;
+	public fun setForcePrompt (Z)Lcom/smartcar/sdk/SmartcarAuth$AuthUrlBuilder;
+	public fun setMakeBypass (Ljava/lang/String;)Lcom/smartcar/sdk/SmartcarAuth$AuthUrlBuilder;
+	public fun setSingleSelect (Z)Lcom/smartcar/sdk/SmartcarAuth$AuthUrlBuilder;
+	public fun setSingleSelectVin (Ljava/lang/String;)Lcom/smartcar/sdk/SmartcarAuth$AuthUrlBuilder;
+	public fun setState (Ljava/lang/String;)Lcom/smartcar/sdk/SmartcarAuth$AuthUrlBuilder;
+	public fun setUser (Ljava/lang/String;)Lcom/smartcar/sdk/SmartcarAuth$AuthUrlBuilder;
+}
+
+public abstract interface class com/smartcar/sdk/SmartcarCallback {
+	public abstract fun handleResponse (Lcom/smartcar/sdk/SmartcarResponse;)V
+}
+
+public class com/smartcar/sdk/SmartcarResponse {
+	public fun getCode ()Ljava/lang/String;
+	public fun getError ()Ljava/lang/String;
+	public fun getErrorDescription ()Ljava/lang/String;
+	public fun getState ()Ljava/lang/String;
+	public fun getVehicleInfo ()Lcom/smartcar/sdk/VehicleInfo;
+	public fun getVirtualKeyUrl ()Ljava/lang/String;
+	public fun toString ()Ljava/lang/String;
+}
+
+public class com/smartcar/sdk/SmartcarResponse$Builder {
+	public fun <init> ()V
+	public fun build ()Lcom/smartcar/sdk/SmartcarResponse;
+	public fun code (Ljava/lang/String;)Lcom/smartcar/sdk/SmartcarResponse$Builder;
+	public fun error (Ljava/lang/String;)Lcom/smartcar/sdk/SmartcarResponse$Builder;
+	public fun errorDescription (Ljava/lang/String;)Lcom/smartcar/sdk/SmartcarResponse$Builder;
+	public fun state (Ljava/lang/String;)Lcom/smartcar/sdk/SmartcarResponse$Builder;
+	public fun vehicleInfo (Lcom/smartcar/sdk/VehicleInfo;)Lcom/smartcar/sdk/SmartcarResponse$Builder;
+	public fun virtualKeyUrl (Ljava/lang/String;)Lcom/smartcar/sdk/SmartcarResponse$Builder;
+}
+
+public class com/smartcar/sdk/VehicleInfo {
+	public fun getMake ()Ljava/lang/String;
+	public fun getVin ()Ljava/lang/String;
+	public fun toString ()Ljava/lang/String;
+}
+
+public class com/smartcar/sdk/VehicleInfo$Builder {
+	public fun <init> ()V
+	public fun build ()Lcom/smartcar/sdk/VehicleInfo;
+	public fun make (Ljava/lang/String;)Lcom/smartcar/sdk/VehicleInfo$Builder;
+	public fun vin (Ljava/lang/String;)Lcom/smartcar/sdk/VehicleInfo$Builder;
+}
+
