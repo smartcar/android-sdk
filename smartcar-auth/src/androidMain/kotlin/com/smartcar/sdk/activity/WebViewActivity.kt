@@ -1,16 +1,23 @@
-package com.smartcar.sdk
+package com.smartcar.sdk.activity
 
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.view.ViewGroup
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.activity.ComponentActivity
+import com.smartcar.sdk.rpc.oauth.HeaderConfig
+import kotlinx.serialization.json.Json
 
-open class OAuthCaptureActivity : ComponentActivity() {
+/**
+ * Base class for ConnectActivity and OAuthCaptureActivity.
+ * Displays a WebView and intercepts requests to a given callback URL.
+ */
+abstract class WebViewActivity : ComponentActivity() {
     private var headerConfig: List<HeaderConfig>? = null
     private lateinit var webView: WebView
 
@@ -28,7 +35,19 @@ open class OAuthCaptureActivity : ComponentActivity() {
         onDestroyWebView(webView)
     }
 
+    /**
+     * Frees up resources from the WebView.
+     */
     open fun onDestroyWebView(webView: WebView) {
+        webView.stopLoading()
+        webView.loadUrl("about:blank")
+
+        // Remove the WebView from its parent if it has one
+        val parent = webView.parent
+        if (parent is ViewGroup) {
+            parent.removeView(webView)
+        }
+        webView.destroy()
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -42,7 +61,7 @@ open class OAuthCaptureActivity : ComponentActivity() {
         val interceptPrefix = intent.getStringExtra("intercept_prefix")
         val allowedHost = intent.getStringExtra("allowed_host")
         val headerConfigJson = intent.getStringExtra("header_config")
-        headerConfigJson?.let { headerConfig = json.decodeFromString(it) }
+        headerConfigJson?.let { headerConfig = Json.decodeFromString(it) }
 
         // Set a custom WebViewClient
         webView.webViewClient = CustomWebViewClient(interceptPrefix, allowedHost)
@@ -87,16 +106,16 @@ open class OAuthCaptureActivity : ComponentActivity() {
         private val allowedHost: String?
     ) : WebViewClient() {
         override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
-            request?.url.let { url ->
+            request?.url?.let { url ->
                 // Check if the URL should be intercepted
                 if (interceptPrefix != null && url.toString().startsWith(interceptPrefix)) {
                     Log.d("OAuthCapture", "Intercepted URL: $url")
-                    request?.let { onInterceptUri(it.url) }
+                    onInterceptUri(url)
                     return true
                 }
 
                 // Check if the URL matches the allowed hostname, if specified
-                if (allowedHost != null && url?.host != allowedHost) {
+                if (allowedHost != null && url.host != allowedHost) {
                     Log.d("OAuthCapture", "Opening external URL: $url")
                     Intent(Intent.ACTION_VIEW, url).apply {
                         startActivity(this)
