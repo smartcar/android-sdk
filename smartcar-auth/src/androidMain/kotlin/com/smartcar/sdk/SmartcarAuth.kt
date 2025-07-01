@@ -304,10 +304,16 @@ class SmartcarAuth {
      * @param authUrl Use {@link AuthUrlBuilder} to generate the authorization url
      */
     fun launchAuthFlow(context: Context, authUrl: String) {
+        // Append sdk version query parameters
+        val newAuthUrl = authUrl.toUri().buildUpon()
+            .appendQueryParameter("sdk_platform", "android")
+            .appendQueryParameter("sdk_version", BuildConfig.VERSION_NAME)
+            .build()
+
         val intent = Intent(context, ConnectActivity::class.java)
-        intent.putExtra("authorize_url", authUrl)
+        intent.putExtra("authorize_url", newAuthUrl.toString())
         intent.putExtra("intercept_prefix", redirectUri)
-        if (authUrl.startsWith(BASE_AUTHORIZATION_URL))
+        if (newAuthUrl.host == AUTHORIZATION_HOST)
             intent.putExtra("allowed_host", AUTHORIZATION_HOST)
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         context.startActivity(intent)
