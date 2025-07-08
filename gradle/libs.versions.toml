@@ -1,5 +1,6 @@
 [versions]
 agp = "8.8.2"
+kable = "0.37.1"
 kermit = "2.0.5"
 kotlin = "2.1.21"
 core-ktx = "1.16.0"
@@ -15,6 +16,7 @@ mockito = "3.1.0"
 robolectric = "4.14.1"
 
 [libraries]
+kable-core = { module = "com.juul.kable:kable-core", version.ref = "kable" }
 kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
