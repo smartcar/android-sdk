@@ -149,8 +149,6 @@ class SmartcarAuth {
     inner class AuthUrlBuilder {
         private val uriBuilder = BASE_AUTHORIZATION_URL.toUri().buildUpon()
                 .appendQueryParameter("response_type", "code")
-                .appendQueryParameter("sdk_platform", "android")
-                .appendQueryParameter("sdk_version", BuildConfig.VERSION_NAME)
                 .appendQueryParameter("client_id", clientId)
                 .appendQueryParameter("redirect_uri", redirectUri)
                 .appendQueryParameter("mode", if (testMode) "test" else "live")
@@ -304,11 +302,22 @@ class SmartcarAuth {
      * @param authUrl Use {@link AuthUrlBuilder} to generate the authorization url
      */
     fun launchAuthFlow(context: Context, authUrl: String) {
-        // Append sdk version query parameters
-        val newAuthUrl = authUrl.toUri().buildUpon()
-            .appendQueryParameter("sdk_platform", "android")
-            .appendQueryParameter("sdk_version", BuildConfig.VERSION_NAME)
-            .build()
+        // Append sdk version query parameters if they don't already exist
+
+        val uri = authUrl.toUri()
+        val uriBuilder = uri.buildUpon()
+        
+        // Check if sdk_platform parameter already exists
+        if (uri.getQueryParameter("sdk_platform") == null) {
+            uriBuilder.appendQueryParameter("sdk_platform", "android")
+        }
+        
+        // Check if sdk_version parameter already exists
+        if (uri.getQueryParameter("sdk_version") == null) {
+            uriBuilder.appendQueryParameter("sdk_version", BuildConfig.VERSION_NAME)
+        }
+        
+        val newAuthUrl = uriBuilder.build()
 
         val intent = Intent(context, ConnectActivity::class.java)
         intent.putExtra("authorize_url", newAuthUrl.toString())

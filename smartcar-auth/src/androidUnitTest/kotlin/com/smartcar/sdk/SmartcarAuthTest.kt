@@ -1,11 +1,13 @@
 package com.smartcar.sdk
 
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.view.View
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.ArgumentCaptor
 import org.mockito.Mockito
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.times
@@ -21,8 +23,7 @@ class SmartcarAuthTest {
         val redirectUriEncoded = "scclient123%3A%2F%2Ftest"
         val scope = arrayOf("read_odometer", "read_vin")
         val expectedUri =
-            ("https://connect.smartcar.com/oauth/authorize?response_type=code&sdk_platform=android" +
-                    "&sdk_version=" + BuildConfig.VERSION_NAME) +
+            "https://connect.smartcar.com/oauth/authorize?response_type=code" +
                     "&client_id=" + clientId +
                     "&redirect_uri=" + redirectUriEncoded +
                     "&mode=live&scope=read_odometer%20read_vin"
@@ -41,8 +42,7 @@ class SmartcarAuthTest {
         val redirectUriEncoded = "scclient123%3A%2F%2Ftest"
         val scope = arrayOf("read_odometer", "read_vin")
         val expectedUri =
-            ("https://connect.smartcar.com/oauth/authorize?response_type=code&sdk_platform=android" +
-                    "&sdk_version=" + BuildConfig.VERSION_NAME) +
+            "https://connect.smartcar.com/oauth/authorize?response_type=code" +
                     "&client_id=" + clientId +
                     "&redirect_uri=" + redirectUriEncoded +
                     "&mode=test&scope=read_odometer%20read_vin"
@@ -64,8 +64,7 @@ class SmartcarAuthTest {
         val flags = arrayOf("flag:suboption", "feature3")
         val user = "e9b24987-52e8-4d40-8417-bfa4402c9e16"
         val expectedUri =
-            ("https://connect.smartcar.com/oauth/authorize?response_type=code&sdk_platform=android" +
-                    "&sdk_version=" + BuildConfig.VERSION_NAME) +
+            "https://connect.smartcar.com/oauth/authorize?response_type=code" +
                     "&client_id=" + clientId +
                     "&redirect_uri=" + redirectUriEncoded +
                     "&mode=live&scope=read_odometer%20read_vin" +
@@ -168,6 +167,138 @@ class SmartcarAuthTest {
             .setSingleSelect(false)
             .build()
         smartcarAuth.launchAuthFlow(context, authUrl)
+    }
+
+    @Test
+    fun smartcarAuth_launchAuthFlow_addsSdkParametersWhenMissing() {
+        // Setup mocks
+        val context: Context = mock(Context::class.java)
+
+        // Create auth URL without sdk parameters
+        val baseUrl = "https://connect.smartcar.com/oauth/authorize?response_type=code&client_id=test123&redirect_uri=test%3A%2F%2Fredirect"
+        
+        val smartcarAuth = SmartcarAuth(
+            "client123",
+            "scclient123://test",
+            arrayOf("read_odometer", "read_vin"),
+        ) {}
+
+        // Execute method
+        smartcarAuth.launchAuthFlow(context, baseUrl)
+
+        // Verify that context.startActivity was called (this indirectly verifies the method completed successfully)
+        verify(context, times(1)).startActivity(Mockito.any())
+    }
+
+    @Test
+    fun smartcarAuth_launchAuthFlow_preservesExistingSdkParameters() {
+        // Setup mocks
+        val context: Context = mock(Context::class.java)
+
+        // Create auth URL with existing sdk parameters
+        val urlWithSdkParams = "https://connect.smartcar.com/oauth/authorize?response_type=code&client_id=test123&sdk_platform=ios&sdk_version=1.0.0&redirect_uri=test%3A%2F%2Fredirect"
+        
+        val smartcarAuth = SmartcarAuth(
+            "client123",
+            "scclient123://test",
+            arrayOf("read_odometer", "read_vin"),
+        ) {}
+
+        // Execute method
+        smartcarAuth.launchAuthFlow(context, urlWithSdkParams)
+
+        // Verify that context.startActivity was called (this indirectly verifies the method completed successfully)
+        verify(context, times(1)).startActivity(Mockito.any())
+    }
+
+    @Test
+    fun smartcarAuth_launchAuthFlow_addsMissingParametersOnly() {
+        // Setup mocks
+        val context: Context = mock(Context::class.java)
+
+        // Create auth URL with only sdk_platform but missing sdk_version
+        val urlWithPartialSdkParams = "https://connect.smartcar.com/oauth/authorize?response_type=code&client_id=test123&sdk_platform=ios&redirect_uri=test%3A%2F%2Fredirect"
+        
+        val smartcarAuth = SmartcarAuth(
+            "client123",
+            "scclient123://test",
+            arrayOf("read_odometer", "read_vin"),
+        ) {}
+
+        // Execute method
+        smartcarAuth.launchAuthFlow(context, urlWithPartialSdkParams)
+
+        // Verify that context.startActivity was called
+        verify(context, times(1)).startActivity(Mockito.any())
+    }
+
+    @Test
+    fun smartcarAuth_launchAuthFlow_verifiesUrlParameterHandling() {
+        // Setup mocks
+        val context: Context = mock(Context::class.java)
+        val intentCaptor = ArgumentCaptor.forClass(Intent::class.java)
+
+        // Create auth URL without sdk parameters
+        val baseUrl = "https://connect.smartcar.com/oauth/authorize?response_type=code&client_id=test123&redirect_uri=test%3A%2F%2Fredirect"
+        
+        val smartcarAuth = SmartcarAuth(
+            "client123",
+            "scclient123://test",
+            arrayOf("read_odometer", "read_vin"),
+        ) {}
+
+        // Execute method
+        smartcarAuth.launchAuthFlow(context, baseUrl)
+
+        // Capture the intent that was passed to startActivity
+        verify(context, times(1)).startActivity(intentCaptor.capture())
+        
+        val capturedIntent = intentCaptor.value
+        val authorizeUrl = capturedIntent.getStringExtra("authorize_url")
+        
+        // Verify that sdk parameters were added
+        Assert.assertNotNull("authorize_url should not be null", authorizeUrl)
+        Assert.assertTrue("URL should contain sdk_platform=android", 
+            authorizeUrl!!.contains("sdk_platform=android"))
+        Assert.assertTrue("URL should contain sdk_version=" + BuildConfig.VERSION_NAME, 
+            authorizeUrl.contains("sdk_version=" + BuildConfig.VERSION_NAME))
+    }
+
+    @Test
+    fun smartcarAuth_launchAuthFlow_preservesExistingSdkParametersVerification() {
+        // Setup mocks
+        val context: Context = mock(Context::class.java)
+        val intentCaptor = ArgumentCaptor.forClass(Intent::class.java)
+
+        // Create auth URL with existing sdk parameters
+        val urlWithSdkParams = "https://connect.smartcar.com/oauth/authorize?response_type=code&client_id=test123&sdk_platform=blah&sdk_version=1.0.0&redirect_uri=test%3A%2F%2Fredirect"
+        
+        val smartcarAuth = SmartcarAuth(
+            "client123",
+            "scclient123://test",
+            arrayOf("read_odometer", "read_vin"),
+        ) {}
+
+        // Execute method
+        smartcarAuth.launchAuthFlow(context, urlWithSdkParams)
+
+        // Capture the intent that was passed to startActivity
+        verify(context, times(1)).startActivity(intentCaptor.capture())
+        
+        val capturedIntent = intentCaptor.value
+        val authorizeUrl = capturedIntent.getStringExtra("authorize_url")
+        
+        // Verify that original sdk parameters were preserved
+        Assert.assertNotNull("authorize_url should not be null", authorizeUrl)
+        Assert.assertTrue("URL should preserve original sdk_platform=blah", 
+            authorizeUrl!!.contains("sdk_platform=blah"))
+        Assert.assertTrue("URL should preserve original sdk_version=1.0.0", 
+            authorizeUrl.contains("sdk_version=1.0.0"))
+        // Should not contain android or current SDK version
+        Assert.assertFalse("URL should not contain duplicate sdk_platform=android", 
+            authorizeUrl.contains("sdk_platform=android"))
+        Assert.assertFalse("URL should not contain duplicate sdk_version=" + BuildConfig.VERSION_NAME, 
+            authorizeUrl.contains("sdk_version=" + BuildConfig.VERSION_NAME))
     }
 
     @Test
