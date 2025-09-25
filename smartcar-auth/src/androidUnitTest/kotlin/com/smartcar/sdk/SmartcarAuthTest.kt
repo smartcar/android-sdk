@@ -65,7 +65,6 @@ class SmartcarAuthTest {
                     "&redirect_uri=" + redirectUriEncoded +
                     "&mode=live"
 
-
         val smartcarAuth = SmartcarAuth(clientId, redirectUri) {}
         val requestUri = smartcarAuth.authUrlBuilder().build()
 
@@ -82,7 +81,6 @@ class SmartcarAuthTest {
                     "&client_id=" + clientId +
                     "&redirect_uri=" + redirectUriEncoded +
                     "&mode=test"
-
 
         val smartcarAuth = SmartcarAuth(clientId, redirectUri, true) {}
         val requestUri = smartcarAuth.authUrlBuilder().build()
