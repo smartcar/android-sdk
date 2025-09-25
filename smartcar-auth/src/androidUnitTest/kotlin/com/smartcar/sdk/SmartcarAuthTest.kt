@@ -55,6 +55,40 @@ class SmartcarAuthTest {
     }
 
     @Test
+    fun smartcarAuth_authUrlBuilder_noScopeOrTestMode() {
+        val clientId = "client123"
+        val redirectUri = "scclient123://test"
+        val redirectUriEncoded = "scclient123%3A%2F%2Ftest"
+        val expectedUri =
+            "https://connect.smartcar.com/oauth/authorize?response_type=code" +
+                    "&client_id=" + clientId +
+                    "&redirect_uri=" + redirectUriEncoded +
+                    "&mode=live"
+
+        val smartcarAuth = SmartcarAuth(clientId, redirectUri) {}
+        val requestUri = smartcarAuth.authUrlBuilder().build()
+
+        Assert.assertEquals(expectedUri, requestUri)
+    }
+
+    @Test
+    fun smartcarAuth_authUrlBuilder_noScope() {
+        val clientId = "client123"
+        val redirectUri = "scclient123://test"
+        val redirectUriEncoded = "scclient123%3A%2F%2Ftest"
+        val expectedUri =
+            "https://connect.smartcar.com/oauth/authorize?response_type=code" +
+                    "&client_id=" + clientId +
+                    "&redirect_uri=" + redirectUriEncoded +
+                    "&mode=test"
+
+        val smartcarAuth = SmartcarAuth(clientId, redirectUri, true) {}
+        val requestUri = smartcarAuth.authUrlBuilder().build()
+
+        Assert.assertEquals(expectedUri, requestUri)
+    }
+
+    @Test
     fun smartcarAuth_authUrlBuilderWithSetters() {
         val clientId = "client123"
         val redirectUri = "scclient123://test"
