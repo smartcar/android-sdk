@@ -35,7 +35,7 @@ class SmartcarAuth {
 
         private lateinit var clientId: String
         private lateinit var redirectUri: String
-        private lateinit var scope: Array<String>
+        private var scope: Array<String> = emptyArray()
         private var testMode: Boolean = false
         private lateinit var callback: SmartcarCallback
 
@@ -112,6 +112,25 @@ class SmartcarAuth {
      *
      * @param clientId    The client's ID
      * @param redirectUri The client's redirect URI
+     * @param callback    Handler to a Callback for receiving the Smartcar Connect response
+     */
+    constructor(clientId: String, redirectUri: String, callback: SmartcarCallback) : this(clientId, redirectUri, emptyArray(), false, callback)
+
+    /**
+     * Constructs an instance with the given parameters.
+     *
+     * @param clientId    The client's ID
+     * @param redirectUri The client's redirect URI
+     * @param testMode    Set to true to run Smartcar Connect in test mode
+     * @param callback    Handler to a Callback for receiving the Smartcar Connect response
+     */
+    constructor(clientId: String, redirectUri: String, testMode: Boolean, callback: SmartcarCallback) : this(clientId, redirectUri, emptyArray(), testMode, callback)
+
+    /**
+     * Constructs an instance with the given parameters.
+     *
+     * @param clientId    The client's ID
+     * @param redirectUri The client's redirect URI
      * @param scope       An array of authorization scopes
      * @param callback    Handler to a Callback for receiving the Smartcar Connect response
      */
@@ -152,7 +171,11 @@ class SmartcarAuth {
                 .appendQueryParameter("client_id", clientId)
                 .appendQueryParameter("redirect_uri", redirectUri)
                 .appendQueryParameter("mode", if (testMode) "test" else "live")
-                .appendQueryParameter("scope", TextUtils.join(" ", scope))
+                .apply {
+                    if (scope.isNotEmpty()) {
+                        appendQueryParameter("scope", TextUtils.join(" ", scope))
+                    }
+                }
 
         /**
          * Set an optional state parameter.
