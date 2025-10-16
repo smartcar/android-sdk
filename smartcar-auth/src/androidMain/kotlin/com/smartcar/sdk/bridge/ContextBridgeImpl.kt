@@ -4,13 +4,16 @@ import android.bluetooth.BluetoothManager
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.LocationManager
+import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.os.Build.VERSION_CODES.S
 import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.core.content.ContextCompat
 import androidx.core.location.LocationManagerCompat
-import com.smartcar.sdk.activity.OAuthCaptureActivity
+import co.touchlab.kermit.Logger
+import com.smartcar.sdk.activity.WebViewActivity
+import com.smartcar.sdk.activity.WebViewActivityIsolated
 import com.smartcar.sdk.activity.awaitActivityResult
 import com.smartcar.sdk.activity.awaitMultiplePermissionsResult
 import com.smartcar.sdk.rpc.ble.Availability
@@ -23,7 +26,16 @@ class ContextBridgeImpl(
         interceptPrefix: String,
         headerConfig: String
     ): String? {
-        val intent = Intent(activity, OAuthCaptureActivity::class.java).apply {
+        // Use process isolated WebView if available
+        val clazz = if (SDK_INT >= Build.VERSION_CODES.P) {
+            Logger.d("OAuthCapture") { "Using isolated WebView" }
+            WebViewActivityIsolated::class.java
+        } else {
+            Logger.d("OAuthCapture") { "Using non-isolated WebView" }
+            WebViewActivity::class.java
+        }
+
+        val intent = Intent(activity, clazz).apply {
             putExtra("authorize_url", authorizeUrl)
             putExtra("intercept_prefix", interceptPrefix)
             putExtra("header_config", headerConfig)

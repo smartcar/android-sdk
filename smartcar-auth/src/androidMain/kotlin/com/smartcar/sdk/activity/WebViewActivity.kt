@@ -15,10 +15,10 @@ import com.smartcar.sdk.rpc.oauth.HeaderConfig
 import kotlinx.serialization.json.Json
 
 /**
- * Base class for ConnectActivity and OAuthCaptureActivity.
+ * Base class for ConnectActivity and WebViewActivityIsolated.
  * Displays a WebView and intercepts requests to a given callback URL.
  */
-abstract class WebViewActivity : ComponentActivity() {
+open class WebViewActivity : ComponentActivity() {
     private var headerConfig: List<HeaderConfig>? = null
     private lateinit var webView: WebView
 
