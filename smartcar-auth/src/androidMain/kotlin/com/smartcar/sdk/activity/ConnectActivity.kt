@@ -9,20 +9,50 @@ import com.smartcar.sdk.rpc.ble.BLEService
 import com.smartcar.sdk.rpc.oauth.OAuthService
 
 class ConnectActivity : WebViewActivity() {
-    private lateinit var oauthService: OAuthService
-    private lateinit var bleService: BLEService
+    private var oauthService: OAuthService? = null
+    private var bleService: BLEService? = null
+    private lateinit var oauthBridge: WebViewBridgeImpl
+    private lateinit var bleBridge: WebViewBridgeImpl
 
     override fun initWebView(webView: WebView) {
-        oauthService = OAuthService(ContextBridgeImpl(this), WebViewBridgeImpl(webView, "SmartcarSDK"))
-        bleService = BLEService(ContextBridgeImpl(this), WebViewBridgeImpl(webView, "SmartcarSDKBLE"))
+        oauthBridge = WebViewBridgeImpl(webView, "SmartcarSDK")
+        bleBridge = WebViewBridgeImpl(webView, "SmartcarSDKBLE")
 
         super.initWebView(webView)
     }
 
-    override fun onDestroyWebView(webView: WebView) {
-        oauthService.dispose()
-        bleService.dispose()
+    override fun onAllowedHostChanged(isAllowedHost: Boolean) {
+        if (!::oauthBridge.isInitialized || !::bleBridge.isInitialized) return
 
+        if (isAllowedHost) {
+            if (oauthService == null) {
+                oauthService = OAuthService(ContextBridgeImpl(this), oauthBridge)
+            }
+            if (bleService == null) {
+                bleService = BLEService(ContextBridgeImpl(this), bleBridge)
+            }
+            oauthBridge.attachJavascriptInterface()
+            bleBridge.attachJavascriptInterface()
+        } else {
+            destroyServices()
+        }
+    }
+
+    private fun destroyServices() {
+        if (::oauthBridge.isInitialized) {
+            oauthBridge.detachJavascriptInterface()
+        }
+        if (::bleBridge.isInitialized) {
+            bleBridge.detachJavascriptInterface()
+        }
+        oauthService?.dispose()
+        bleService?.dispose()
+        oauthService = null
+        bleService = null
+    }
+
+    override fun onDestroyWebView(webView: WebView) {
+        destroyServices()
         super.onDestroyWebView(webView)
     }
 

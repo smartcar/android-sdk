@@ -31,7 +31,6 @@ class SmartcarAuth {
 
     internal companion object {
         private const val BASE_AUTHORIZATION_URL = "https://connect.smartcar.com/oauth/authorize"
-        private const val AUTHORIZATION_HOST = "connect.smartcar.com"
 
         private lateinit var clientId: String
         private lateinit var redirectUri: String
@@ -329,24 +328,23 @@ class SmartcarAuth {
 
         val uri = authUrl.toUri()
         val uriBuilder = uri.buildUpon()
-        
+
         // Check if sdk_platform parameter already exists
         if (uri.getQueryParameter("sdk_platform") == null) {
             uriBuilder.appendQueryParameter("sdk_platform", "android")
         }
-        
+
         // Check if sdk_version parameter already exists
         if (uri.getQueryParameter("sdk_version") == null) {
             uriBuilder.appendQueryParameter("sdk_version", BuildConfig.VERSION_NAME)
         }
-        
+
         val newAuthUrl = uriBuilder.build()
 
         val intent = Intent(context, ConnectActivity::class.java)
         intent.putExtra("authorize_url", newAuthUrl.toString())
         intent.putExtra("intercept_prefix", redirectUri)
-        if (newAuthUrl.host == AUTHORIZATION_HOST)
-            intent.putExtra("allowed_host", AUTHORIZATION_HOST)
+        intent.putExtra("allowed_host", newAuthUrl.host)
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         context.startActivity(intent)
     }
