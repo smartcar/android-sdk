@@ -5,7 +5,7 @@ import android.webkit.WebView
 
 class WebViewBridgeImpl(
     private val webView: WebView,
-    channelName: String,
+    private val channelName: String,
 ): WebViewBridge {
 
     override lateinit var onMessageFromJS: ((String) -> Unit)
@@ -17,10 +17,19 @@ class WebViewBridgeImpl(
             onMessageFromJS.invoke(message)
         }
     }
+    private val jsInterface = JSInterface()
+    private var isJavascriptInterfaceAttached = false
 
-    init {
-        // Add the JavaScript interface to the WebView.
-        webView.addJavascriptInterface(JSInterface(), channelName)
+    fun attachJavascriptInterface() {
+        if (isJavascriptInterfaceAttached) return
+        webView.addJavascriptInterface(jsInterface, channelName)
+        isJavascriptInterfaceAttached = true
+    }
+
+    fun detachJavascriptInterface() {
+        if (!isJavascriptInterfaceAttached) return
+        webView.removeJavascriptInterface(channelName)
+        isJavascriptInterfaceAttached = false
     }
 
     override fun evaluateJavaScript(script: String, callback: (String?) -> Unit) {

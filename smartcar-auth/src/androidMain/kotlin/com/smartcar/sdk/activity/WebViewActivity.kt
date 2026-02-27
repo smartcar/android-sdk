@@ -10,6 +10,7 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.activity.ComponentActivity
+import androidx.core.net.toUri
 import com.smartcar.sdk.bridge.ContextBridgeImpl
 import com.smartcar.sdk.rpc.oauth.HeaderConfig
 import kotlinx.serialization.json.Json
@@ -69,6 +70,8 @@ open class WebViewActivity : ComponentActivity() {
 
         // Load the URL
         authorizeURL?.let {
+            checkAllowedHost(it.toUri(), allowedHost)
+
             val headers = getAdditionalHeaders(it)
             // Set the user agent if specified
             getUserAgentFromHeaders(headers)?.let { userAgent ->
@@ -102,6 +105,14 @@ open class WebViewActivity : ComponentActivity() {
         finish()
     }
 
+    open fun onAllowedHostChanged(isAllowedHost: Boolean) {
+    }
+
+    private fun checkAllowedHost(url: Uri, allowedHost: String?) {
+        onAllowedHostChanged(allowedHost == null ||
+                url.host.equals(allowedHost, ignoreCase = true))
+    }
+
     inner class CustomWebViewClient(
         private val interceptPrefix: String?,
         private val allowedHost: String?
@@ -123,14 +134,7 @@ open class WebViewActivity : ComponentActivity() {
                     return true
                 }
 
-                // Check if the URL matches the allowed hostname, if specified
-                if (allowedHost != null && url.host != allowedHost) {
-                    Log.d("OAuthCapture", "Opening external URL: $url")
-                    Intent(Intent.ACTION_VIEW, url).apply {
-                        startActivity(this)
-                    }
-                    return true
-                }
+                checkAllowedHost(url, allowedHost)
 
                 // Load with custom headers if applicable
                 val headers = getAdditionalHeaders(url.toString())
