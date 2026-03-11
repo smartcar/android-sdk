@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Smartcar Test App</string>
+    <string name="environment_label">Environment</string>
+    <string name="environment_prod">Prod</string>
+    <string name="environment_qa">QA</string>
+    <string name="mode_label">Mode</string>
+    <string name="mode_live">Live</string>
+    <string name="mode_test">Test</string>
+    <string name="label_client_id">Client ID</string>
+    <string name="label_redirect_uri">Redirect URI</string>
+    <string name="hint_client_id">Client ID</string>
+    <string name="hint_redirect_uri">Redirect URI</string>
+    <string name="connect_button">Connect with Smartcar</string>
+    <string name="missing_fields_message">Please enter both Client ID and Redirect URI.</string>
+</resources>
