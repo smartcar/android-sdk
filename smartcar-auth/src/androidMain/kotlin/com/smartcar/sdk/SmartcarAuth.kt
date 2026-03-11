@@ -49,6 +49,7 @@ class SmartcarAuth {
                 val queryState = uri.getQueryParameter("state")
                 val queryErrorDescription = uri.getQueryParameter("error_description")
                 val queryCode = uri.getQueryParameter("code")
+                val queryUserId = uri.getQueryParameter("user_id")
                 val queryError = uri.getQueryParameter("error")
                 val queryVin = uri.getQueryParameter("vin")
                 val queryVirtualKeyUrl = uri.getQueryParameter("virtual_key_url")
@@ -60,9 +61,11 @@ class SmartcarAuth {
                 val responseBuilder = SmartcarResponse.Builder()
 
                 if (receivedCode) {
-
+                // for now, userId is returned alongside code
+                // in the future, userId may be returned without code, so we want to make sure to include it in the response if it's present in a success auth response
                     val smartcarResponse = responseBuilder
                             .code(queryCode)
+                            .userId(queryUserId)
                             .errorDescription(queryErrorDescription)
                             .state(queryState)
                             .virtualKeyUrl(queryVirtualKeyUrl)

@@ -486,6 +486,20 @@ class SmartcarAuthTest {
     }
 
     @Test
+    fun smartcarAuth_receiveResponse_codeWithUserId() {
+        val clientId = "client123"
+        val redirectUri = "scclient123://test"
+        val scope = arrayOf("read_odometer", "read_vin")
+
+        SmartcarAuth(clientId, redirectUri, scope) { smartcarResponse ->
+            Assert.assertEquals(smartcarResponse!!.code, "testCode")
+            Assert.assertEquals(smartcarResponse.userId, "user-123")
+        }
+
+        SmartcarAuth.receiveResponse(Uri.parse("$redirectUri?code=testCode&user_id=user-123"))
+    }
+
+    @Test
     fun smartcarAuth_receiveResponse_codeWithVirtualKeyUrl() {
         val clientId = "client123"
         val redirectUri = "scclient123://test"

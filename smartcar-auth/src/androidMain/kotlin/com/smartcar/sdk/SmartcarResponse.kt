@@ -25,6 +25,7 @@ package com.smartcar.sdk
  */
 class SmartcarResponse private constructor(
     val code: String?,
+    val userId: String?,
     val error: String?,
     val errorDescription: String?,
     val state: String?,
@@ -35,6 +36,7 @@ class SmartcarResponse private constructor(
     override fun toString(): String {
         return "SmartcarResponse{" +
                 "code='" + code + '\'' +
+                ", userId='" + userId + '\'' +
                 ", error='" + error + '\'' +
                 ", errorDescription='" + errorDescription + '\'' +
                 ", state='" + state + '\'' +
@@ -45,6 +47,7 @@ class SmartcarResponse private constructor(
 
     class Builder {
         private var code: String? = null
+        private var userId: String? = null
         private var error: String? = null
         private var errorDescription: String? = null
         private var state: String? = null
@@ -63,6 +66,11 @@ class SmartcarResponse private constructor(
 
         fun code(code: String?): Builder {
             this.code = code
+            return this
+        }
+
+        fun userId(userId: String?): Builder {
+            this.userId = userId
             return this
         }
 
@@ -88,7 +96,7 @@ class SmartcarResponse private constructor(
          * @return a new instantiation of the SmartcarResponse class
          */
         fun build(): SmartcarResponse {
-            return SmartcarResponse(code, error, errorDescription, state, vehicleInfo, virtualKeyUrl)
+            return SmartcarResponse(code, userId, error, errorDescription, state, vehicleInfo, virtualKeyUrl)
         }
     }
 }
