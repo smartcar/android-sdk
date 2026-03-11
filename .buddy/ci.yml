@@ -10,7 +10,6 @@
     docker_image_name: "library/eclipse-temurin"
     docker_image_tag: "21-jdk"
     execute_commands:
-    - "echo CI_YAML_FIXCI_MARKER"
     - "export ANDROID_HOME=\"/opt/android/sdk\""
     - "export PATH=$PATH:/opt/android/sdk/cmdline-tools/tools/bin"
     - "if [ ! -d \"$ANDROID_HOME/cmdline-tools\" ]; then"
@@ -23,7 +22,7 @@
     - "fi"
     - ""
     - "chmod +x gradlew"
-    - "./gradlew build check"
+    - "./gradlew --no-daemon --stacktrace --max-workers=2 -Dorg.gradle.jvmargs='-Xmx1536m -Dfile.encoding=UTF-8 -Dkotlin.daemon.jvm.options=\"-Xmx1024m\"' build check"
     - "# ./gradlew assembleDebug"
     - "# ./gradlew assembleRelease"
     setup_commands:
