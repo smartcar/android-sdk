@@ -10,6 +10,7 @@
     docker_image_name: "library/eclipse-temurin"
     docker_image_tag: "21-jdk"
     execute_commands:
+    - "echo CI_YAML_FIXCI_MARKER"
     - "export ANDROID_HOME=\"/opt/android/sdk\""
     - "export PATH=$PATH:/opt/android/sdk/cmdline-tools/tools/bin"
     - "if [ ! -d \"$ANDROID_HOME/cmdline-tools\" ]; then"
