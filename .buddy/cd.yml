@@ -25,7 +25,7 @@
     - "export ORG_GRADLE_PROJECT_signingKey=\"$(cat /buddy-variables/cismartcar_com_pgp)\""
     - "# Publish"
     - ""
-    - "./gradlew --no-configuration-cache publishAndroidReleasePublicationToSonatypeRepository closeAndReleaseStagingRepositories"
+    - "./gradlew --no-configuration-cache --no-daemon -x :smartcar-auth:commonizeNativeDistribution -Pkotlin.native.ignoreDisabledTargets=true -PskipDokkaForPublish=true publishAndroidReleasePublicationToSonatypeRepository closeAndReleaseStagingRepositories"
     - ""
     - ""
     setup_commands:
