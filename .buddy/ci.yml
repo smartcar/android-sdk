@@ -7,7 +7,7 @@
   actions:
   - action: "Build"
     type: "BUILD"
-    docker_image_name: "docker.io/library/eclipse-temurin"
+    docker_image_name: "library/eclipse-temurin"
     docker_image_tag: "21-jdk"
     execute_commands:
     - "export ANDROID_HOME=\"/opt/android/sdk\""
