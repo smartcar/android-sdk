@@ -72,7 +72,8 @@ class MainActivity : ComponentActivity() {
                 .path(selectedBaseUri.path)
                 .build()
                 .toString()
-
+            // log the selected auth url for debugging purposes
+            Log.d("SmartcarTestApp", "Selected Auth URL: $selectedAuthUrl")
             smartcarAuth.launchAuthFlow(applicationContext, selectedAuthUrl)
         }
     }
