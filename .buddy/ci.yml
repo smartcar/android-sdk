@@ -7,8 +7,8 @@
   actions:
   - action: "Build"
     type: "BUILD"
-    docker_image_name: "library/openjdk"
-    docker_image_tag: "20"
+    docker_image_name: "eclipse-temurin"
+    docker_image_tag: "21-jdk"
     execute_commands:
     - "export ANDROID_HOME=\"/opt/android/sdk\""
     - "export PATH=$PATH:/opt/android/sdk/cmdline-tools/tools/bin"
@@ -26,7 +26,7 @@
     - "# ./gradlew assembleDebug"
     - "# ./gradlew assembleRelease"
     setup_commands:
-    - "microdnf install unzip findutils"
+    - "apt-get update && apt-get install -y unzip findutils"
     cached_dirs:
     - "/root/.gradle"
     - "/opt/android/sdk"
