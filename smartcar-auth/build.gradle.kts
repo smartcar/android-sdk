@@ -16,6 +16,10 @@ val libGroup: String by project
 val libName: String by project
 val libVersion: String by project
 val libDescription: String by project
+val skipDokkaForPublish = providers
+    .gradleProperty("skipDokkaForPublish")
+    .map(String::toBoolean)
+    .orElse(false)
 
 group = libGroup
 version = libVersion
@@ -179,7 +183,14 @@ publishing {
 // Task to generate documentation with Dokka and package it as a JAR
 val javadocJar by tasks.registering(Jar::class) {
     archiveClassifier.set("javadoc")
-    from(tasks.dokkaGeneratePublicationHtml.flatMap { it.outputDirectory })
+    if (skipDokkaForPublish.get()) {
+        // Keep Maven Central-compatible javadoc artifact when Dokka is skipped in CI publish jobs.
+        doFirst {
+            logger.lifecycle("Skipping Dokka and creating empty javadoc JAR (skipDokkaForPublish=true)")
+        }
+    } else {
+        from(tasks.dokkaGeneratePublicationHtml.flatMap { it.outputDirectory })
+    }
 }
 
 /**
