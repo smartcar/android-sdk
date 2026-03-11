@@ -48,7 +48,7 @@ import com.smartcar.sdk.SmartcarCallback;
 import com.smartcar.sdk.SmartcarResponse;
 
 SmartcarAuth smartcarAuth = new SmartcarAuth(
-    "your-client-id",
+    "your-application-id", // same as the former alias: client-id 
     "your-redirect-uri",
     new String[] {"read_vehicle_info", "read_odometer"},
 
