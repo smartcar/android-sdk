@@ -22,7 +22,7 @@
     - "fi"
     - ""
     - "chmod +x gradlew"
-    - "./gradlew --no-daemon --stacktrace --max-workers=2 -Dorg.gradle.jvmargs='-Xmx1536m -Dfile.encoding=UTF-8 -Dkotlin.daemon.jvm.options=\"-Xmx1024m\"' build check"
+    - "./gradlew build check"
     - "# ./gradlew assembleDebug"
     - "# ./gradlew assembleRelease"
     setup_commands:
