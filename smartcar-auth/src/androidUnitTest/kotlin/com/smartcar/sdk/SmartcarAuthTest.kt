@@ -18,18 +18,18 @@ import org.robolectric.RobolectricTestRunner
 class SmartcarAuthTest {
     @Test
     fun smartcarAuth_authUrlBuilder() {
-        val clientId = "client123"
+        val applicationId = "client123"
         val redirectUri = "scclient123://test"
         val redirectUriEncoded = "scclient123%3A%2F%2Ftest"
         val scope = arrayOf("read_odometer", "read_vin")
         val expectedUri =
             "https://connect.smartcar.com/oauth/authorize?response_type=code" +
-                    "&client_id=" + clientId +
+                    "&application_id=" + applicationId +
                     "&redirect_uri=" + redirectUriEncoded +
                     "&mode=live&scope=read_odometer%20read_vin"
 
 
-        val smartcarAuth = SmartcarAuth(clientId, redirectUri, scope) {}
+        val smartcarAuth = SmartcarAuth(applicationId, redirectUri, scope) {}
         val requestUri = smartcarAuth.authUrlBuilder().build()
 
         Assert.assertEquals(expectedUri, requestUri)
@@ -37,18 +37,18 @@ class SmartcarAuthTest {
 
     @Test
     fun smartcarAuth_authUrlBuilder_testMode() {
-        val clientId = "client123"
+        val applicationId = "client123"
         val redirectUri = "scclient123://test"
         val redirectUriEncoded = "scclient123%3A%2F%2Ftest"
         val scope = arrayOf("read_odometer", "read_vin")
         val expectedUri =
             "https://connect.smartcar.com/oauth/authorize?response_type=code" +
-                    "&client_id=" + clientId +
+                    "&application_id=" + applicationId +
                     "&redirect_uri=" + redirectUriEncoded +
                     "&mode=test&scope=read_odometer%20read_vin"
 
 
-        val smartcarAuth = SmartcarAuth(clientId, redirectUri, scope, true) {}
+        val smartcarAuth = SmartcarAuth(applicationId, redirectUri, scope, true) {}
         val requestUri = smartcarAuth.authUrlBuilder().build()
 
         Assert.assertEquals(expectedUri, requestUri)
@@ -56,16 +56,16 @@ class SmartcarAuthTest {
 
     @Test
     fun smartcarAuth_authUrlBuilder_noScopeOrTestMode() {
-        val clientId = "client123"
+        val applicationId = "client123"
         val redirectUri = "scclient123://test"
         val redirectUriEncoded = "scclient123%3A%2F%2Ftest"
         val expectedUri =
             "https://connect.smartcar.com/oauth/authorize?response_type=code" +
-                    "&client_id=" + clientId +
+                    "&application_id=" + applicationId +
                     "&redirect_uri=" + redirectUriEncoded +
                     "&mode=live"
 
-        val smartcarAuth = SmartcarAuth(clientId, redirectUri) {}
+        val smartcarAuth = SmartcarAuth(applicationId, redirectUri) {}
         val requestUri = smartcarAuth.authUrlBuilder().build()
 
         Assert.assertEquals(expectedUri, requestUri)
@@ -73,16 +73,16 @@ class SmartcarAuthTest {
 
     @Test
     fun smartcarAuth_authUrlBuilder_noScope() {
-        val clientId = "client123"
+        val applicationId = "client123"
         val redirectUri = "scclient123://test"
         val redirectUriEncoded = "scclient123%3A%2F%2Ftest"
         val expectedUri =
             "https://connect.smartcar.com/oauth/authorize?response_type=code" +
-                    "&client_id=" + clientId +
+                    "&application_id=" + applicationId +
                     "&redirect_uri=" + redirectUriEncoded +
                     "&mode=test"
 
-        val smartcarAuth = SmartcarAuth(clientId, redirectUri, true) {}
+        val smartcarAuth = SmartcarAuth(applicationId, redirectUri, true) {}
         val requestUri = smartcarAuth.authUrlBuilder().build()
 
         Assert.assertEquals(expectedUri, requestUri)
@@ -90,7 +90,7 @@ class SmartcarAuthTest {
 
     @Test
     fun smartcarAuth_authUrlBuilderWithSetters() {
-        val clientId = "client123"
+        val applicationId = "client123"
         val redirectUri = "scclient123://test"
         val redirectUriEncoded = "scclient123%3A%2F%2Ftest"
         val scope = arrayOf("read_odometer", "read_vin")
@@ -99,7 +99,7 @@ class SmartcarAuthTest {
         val user = "e9b24987-52e8-4d40-8417-bfa4402c9e16"
         val expectedUri =
             "https://connect.smartcar.com/oauth/authorize?response_type=code" +
-                    "&client_id=" + clientId +
+                    "&application_id=" + applicationId +
                     "&redirect_uri=" + redirectUriEncoded +
                     "&mode=live&scope=read_odometer%20read_vin" +
                     "&approval_prompt=force&make=BMW&state=some%20state" +
@@ -108,7 +108,7 @@ class SmartcarAuthTest {
                     "&flags=flag%3Asuboption%20feature3" +
                     "&user=e9b24987-52e8-4d40-8417-bfa4402c9e16"
 
-        val smartcarAuth = SmartcarAuth(clientId, redirectUri, scope) {}
+        val smartcarAuth = SmartcarAuth(applicationId, redirectUri, scope) {}
         val requestUri = smartcarAuth.authUrlBuilder()
             .setForcePrompt(true)
             .setMakeBypass("BMW")
@@ -209,7 +209,7 @@ class SmartcarAuthTest {
         val context: Context = mock(Context::class.java)
 
         // Create auth URL without sdk parameters
-        val baseUrl = "https://connect.smartcar.com/oauth/authorize?response_type=code&client_id=test123&redirect_uri=test%3A%2F%2Fredirect"
+        val baseUrl = "https://connect.smartcar.com/oauth/authorize?response_type=code&application_id=test123&redirect_uri=test%3A%2F%2Fredirect"
         
         val smartcarAuth = SmartcarAuth(
             "client123",
@@ -230,7 +230,7 @@ class SmartcarAuthTest {
         val context: Context = mock(Context::class.java)
 
         // Create auth URL with existing sdk parameters
-        val urlWithSdkParams = "https://connect.smartcar.com/oauth/authorize?response_type=code&client_id=test123&sdk_platform=ios&sdk_version=1.0.0&redirect_uri=test%3A%2F%2Fredirect"
+        val urlWithSdkParams = "https://connect.smartcar.com/oauth/authorize?response_type=code&application_id=test123&sdk_platform=ios&sdk_version=1.0.0&redirect_uri=test%3A%2F%2Fredirect"
         
         val smartcarAuth = SmartcarAuth(
             "client123",
@@ -251,7 +251,7 @@ class SmartcarAuthTest {
         val context: Context = mock(Context::class.java)
 
         // Create auth URL with only sdk_platform but missing sdk_version
-        val urlWithPartialSdkParams = "https://connect.smartcar.com/oauth/authorize?response_type=code&client_id=test123&sdk_platform=ios&redirect_uri=test%3A%2F%2Fredirect"
+        val urlWithPartialSdkParams = "https://connect.smartcar.com/oauth/authorize?response_type=code&application_id=test123&sdk_platform=ios&redirect_uri=test%3A%2F%2Fredirect"
         
         val smartcarAuth = SmartcarAuth(
             "client123",
@@ -273,7 +273,7 @@ class SmartcarAuthTest {
         val intentCaptor = ArgumentCaptor.forClass(Intent::class.java)
 
         // Create auth URL without sdk parameters
-        val baseUrl = "https://connect.smartcar.com/oauth/authorize?response_type=code&client_id=test123&redirect_uri=test%3A%2F%2Fredirect"
+        val baseUrl = "https://connect.smartcar.com/oauth/authorize?response_type=code&application_id=test123&redirect_uri=test%3A%2F%2Fredirect"
         
         val smartcarAuth = SmartcarAuth(
             "client123",
@@ -305,7 +305,7 @@ class SmartcarAuthTest {
         val intentCaptor = ArgumentCaptor.forClass(Intent::class.java)
 
         // Create auth URL with existing sdk parameters
-        val urlWithSdkParams = "https://connect.smartcar.com/oauth/authorize?response_type=code&client_id=test123&sdk_platform=blah&sdk_version=1.0.0&redirect_uri=test%3A%2F%2Fredirect"
+        val urlWithSdkParams = "https://connect.smartcar.com/oauth/authorize?response_type=code&application_id=test123&sdk_platform=blah&sdk_version=1.0.0&redirect_uri=test%3A%2F%2Fredirect"
         
         val smartcarAuth = SmartcarAuth(
             "client123",
@@ -337,11 +337,11 @@ class SmartcarAuthTest {
 
     @Test
     fun smartcarAuth_receiveResponse() {
-        val clientId = "client123"
+        val applicationId = "client123"
         val redirectUri = "scclient123://test"
         val scope = arrayOf("read_odometer", "read_vin")
 
-        SmartcarAuth(clientId, redirectUri, scope) { smartcarResponse ->
+        SmartcarAuth(applicationId, redirectUri, scope) { smartcarResponse ->
             Assert.assertEquals(
                 smartcarResponse!!.code,
                 "testcode123"
@@ -353,13 +353,13 @@ class SmartcarAuthTest {
 
     @Test
     fun smartcarAuth_receiveResponse_mismatchRedirectUri() {
-        val clientId = "client123"
+        val applicationId = "client123"
         val redirectUri = "scclient123://test"
         val scope = arrayOf("read_odometer", "read_vin")
         val wrongRedirectUri = "wrongscheme://test"
 
         SmartcarAuth(
-            clientId,
+            applicationId,
             redirectUri,
             scope
         ) { throw AssertionError("Response should not be received.") }
@@ -369,12 +369,12 @@ class SmartcarAuthTest {
 
     @Test
     fun smartcarAuth_receiveResponse_nullUri() {
-        val clientId = "client123"
+        val applicationId = "client123"
         val redirectUri = "scclient123://test"
         val scope = arrayOf("read_odometer", "read_vin")
 
         SmartcarAuth(
-            clientId,
+            applicationId,
             redirectUri,
             scope
         ) { throw AssertionError("Response should not be received.") }
@@ -384,11 +384,11 @@ class SmartcarAuthTest {
 
     @Test
     fun smartcarAuth_receiveResponse_nullCode() {
-        val clientId = "client123"
+        val applicationId = "client123"
         val redirectUri = "scclient123://test"
         val scope = arrayOf("read_odometer", "read_vin")
 
-        SmartcarAuth(clientId, redirectUri, scope) { smartcarResponse ->
+        SmartcarAuth(applicationId, redirectUri, scope) { smartcarResponse ->
             Assert.assertEquals(
                 smartcarResponse!!.errorDescription,
                 "Unable to fetch code. Please try again"
@@ -400,10 +400,10 @@ class SmartcarAuthTest {
 
     @Test
     fun smartcarAuth_receiveResponse_accessDenied() {
-        val clientId = "client123"
+        val applicationId = "client123"
         val redirectUri = "scclient123://test"
         val scope = arrayOf("read_odometer", "read_vin")
-        SmartcarAuth(clientId, redirectUri, scope) { smartcarResponse ->
+        SmartcarAuth(applicationId, redirectUri, scope) { smartcarResponse ->
             Assert.assertEquals(smartcarResponse!!.error, "access_denied")
             Assert.assertEquals(
                 smartcarResponse.errorDescription,
@@ -416,10 +416,10 @@ class SmartcarAuthTest {
 
     @Test
     fun smartcarAuth_receiveResponse_vehicleIncompatible() {
-        val clientId = "client123"
+        val applicationId = "client123"
         val redirectUri = "scclient123://test"
         val scope = arrayOf("read_odometer", "read_vin")
-        SmartcarAuth(clientId, redirectUri, scope) { smartcarResponse ->
+        SmartcarAuth(applicationId, redirectUri, scope) { smartcarResponse ->
             Assert.assertEquals(smartcarResponse!!.error, "vehicle_incompatible")
             Assert.assertEquals(
                 smartcarResponse.errorDescription,
@@ -432,10 +432,10 @@ class SmartcarAuthTest {
 
     @Test
     fun smartcarAuth_receiveResponse_vehicleIncompatibleWithVehicle() {
-        val clientId = "client123"
+        val applicationId = "client123"
         val redirectUri = "scclient123://test"
         val scope = arrayOf("read_odometer", "read_vin")
-        SmartcarAuth(clientId, redirectUri, scope) { smartcarResponse ->
+        SmartcarAuth(applicationId, redirectUri, scope) { smartcarResponse ->
             val responseVehicle = smartcarResponse!!.vehicleInfo
             Assert.assertEquals(smartcarResponse.error, "vehicle_incompatible")
             Assert.assertEquals(
@@ -457,11 +457,11 @@ class SmartcarAuthTest {
 
     @Test
     fun smartcarAuth_receiveResponse_nullCodeWithMessage() {
-        val clientId = "client123"
+        val applicationId = "client123"
         val redirectUri = "scclient123://test"
         val scope = arrayOf("read_odometer", "read_vin")
 
-        SmartcarAuth(clientId, redirectUri, scope) { smartcarResponse ->
+        SmartcarAuth(applicationId, redirectUri, scope) { smartcarResponse ->
             Assert.assertEquals(
                 smartcarResponse!!.errorDescription,
                 "Unable to fetch code. Please try again"
@@ -473,11 +473,11 @@ class SmartcarAuthTest {
 
     @Test
     fun smartcarAuth_receiveResponse_codeWithState() {
-        val clientId = "client123"
+        val applicationId = "client123"
         val redirectUri = "scclient123://test"
         val scope = arrayOf("read_odometer", "read_vin")
 
-        SmartcarAuth(clientId, redirectUri, scope) { smartcarResponse ->
+        SmartcarAuth(applicationId, redirectUri, scope) { smartcarResponse ->
             Assert.assertEquals(smartcarResponse!!.code, "testCode")
             Assert.assertEquals(smartcarResponse.state, "testState")
         }
@@ -487,11 +487,11 @@ class SmartcarAuthTest {
 
     @Test
     fun smartcarAuth_receiveResponse_codeWithUserId() {
-        val clientId = "client123"
+        val applicationId = "client123"
         val redirectUri = "scclient123://test"
         val scope = arrayOf("read_odometer", "read_vin")
 
-        SmartcarAuth(clientId, redirectUri, scope) { smartcarResponse ->
+        SmartcarAuth(applicationId, redirectUri, scope) { smartcarResponse ->
             Assert.assertEquals(smartcarResponse!!.code, "testCode")
             Assert.assertEquals(smartcarResponse.userId, "user-123")
         }
@@ -501,11 +501,11 @@ class SmartcarAuthTest {
 
     @Test
     fun smartcarAuth_receiveResponse_codeWithVirtualKeyUrl() {
-        val clientId = "client123"
+        val applicationId = "client123"
         val redirectUri = "scclient123://test"
         val scope = arrayOf("read_odometer", "read_vin")
 
-        SmartcarAuth(clientId, redirectUri, scope) { smartcarResponse ->
+        SmartcarAuth(applicationId, redirectUri, scope) { smartcarResponse ->
             Assert.assertEquals(smartcarResponse!!.code, "testCode")
             Assert.assertEquals(smartcarResponse.state, null)
             Assert.assertEquals(

@@ -32,7 +32,7 @@ class SmartcarAuth {
     internal companion object {
         private const val BASE_AUTHORIZATION_URL = "https://connect.smartcar.com/oauth/authorize"
 
-        private lateinit var clientId: String
+        private lateinit var applicationId: String
         private lateinit var redirectUri: String
         private var scope: Array<String> = emptyArray()
         private var testMode: Boolean = false
@@ -112,43 +112,43 @@ class SmartcarAuth {
     /**
      * Constructs an instance with the given parameters.
      *
-     * @param clientId    The client's ID
-     * @param redirectUri The client's redirect URI
+        * @param applicationId The application's ID
+        * @param redirectUri The application's redirect URI
      * @param callback    Handler to a Callback for receiving the Smartcar Connect response
      */
-    constructor(clientId: String, redirectUri: String, callback: SmartcarCallback) : this(clientId, redirectUri, emptyArray(), false, callback)
+    constructor(applicationId: String, redirectUri: String, callback: SmartcarCallback) : this(applicationId, redirectUri, emptyArray(), false, callback)
 
     /**
      * Constructs an instance with the given parameters.
      *
-     * @param clientId    The client's ID
-     * @param redirectUri The client's redirect URI
+        * @param applicationId The application's ID
+        * @param redirectUri The application's redirect URI
      * @param testMode    Set to true to run Smartcar Connect in test mode
      * @param callback    Handler to a Callback for receiving the Smartcar Connect response
      */
-    constructor(clientId: String, redirectUri: String, testMode: Boolean, callback: SmartcarCallback) : this(clientId, redirectUri, emptyArray(), testMode, callback)
+    constructor(applicationId: String, redirectUri: String, testMode: Boolean, callback: SmartcarCallback) : this(applicationId, redirectUri, emptyArray(), testMode, callback)
 
     /**
      * Constructs an instance with the given parameters.
      *
-     * @param clientId    The client's ID
-     * @param redirectUri The client's redirect URI
+        * @param applicationId The application's ID
+        * @param redirectUri The application's redirect URI
      * @param scope       An array of authorization scopes
      * @param callback    Handler to a Callback for receiving the Smartcar Connect response
      */
-    constructor(clientId: String, redirectUri: String, scope: Array<String>, callback: SmartcarCallback) : this(clientId, redirectUri, scope, false, callback)
+    constructor(applicationId: String, redirectUri: String, scope: Array<String>, callback: SmartcarCallback) : this(applicationId, redirectUri, scope, false, callback)
 
     /**
      * Constructs an instance with the given parameters.
      *
-     * @param clientId    The client's ID
-     * @param redirectUri The client's redirect URI
+     * @param applicationId The application's ID
+    * @param redirectUri The application's redirect URI
      * @param scope       An array of authorization scopes
      * @param testMode    Set to true to run Smartcar Connect in test mode
      * @param callback    Handler to a Callback for receiving the Smartcar Connect response
      */
-    constructor(clientId: String, redirectUri: String, scope: Array<String>, testMode: Boolean, callback: SmartcarCallback) {
-        Companion.clientId = clientId
+    constructor(applicationId: String, redirectUri: String, scope: Array<String>, testMode: Boolean, callback: SmartcarCallback) {
+        Companion.applicationId = applicationId
         Companion.redirectUri = redirectUri
         Companion.scope = scope
         Companion.testMode = testMode
@@ -170,7 +170,7 @@ class SmartcarAuth {
     inner class AuthUrlBuilder {
         private val uriBuilder = BASE_AUTHORIZATION_URL.toUri().buildUpon()
                 .appendQueryParameter("response_type", "code")
-                .appendQueryParameter("client_id", clientId)
+                .appendQueryParameter("application_id", applicationId)
                 .appendQueryParameter("redirect_uri", redirectUri)
                 .appendQueryParameter("mode", if (testMode) "test" else "live")
                 .apply {
