@@ -127,6 +127,14 @@ open class WebViewActivity : ComponentActivity() {
                     return true
                 }
 
+                // Tesla Universal Link for virtual key pairing must be opened externally so the
+                // Tesla app can handle it. Scoped to /_ak/ only — the Tesla OAuth login flow at
+                // fleet-auth.prd.vn.cloud.tesla.com must stay in the WebView.
+                if (url.host == "www.tesla.com" && url.path?.startsWith("/_ak/") == true) {
+                    startActivity(Intent(Intent.ACTION_VIEW, url))
+                    return true
+                }
+
                 // Check if the URL should be intercepted
                 if (interceptPrefix != null && url.toString().startsWith(interceptPrefix)) {
                     Log.d("OAuthCapture", "Intercepted URL: $url")
