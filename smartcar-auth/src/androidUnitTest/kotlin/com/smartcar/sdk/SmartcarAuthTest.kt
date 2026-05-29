@@ -348,7 +348,7 @@ class SmartcarAuthTest {
             )
         }
 
-        SmartcarAuth.receiveResponse(Uri.parse("$redirectUri?code=testcode123"))
+        SmartcarAuth.receiveResponse(Uri.parse("$redirectUri?code=testcode123"), redirectUri)
     }
 
     @Test
@@ -364,7 +364,7 @@ class SmartcarAuthTest {
             scope
         ) { throw AssertionError("Response should not be received.") }
 
-        SmartcarAuth.receiveResponse(Uri.parse(wrongRedirectUri))
+        SmartcarAuth.receiveResponse(Uri.parse(wrongRedirectUri), redirectUri)
     }
 
     @Test
@@ -379,7 +379,7 @@ class SmartcarAuthTest {
             scope
         ) { throw AssertionError("Response should not be received.") }
 
-        SmartcarAuth.receiveResponse(null)
+        SmartcarAuth.receiveResponse(null, redirectUri)
     }
 
     @Test
@@ -395,7 +395,7 @@ class SmartcarAuthTest {
             )
         }
 
-        SmartcarAuth.receiveResponse(Uri.parse(redirectUri))
+        SmartcarAuth.receiveResponse(Uri.parse(redirectUri), redirectUri)
     }
 
     @Test
@@ -411,7 +411,7 @@ class SmartcarAuthTest {
             )
         }
 
-        SmartcarAuth.receiveResponse(Uri.parse("$redirectUri?error=access_denied&error_description=User%20denied%20access%20to%20the%20requested%20scope%20of%20permissions."))
+        SmartcarAuth.receiveResponse(Uri.parse("$redirectUri?error=access_denied&error_description=User%20denied%20access%20to%20the%20requested%20scope%20of%20permissions."), redirectUri)
     }
 
     @Test
@@ -427,7 +427,7 @@ class SmartcarAuthTest {
             )
         }
 
-        SmartcarAuth.receiveResponse(Uri.parse("$redirectUri?error=vehicle_incompatible&error_description=The%20user%27s%20vehicle%20is%20not%20compatible."))
+        SmartcarAuth.receiveResponse(Uri.parse("$redirectUri?error=vehicle_incompatible&error_description=The%20user%27s%20vehicle%20is%20not%20compatible."), redirectUri)
     }
 
     @Test
@@ -451,7 +451,8 @@ class SmartcarAuthTest {
                 redirectUri + "?error=vehicle_incompatible" +
                         "&error_description=The%20user%27s%20vehicle%20is%20not%20compatible." +
                         "&vin=1FDKE30G4JHA04964&make=FORD"
-            )
+            ),
+            redirectUri
         )
     }
 
@@ -468,7 +469,7 @@ class SmartcarAuthTest {
             )
         }
 
-        SmartcarAuth.receiveResponse(Uri.parse("$redirectUri?error_description=error"))
+        SmartcarAuth.receiveResponse(Uri.parse("$redirectUri?error_description=error"), redirectUri)
     }
 
     @Test
@@ -482,7 +483,7 @@ class SmartcarAuthTest {
             Assert.assertEquals(smartcarResponse.state, "testState")
         }
 
-        SmartcarAuth.receiveResponse(Uri.parse("$redirectUri?code=testCode&state=testState"))
+        SmartcarAuth.receiveResponse(Uri.parse("$redirectUri?code=testCode&state=testState"), redirectUri)
     }
 
     @Test
@@ -496,7 +497,7 @@ class SmartcarAuthTest {
             Assert.assertEquals(smartcarResponse.userId, "user-123")
         }
 
-        SmartcarAuth.receiveResponse(Uri.parse("$redirectUri?code=testCode&user_id=user-123"))
+        SmartcarAuth.receiveResponse(Uri.parse("$redirectUri?code=testCode&user_id=user-123"), redirectUri)
     }
 
     @Test
@@ -514,6 +515,6 @@ class SmartcarAuthTest {
             )
         }
 
-        SmartcarAuth.receiveResponse(Uri.parse("$redirectUri?code=testCode&virtual_key_url=https://www.tesla.com/_ak/smartcar.com"))
+        SmartcarAuth.receiveResponse(Uri.parse("$redirectUri?code=testCode&virtual_key_url=https://www.tesla.com/_ak/smartcar.com"), redirectUri)
     }
 }
