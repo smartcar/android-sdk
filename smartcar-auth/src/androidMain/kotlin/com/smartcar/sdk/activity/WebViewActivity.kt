@@ -98,7 +98,7 @@ open class WebViewActivity : ComponentActivity() {
         }?.value
     }
 
-    open fun onInterceptUri(uri: Uri) {
+    open fun onInterceptUri(uri: Uri, interceptPrefix: String) {
         val resultIntent = Intent()
         resultIntent.putExtra("return_uri", uri.toString())
         setResult(RESULT_OK, resultIntent)
@@ -138,7 +138,7 @@ open class WebViewActivity : ComponentActivity() {
                 // Check if the URL should be intercepted
                 if (interceptPrefix != null && url.toString().startsWith(interceptPrefix)) {
                     Log.d("OAuthCapture", "Intercepted URL: $url")
-                    onInterceptUri(url)
+                    onInterceptUri(url, interceptPrefix)
                     return true
                 }
 

@@ -56,8 +56,8 @@ class ConnectActivity : WebViewActivity() {
         super.onDestroyWebView(webView)
     }
 
-    override fun onInterceptUri(uri: Uri) {
-        SmartcarAuth.receiveResponse(uri)
-        super.onInterceptUri(uri)
+    override fun onInterceptUri(uri: Uri, interceptPrefix: String) {
+        SmartcarAuth.receiveResponse(uri, interceptPrefix)
+        super.onInterceptUri(uri, interceptPrefix)
     }
 }
