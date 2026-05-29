@@ -44,7 +44,15 @@ class SmartcarAuth {
          *
          * @param uri The response data as a Uri
          */
-        fun receiveResponse(uri: Uri?) {
+        fun receiveResponse(uri: Uri?, redirectUri: String) {
+            /**
+             * If the process was killed while Connect was open, the callback will not have been
+             * re-initialized when Android recreates the activity. We return silently to avoid a
+             * crash, but the auth result is lost and the user must restart the flow.
+             * Known limitation of the SmartcarCallback API — will be addressed in the next
+             * major version by migrating to the ContextBridge/Activity Results pattern.
+             */
+            if (!::callback.isInitialized) return
             if (uri != null && uri.toString().startsWith(redirectUri)) {
                 val queryState = uri.getQueryParameter("state")
                 val queryErrorDescription = uri.getQueryParameter("error_description")
