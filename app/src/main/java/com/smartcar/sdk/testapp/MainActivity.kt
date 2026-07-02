@@ -27,12 +27,16 @@ class MainActivity : ComponentActivity() {
         val environmentGroup = findViewById<RadioGroup>(R.id.environmentGroup)
         val modeGroup = findViewById<RadioGroup>(R.id.modeGroup)
 
+        val makeInput = findViewById<EditText>(R.id.makeInput)
+
         clientIdInput.setText("bbccf263-6fa2-4f28-ac25-102950ef00e0")
         redirectUriInput.setText("https://smartcar.com/")
 
         findViewById<Button>(R.id.connectButton).setOnClickListener {
+
             val clientId = clientIdInput.text.toString().trim()
             val redirectUri = redirectUriInput.text.toString().trim()
+            val make = makeInput.text.toString().trim()
 
             if (clientId.isEmpty() || redirectUri.isEmpty()) {
                 Toast.makeText(this, R.string.missing_fields_message, Toast.LENGTH_SHORT).show()
@@ -64,7 +68,11 @@ class MainActivity : ComponentActivity() {
                 PROD_AUTH_URL
             }
 
-            val builtUri = smartcarAuth.authUrlBuilder().build().toUri()
+            val authUrlBuilder = smartcarAuth.authUrlBuilder()
+            if (make.isNotEmpty()) {
+                authUrlBuilder.setMakeBypass(make)
+            }
+            val builtUri = authUrlBuilder.build().toUri()
             val selectedBaseUri = baseAuthorizationUrl.toUri()
             val selectedAuthUrl = builtUri.buildUpon()
                 .scheme(selectedBaseUri.scheme)

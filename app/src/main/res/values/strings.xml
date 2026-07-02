@@ -13,4 +13,7 @@
     <string name="hint_redirect_uri">Redirect URI</string>
     <string name="connect_button">Connect with Smartcar</string>
     <string name="missing_fields_message">Please enter both Client ID and Redirect URI.</string>
+
+    <string name="label_make">Make (optional)</string>
+    <string name="hint_make">e.g. tesla, honda</string>
 </resources>
