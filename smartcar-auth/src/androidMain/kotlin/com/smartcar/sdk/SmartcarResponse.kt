@@ -26,6 +26,7 @@ package com.smartcar.sdk
 class SmartcarResponse private constructor(
     val code: String?,
     val userId: String?,
+    val externalId: String?,
     val error: String?,
     val errorDescription: String?,
     val state: String?,
@@ -37,6 +38,7 @@ class SmartcarResponse private constructor(
         return "SmartcarResponse{" +
                 "code='" + code + '\'' +
                 ", userId='" + userId + '\'' +
+                ", externalId='" + externalId + '\'' +
                 ", error='" + error + '\'' +
                 ", errorDescription='" + errorDescription + '\'' +
                 ", state='" + state + '\'' +
@@ -48,6 +50,7 @@ class SmartcarResponse private constructor(
     class Builder {
         private var code: String? = null
         private var userId: String? = null
+        private var externalId: String? = null
         private var error: String? = null
         private var errorDescription: String? = null
         private var state: String? = null
@@ -74,6 +77,11 @@ class SmartcarResponse private constructor(
             return this
         }
 
+        fun externalId(externalId: String?): Builder {
+            this.externalId = externalId
+            return this
+        }
+
         fun error(error: String?): Builder {
             this.error = error
             return this
@@ -96,7 +104,7 @@ class SmartcarResponse private constructor(
          * @return a new instantiation of the SmartcarResponse class
          */
         fun build(): SmartcarResponse {
-            return SmartcarResponse(code, userId, error, errorDescription, state, vehicleInfo, virtualKeyUrl)
+            return SmartcarResponse(code, userId, externalId, error, errorDescription, state, vehicleInfo, virtualKeyUrl)
         }
     }
 }

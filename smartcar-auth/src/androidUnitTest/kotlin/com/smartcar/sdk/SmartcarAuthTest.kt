@@ -517,4 +517,107 @@ class SmartcarAuthTest {
 
         SmartcarAuth.receiveResponse(Uri.parse("$redirectUri?code=testCode&virtual_key_url=https://www.tesla.com/_ak/smartcar.com"), redirectUri)
     }
+
+    @Test
+    fun smartcarAuth_authUrlBuilder_responseTypeNoneWithRedirectUri() {
+        val applicationId = "client123"
+        val redirectUri = "scclient123://test"
+        val redirectUriEncoded = "scclient123%3A%2F%2Ftest"
+        val scope = arrayOf("read_odometer", "read_vin")
+        val expectedUri =
+            "https://connect.smartcar.com/oauth/authorize?response_type=none" +
+                    "&application_id=" + applicationId +
+                    "&redirect_uri=" + redirectUriEncoded +
+                    "&mode=live" +
+                    "&scope=read_odometer%20read_vin" +
+                    "&external_id=abc123"
+
+        val smartcarAuth = SmartcarAuth(applicationId, redirectUri, scope, false, "none") {}
+        val requestUri = smartcarAuth.authUrlBuilder()
+            .setExternalId("abc123")
+            .build()
+
+        Assert.assertEquals(expectedUri, requestUri)
+    }
+
+    @Test
+    fun smartcarAuth_authUrlBuilder_responseTypeNoneWithoutRedirectUri() {
+        val applicationId = "client123"
+        val scope = arrayOf("read_odometer", "read_vin")
+        val expectedUri =
+            "https://connect.smartcar.com/oauth/authorize?response_type=none" +
+                    "&application_id=" + applicationId +
+                    "&mode=live" +
+                    "&scope=read_odometer%20read_vin" +
+                    "&external_id=abc123"
+
+        val smartcarAuth = SmartcarAuth(applicationId, null, scope, false, "none") {}
+        val requestUri = smartcarAuth.authUrlBuilder()
+            .setExternalId("abc123")
+            .build()
+
+        Assert.assertEquals(expectedUri, requestUri)
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun smartcarAuth_invalidResponseType_throws() {
+        SmartcarAuth("client123", "scclient123://test", emptyArray(), false, "bogus") {}
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun smartcarAuth_codeResponseTypeWithoutRedirectUri_throws() {
+        SmartcarAuth("client123", null, emptyArray(), false, "code") {}
+    }
+
+    @Test
+    fun smartcarAuth_receiveResponse_noneFlow_successWithoutCode() {
+        val applicationId = "client123"
+        val redirectUri = "scclient123://test"
+        val scope = arrayOf("read_odometer", "read_vin")
+
+        SmartcarAuth(applicationId, redirectUri, scope, false, "none") { smartcarResponse ->
+            Assert.assertEquals(smartcarResponse!!.code, null)
+            Assert.assertEquals(smartcarResponse.error, null)
+            Assert.assertEquals(smartcarResponse.userId, "user-123")
+            Assert.assertEquals(smartcarResponse.externalId, "abc123")
+        }
+
+        SmartcarAuth.receiveResponse(
+            Uri.parse("$redirectUri?user_id=user-123&external_id=abc123"),
+            redirectUri
+        )
+    }
+
+    @Test
+    fun smartcarAuth_receiveResponse_codeFlow_noCodeNoError_stillReportsExistingError() {
+        val applicationId = "client123"
+        val redirectUri = "scclient123://test"
+        val scope = arrayOf("read_odometer", "read_vin")
+
+        SmartcarAuth(applicationId, redirectUri, scope) { smartcarResponse ->
+            Assert.assertEquals(
+                smartcarResponse!!.errorDescription,
+                "Unable to fetch code. Please try again"
+            )
+        }
+
+        SmartcarAuth.receiveResponse(Uri.parse("$redirectUri?external_id=abc123"), redirectUri)
+    }
+
+    @Test
+    fun smartcarAuth_receiveResponse_externalIdOnError() {
+        val applicationId = "client123"
+        val redirectUri = "scclient123://test"
+        val scope = arrayOf("read_odometer", "read_vin")
+
+        SmartcarAuth(applicationId, redirectUri, scope, false, "none") { smartcarResponse ->
+            Assert.assertEquals(smartcarResponse!!.error, "access_denied")
+            Assert.assertEquals(smartcarResponse.externalId, "abc123")
+        }
+
+        SmartcarAuth.receiveResponse(
+            Uri.parse("$redirectUri?error=access_denied&external_id=abc123"),
+            redirectUri
+        )
+    }
 }
