@@ -1,12 +1,26 @@
 - pipeline: "Deploy Snapshot"
   on: "CLICK"
   fail_on_prepare_env_warning: true
+  variables:
+  - key: SOURCE_BRANCH
+    type: VAR
+    settable: RUN_ONLY
+    value: "master"
+    description: "Branch to check out and publish a snapshot from"
   actions:
   - action: "Publish Snapshot"
     type: "BUILD"
     docker_image_name: "library/eclipse-temurin"
     docker_image_tag: "21-jdk"
     execute_commands:
+    - "# This pipeline has no PUSH/refs trigger, so Buddy's default checkout"
+    - "# doesn't correspond to any particular branch we care about — explicitly"
+    - "# fetch and check out whichever branch was set via the SOURCE_BRANCH"
+    - "# variable (editable in the Run dialog's Variables tab) before building."
+    - "echo \"Checking out $SOURCE_BRANCH\""
+    - "git fetch origin \"$SOURCE_BRANCH\""
+    - "git checkout \"$SOURCE_BRANCH\""
+    - ""
     - "export ANDROID_HOME=\"/opt/android/sdk\""
     - "export PATH=$PATH:/opt/android/sdk/cmdline-tools/tools/bin"
     - "if [ ! -d \"$ANDROID_HOME/cmdline-tools\" ]; then"
