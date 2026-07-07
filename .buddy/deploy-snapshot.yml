@@ -1,4 +1,5 @@
 - pipeline: "Deploy Snapshot"
+  on: "CLICK"
   fail_on_prepare_env_warning: true
   actions:
   - action: "Publish Snapshot"
