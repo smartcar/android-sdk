@@ -48,7 +48,7 @@ import com.smartcar.sdk.SmartcarCallback;
 import com.smartcar.sdk.SmartcarResponse;
 
 SmartcarAuth smartcarAuth = new SmartcarAuth(
-    "your-application-id", // same as the former alias: client-id 
+    "your-application-id", // same as the former alias: client-id
     "your-redirect-uri",
     new String[] {"read_vehicle_info", "read_odometer"},
 
@@ -92,7 +92,7 @@ Button connectButton = findViewById(R.id.connect_button);
 smartcarAuth.addClickHandler(getApplicationContext(), button, authUrl);
 ```
 
-## Redirect-less Connect (`responseType = "none"`)
+## `responseType = "none"`
 
 For M2M / server-side flows where you don't need an authorization code
 exchanged in the app, pass `responseType = "none"` to the constructor along
@@ -120,11 +120,8 @@ String authUrl = smartcarAuth.authUrlBuilder()
 smartcarAuth.launchAuthFlow(getApplicationContext(), authUrl);
 ```
 
-If `redirectUri` is provided, Connect still redirects back into the app and
-`handleResponse` fires — just without a `code`. If `redirectUri` is omitted
-(`null`), there is no redirect at all and `handleResponse` is never invoked;
-correlate the connection out-of-band via `externalId` (webhook or the
-`/connections` endpoint).
+For the `response_type=none` flow,  `smartcarResponse.getCode()`
+will return `null`; correlate via `externalId` via a webhook or the `/connections` endpoint.
 
 ## Contributing
 
