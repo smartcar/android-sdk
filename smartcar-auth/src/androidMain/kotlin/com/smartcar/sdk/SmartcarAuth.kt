@@ -7,6 +7,7 @@ import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import com.smartcar.sdk.activity.ConnectActivity
+import com.smartcar.sdk.rpc.oauth.CompleteRequest
 import androidx.core.net.toUri
 
 /**
@@ -42,12 +43,21 @@ class SmartcarAuth {
         private var responseType: String = "code"
 
         /**
-         * Receives the response from Connect and sends it back to the calling function
-         * via the callback method. The code is packed in a Bundle with the key "code".
-         *
-         * @param uri The response data as a Uri
+         * Turns raw result fields into a [SmartcarResponse] and hands it to [callback]. Shared
+         * by the redirect path ([receiveResponse]) and the direct RPC path
+         * ([receiveDirectResult]) so both produce identical responses for equivalent input.
          */
-        fun receiveResponse(uri: Uri?, redirectUri: String) {
+        private fun buildAndDeliverResponse(
+            code: String?,
+            userId: String?,
+            externalId: String?,
+            error: String?,
+            errorDescription: String?,
+            state: String?,
+            vin: String?,
+            make: String?,
+            virtualKeyUrl: String?
+        ) {
             /**
              * If the process was killed while Connect was open, the callback will not have been
              * re-initialized when Android recreates the activity. We return silently to avoid a
@@ -56,76 +66,107 @@ class SmartcarAuth {
              * major version by migrating to the ContextBridge/Activity Results pattern.
              */
             if (!::callback.isInitialized) return
-            if (uri != null && uri.toString().startsWith(redirectUri)) {
-                val queryState = uri.getQueryParameter("state")
-                val queryErrorDescription = uri.getQueryParameter("error_description")
-                val queryCode = uri.getQueryParameter("code")
-                val queryUserId = uri.getQueryParameter("user_id")
-                val queryExternalId = uri.getQueryParameter("external_id")
-                val queryError = uri.getQueryParameter("error")
-                val queryVin = uri.getQueryParameter("vin")
-                val queryVirtualKeyUrl = uri.getQueryParameter("virtual_key_url")
 
-                val receivedCode = queryCode != null
-                val receivedError = queryError != null && queryVin == null
-                val receivedErrorWithVehicle = queryError != null && queryVin != null
-                // response_type=none succeeds without a code; only treat "no code, no
-                // error" as success when the flow was configured for it, so a broken
-                // code-flow redirect still surfaces the "unable to fetch code" error below
-                val receivedSuccessWithoutCode = responseType == "none" &&
-                        !receivedCode && !receivedError && !receivedErrorWithVehicle
+            val receivedCode = code != null
+            val receivedError = error != null && vin == null
+            val receivedErrorWithVehicle = error != null && vin != null
+            // response_type=none succeeds without a code; only treat "no code, no
+            // error" as success when the flow was configured for it, so a broken
+            // code-flow redirect still surfaces the "unable to fetch code" error below
+            val receivedSuccessWithoutCode = responseType == "none" &&
+                    !receivedCode && !receivedError && !receivedErrorWithVehicle
 
-                val responseBuilder = SmartcarResponse.Builder()
+            val responseBuilder = SmartcarResponse.Builder()
 
-                if (receivedCode || receivedSuccessWithoutCode) {
-                // for now, userId is returned alongside code
-                // in the future, userId may be returned without code, so we want to make sure to include it in the response if it's present in a success auth response
-                    val smartcarResponse = responseBuilder
-                            .code(queryCode)
-                            .userId(queryUserId)
-                            .externalId(queryExternalId)
-                            .errorDescription(queryErrorDescription)
-                            .state(queryState)
-                            .virtualKeyUrl(queryVirtualKeyUrl)
-                            .build()
-                    callback.handleResponse(smartcarResponse)
+            if (receivedCode || receivedSuccessWithoutCode) {
+            // for now, userId is returned alongside code
+            // in the future, userId may be returned without code, so we want to make sure to include it in the response if it's present in a success auth response
+                val smartcarResponse = responseBuilder
+                        .code(code)
+                        .userId(userId)
+                        .externalId(externalId)
+                        .errorDescription(errorDescription)
+                        .state(state)
+                        .virtualKeyUrl(virtualKeyUrl)
+                        .build()
+                callback.handleResponse(smartcarResponse)
 
-                } else if (receivedError) {
+            } else if (receivedError) {
 
-                    val smartcarResponse = responseBuilder
-                            .error(queryError)
-                            .errorDescription(queryErrorDescription)
-                            .state(queryState)
-                            .externalId(queryExternalId)
-                            .build()
-                    callback.handleResponse(smartcarResponse)
+                val smartcarResponse = responseBuilder
+                        .error(error)
+                        .errorDescription(errorDescription)
+                        .state(state)
+                        .externalId(externalId)
+                        .build()
+                callback.handleResponse(smartcarResponse)
 
-                } else if (receivedErrorWithVehicle) {
+            } else if (receivedErrorWithVehicle) {
 
-                    val make = uri.getQueryParameter("make")
-                    val responseVehicle = VehicleInfo.Builder()
-                            .vin(queryVin)
-                            .make(make)
-                            .build()
+                val responseVehicle = VehicleInfo.Builder()
+                        .vin(vin)
+                        .make(make)
+                        .build()
 
-                    val smartcarResponse = responseBuilder
-                            .error(queryError)
-                            .errorDescription(queryErrorDescription)
-                            .state(queryState)
-                            .vehicleInfo(responseVehicle)
-                            .externalId(queryExternalId)
-                            .build()
-                    callback.handleResponse(smartcarResponse)
+                val smartcarResponse = responseBuilder
+                        .error(error)
+                        .errorDescription(errorDescription)
+                        .state(state)
+                        .vehicleInfo(responseVehicle)
+                        .externalId(externalId)
+                        .build()
+                callback.handleResponse(smartcarResponse)
 
-                } else {
+            } else {
 
-                    val smartcarResponse = responseBuilder
-                            .errorDescription("Unable to fetch code. Please try again")
-                            .state(queryState)
-                            .build()
-                    callback.handleResponse(smartcarResponse)
-                }
+                val smartcarResponse = responseBuilder
+                        .errorDescription("Unable to fetch code. Please try again")
+                        .state(state)
+                        .build()
+                callback.handleResponse(smartcarResponse)
             }
+        }
+
+        /**
+         * Receives the response from Connect and sends it back to the calling function
+         * via the callback method. The code is packed in a Bundle with the key "code".
+         *
+         * @param uri The response data as a Uri
+         */
+        fun receiveResponse(uri: Uri?, redirectUri: String) {
+            if (uri != null && uri.toString().startsWith(redirectUri)) {
+                buildAndDeliverResponse(
+                    code = uri.getQueryParameter("code"),
+                    userId = uri.getQueryParameter("user_id"),
+                    externalId = uri.getQueryParameter("external_id"),
+                    error = uri.getQueryParameter("error"),
+                    errorDescription = uri.getQueryParameter("error_description"),
+                    state = uri.getQueryParameter("state"),
+                    vin = uri.getQueryParameter("vin"),
+                    make = uri.getQueryParameter("make"),
+                    virtualKeyUrl = uri.getQueryParameter("virtual_key_url")
+                )
+            }
+        }
+
+        /**
+         * Receives the Connect result directly over the RPC bridge (no redirect involved) and
+         * sends it back to the calling function via the callback method.
+         *
+         * @param params The result fields Connect would otherwise have encoded into a redirect URI
+         */
+        fun receiveDirectResult(params: CompleteRequest.CompleteParams) {
+            buildAndDeliverResponse(
+                code = params.code,
+                userId = params.userId,
+                externalId = params.externalId,
+                error = params.error,
+                errorDescription = params.errorDescription,
+                state = params.state,
+                vin = params.vin,
+                make = params.make,
+                virtualKeyUrl = params.virtualKeyUrl
+            )
         }
     }
 

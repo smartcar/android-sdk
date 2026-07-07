@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.view.View
+import com.smartcar.sdk.rpc.oauth.CompleteRequest
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -618,6 +619,99 @@ class SmartcarAuthTest {
         SmartcarAuth.receiveResponse(
             Uri.parse("$redirectUri?error=access_denied&external_id=abc123"),
             redirectUri
+        )
+    }
+
+    @Test
+    fun smartcarAuth_receiveDirectResult_code() {
+        val applicationId = "client123"
+        val redirectUri = "scclient123://test"
+        val scope = arrayOf("read_odometer", "read_vin")
+
+        SmartcarAuth(applicationId, redirectUri, scope) { smartcarResponse ->
+            Assert.assertEquals(smartcarResponse!!.code, "testCode")
+            Assert.assertEquals(smartcarResponse.userId, "user-123")
+        }
+
+        SmartcarAuth.receiveDirectResult(
+            CompleteRequest.CompleteParams(code = "testCode", userId = "user-123")
+        )
+    }
+
+    @Test
+    fun smartcarAuth_receiveDirectResult_error() {
+        val applicationId = "client123"
+        val redirectUri = "scclient123://test"
+        val scope = arrayOf("read_odometer", "read_vin")
+
+        SmartcarAuth(applicationId, redirectUri, scope) { smartcarResponse ->
+            Assert.assertEquals(smartcarResponse!!.error, "access_denied")
+            Assert.assertEquals(
+                smartcarResponse.errorDescription,
+                "User denied access to the requested scope of permissions."
+            )
+        }
+
+        SmartcarAuth.receiveDirectResult(
+            CompleteRequest.CompleteParams(
+                error = "access_denied",
+                errorDescription = "User denied access to the requested scope of permissions."
+            )
+        )
+    }
+
+    @Test
+    fun smartcarAuth_receiveDirectResult_errorWithVehicle() {
+        val applicationId = "client123"
+        val redirectUri = "scclient123://test"
+        val scope = arrayOf("read_odometer", "read_vin")
+
+        SmartcarAuth(applicationId, redirectUri, scope) { smartcarResponse ->
+            val responseVehicle = smartcarResponse!!.vehicleInfo
+            Assert.assertEquals(smartcarResponse.error, "vehicle_incompatible")
+            Assert.assertEquals(responseVehicle!!.vin, "1FDKE30G4JHA04964")
+            Assert.assertEquals(responseVehicle.make, "FORD")
+        }
+
+        SmartcarAuth.receiveDirectResult(
+            CompleteRequest.CompleteParams(
+                error = "vehicle_incompatible",
+                vin = "1FDKE30G4JHA04964",
+                make = "FORD"
+            )
+        )
+    }
+
+    @Test
+    fun smartcarAuth_receiveDirectResult_noneFlow_successWithoutCode() {
+        val applicationId = "client123"
+        val redirectUri = "scclient123://test"
+        val scope = arrayOf("read_odometer", "read_vin")
+
+        SmartcarAuth(applicationId, redirectUri, scope, false, "none") { smartcarResponse ->
+            Assert.assertEquals(smartcarResponse!!.code, null)
+            Assert.assertEquals(smartcarResponse.error, null)
+            Assert.assertEquals(smartcarResponse.userId, "user-123")
+            Assert.assertEquals(smartcarResponse.externalId, "abc123")
+        }
+
+        SmartcarAuth.receiveDirectResult(
+            CompleteRequest.CompleteParams(userId = "user-123", externalId = "abc123")
+        )
+    }
+
+    @Test
+    fun smartcarAuth_receiveDirectResult_noneFlow_withoutRedirectUri() {
+        val applicationId = "client123"
+        val scope = arrayOf("read_odometer", "read_vin")
+
+        SmartcarAuth(applicationId, null, scope, false, "none") { smartcarResponse ->
+            Assert.assertEquals(smartcarResponse!!.userId, "user-123")
+            Assert.assertEquals(smartcarResponse.externalId, "abc123")
+        }
+
+        SmartcarAuth.receiveDirectResult(
+            CompleteRequest.CompleteParams(userId = "user-123", externalId = "abc123")
         )
     }
 }

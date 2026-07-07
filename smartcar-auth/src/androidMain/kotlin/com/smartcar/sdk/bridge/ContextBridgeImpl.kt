@@ -12,11 +12,13 @@ import androidx.activity.ComponentActivity
 import androidx.core.content.ContextCompat
 import androidx.core.location.LocationManagerCompat
 import co.touchlab.kermit.Logger
+import com.smartcar.sdk.SmartcarAuth
 import com.smartcar.sdk.activity.WebViewActivity
 import com.smartcar.sdk.activity.WebViewActivityIsolated
 import com.smartcar.sdk.activity.awaitActivityResult
 import com.smartcar.sdk.activity.awaitMultiplePermissionsResult
 import com.smartcar.sdk.rpc.ble.Availability
+import com.smartcar.sdk.rpc.oauth.CompleteRequest
 
 class ContextBridgeImpl(
     private val activity: ComponentActivity
@@ -104,5 +106,13 @@ class ContextBridgeImpl(
             "location_settings" ->
                 activity.startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
         }
+    }
+
+    override fun deliverCompleteResult(params: CompleteRequest.CompleteParams) {
+        SmartcarAuth.receiveDirectResult(params)
+    }
+
+    override fun finishConnect() {
+        activity.finish()
     }
 }

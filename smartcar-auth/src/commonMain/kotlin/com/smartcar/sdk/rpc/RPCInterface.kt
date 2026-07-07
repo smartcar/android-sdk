@@ -63,6 +63,7 @@ abstract class RPCInterface(
     private val json = Json {
         classDiscriminator = "method"
         encodeDefaults = true
+        ignoreUnknownKeys = true
         serializersModule = this@RPCInterface.serializersModule
     }
     private val responseSerializer = Json {
@@ -105,7 +106,16 @@ abstract class RPCInterface(
      */
     private fun acceptMessage(jsonStr: String) {
         Logger.d("RPCInterface") { "RPC request: $jsonStr" }
-        val request = json.decodeFromString(JsonRpcRequest.serializer(), jsonStr)
+        val request = try {
+            json.decodeFromString(JsonRpcRequest.serializer(), jsonStr)
+        } catch (e: Exception) {
+            // Decoding runs synchronously on the @JavascriptInterface call; letting this
+            // throw propagates as an uncaught Java exception across the JS bridge instead
+            // of a catchable JSON-RPC error, so it must be handled here rather than below.
+            Logger.d("RPCInterface", e) { "Failed to decode RPC request" }
+            sendErrorResponse(-32700, e.message.orEmpty(), null)
+            return
+        }
 
         scope.launch {
             try {
