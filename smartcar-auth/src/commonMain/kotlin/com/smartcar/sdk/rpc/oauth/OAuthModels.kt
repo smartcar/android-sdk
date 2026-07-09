@@ -26,3 +26,25 @@ data class HeaderConfig(
 
 @Serializable
 data class OAuthResult(val returnUri: String) : JsonRpcResult()
+
+@Serializable
+@SerialName("complete")
+data class CompleteRequest(
+    val params: CompleteParams
+) : JsonRpcRequest() {
+    @Serializable
+    data class CompleteParams(
+        val code: String? = null,
+        val userId: String? = null,
+        val externalId: String? = null,
+        val error: String? = null,
+        val errorDescription: String? = null,
+        val state: String? = null,
+        val vin: String? = null,
+        val make: String? = null,
+        val virtualKeyUrl: String? = null
+    )
+}
+
+@Serializable
+data class CompleteResult(val acknowledged: Boolean = true) : JsonRpcResult()

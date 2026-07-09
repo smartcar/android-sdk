@@ -1,6 +1,7 @@
 package com.smartcar.sdk.bridge
 
 import com.smartcar.sdk.rpc.ble.Availability
+import com.smartcar.sdk.rpc.oauth.CompleteRequest
 import kotlinx.coroutines.suspendCancellableCoroutine
 import platform.CoreBluetooth.CBCentralManager
 import platform.CoreBluetooth.CBCentralManagerDelegateProtocol
@@ -59,5 +60,13 @@ class ContextBridgeImpl: ContextBridge {
                 UIApplication.sharedApplication.openURL(url)
             }
         }
+    }
+
+    override fun deliverCompleteResult(params: CompleteRequest.CompleteParams) {
+        TODO("Not yet implemented")
+    }
+
+    override fun finishConnect() {
+        TODO("Not yet implemented")
     }
 }

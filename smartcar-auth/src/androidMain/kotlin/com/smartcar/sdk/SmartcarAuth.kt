@@ -4,8 +4,10 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.text.TextUtils
+import android.util.Log
 import android.view.View
 import com.smartcar.sdk.activity.ConnectActivity
+import com.smartcar.sdk.rpc.oauth.CompleteRequest
 import androidx.core.net.toUri
 
 /**
@@ -31,20 +33,31 @@ class SmartcarAuth {
 
     internal companion object {
         private const val BASE_AUTHORIZATION_URL = "https://connect.smartcar.com/oauth/authorize"
+        private val VALID_RESPONSE_TYPES = arrayOf("code", "none")
 
         private lateinit var applicationId: String
-        private lateinit var redirectUri: String
+        private var redirectUri: String? = null
         private var scope: Array<String> = emptyArray()
         private var testMode: Boolean = false
         private lateinit var callback: SmartcarCallback
+        private var responseType: String = "code"
 
         /**
-         * Receives the response from Connect and sends it back to the calling function
-         * via the callback method. The code is packed in a Bundle with the key "code".
-         *
-         * @param uri The response data as a Uri
+         * Turns raw result fields into a [SmartcarResponse] and hands it to [callback]. Shared
+         * by the redirect path ([receiveResponse]) and the direct RPC path
+         * ([receiveDirectResult]) so both produce identical responses for equivalent input.
          */
-        fun receiveResponse(uri: Uri?, redirectUri: String) {
+        private fun buildAndDeliverResponse(
+            code: String?,
+            userId: String?,
+            externalId: String?,
+            error: String?,
+            errorDescription: String?,
+            state: String?,
+            vin: String?,
+            make: String?,
+            virtualKeyUrl: String?
+        ) {
             /**
              * If the process was killed while Connect was open, the callback will not have been
              * re-initialized when Android recreates the activity. We return silently to avoid a
@@ -53,67 +66,107 @@ class SmartcarAuth {
              * major version by migrating to the ContextBridge/Activity Results pattern.
              */
             if (!::callback.isInitialized) return
-            if (uri != null && uri.toString().startsWith(redirectUri)) {
-                val queryState = uri.getQueryParameter("state")
-                val queryErrorDescription = uri.getQueryParameter("error_description")
-                val queryCode = uri.getQueryParameter("code")
-                val queryUserId = uri.getQueryParameter("user_id")
-                val queryError = uri.getQueryParameter("error")
-                val queryVin = uri.getQueryParameter("vin")
-                val queryVirtualKeyUrl = uri.getQueryParameter("virtual_key_url")
 
-                val receivedCode = queryCode != null
-                val receivedError = queryError != null && queryVin == null
-                val receivedErrorWithVehicle = queryError != null && queryVin != null
+            val receivedCode = code != null
+            val receivedError = error != null && vin == null
+            val receivedErrorWithVehicle = error != null && vin != null
+            // response_type=none succeeds without a code; only treat "no code, no
+            // error" as success when the flow was configured for it, so a broken
+            // code-flow redirect still surfaces the "unable to fetch code" error below
+            val receivedSuccessWithoutCode = responseType == "none" &&
+                    !receivedCode && !receivedError && !receivedErrorWithVehicle
 
-                val responseBuilder = SmartcarResponse.Builder()
+            val responseBuilder = SmartcarResponse.Builder()
 
-                if (receivedCode) {
-                // for now, userId is returned alongside code
-                // in the future, userId may be returned without code, so we want to make sure to include it in the response if it's present in a success auth response
-                    val smartcarResponse = responseBuilder
-                            .code(queryCode)
-                            .userId(queryUserId)
-                            .errorDescription(queryErrorDescription)
-                            .state(queryState)
-                            .virtualKeyUrl(queryVirtualKeyUrl)
-                            .build()
-                    callback.handleResponse(smartcarResponse)
+            if (receivedCode || receivedSuccessWithoutCode) {
+            // for now, userId is returned alongside code
+            // in the future, userId may be returned without code, so we want to make sure to include it in the response if it's present in a success auth response
+                val smartcarResponse = responseBuilder
+                        .code(code)
+                        .userId(userId)
+                        .externalId(externalId)
+                        .errorDescription(errorDescription)
+                        .state(state)
+                        .virtualKeyUrl(virtualKeyUrl)
+                        .build()
+                callback.handleResponse(smartcarResponse)
 
-                } else if (receivedError) {
+            } else if (receivedError) {
 
-                    val smartcarResponse = responseBuilder
-                            .error(queryError)
-                            .errorDescription(queryErrorDescription)
-                            .state(queryState)
-                            .build()
-                    callback.handleResponse(smartcarResponse)
+                val smartcarResponse = responseBuilder
+                        .error(error)
+                        .errorDescription(errorDescription)
+                        .state(state)
+                        .externalId(externalId)
+                        .build()
+                callback.handleResponse(smartcarResponse)
 
-                } else if (receivedErrorWithVehicle) {
+            } else if (receivedErrorWithVehicle) {
 
-                    val make = uri.getQueryParameter("make")
-                    val responseVehicle = VehicleInfo.Builder()
-                            .vin(queryVin)
-                            .make(make)
-                            .build()
+                val responseVehicle = VehicleInfo.Builder()
+                        .vin(vin)
+                        .make(make)
+                        .build()
 
-                    val smartcarResponse = responseBuilder
-                            .error(queryError)
-                            .errorDescription(queryErrorDescription)
-                            .state(queryState)
-                            .vehicleInfo(responseVehicle)
-                            .build()
-                    callback.handleResponse(smartcarResponse)
+                val smartcarResponse = responseBuilder
+                        .error(error)
+                        .errorDescription(errorDescription)
+                        .state(state)
+                        .vehicleInfo(responseVehicle)
+                        .externalId(externalId)
+                        .build()
+                callback.handleResponse(smartcarResponse)
 
-                } else {
+            } else {
 
-                    val smartcarResponse = responseBuilder
-                            .errorDescription("Unable to fetch code. Please try again")
-                            .state(queryState)
-                            .build()
-                    callback.handleResponse(smartcarResponse)
-                }
+                val smartcarResponse = responseBuilder
+                        .errorDescription("Unable to fetch code. Please try again")
+                        .state(state)
+                        .build()
+                callback.handleResponse(smartcarResponse)
             }
+        }
+
+        /**
+         * Receives the response from Connect and sends it back to the calling function
+         * via the callback method. The code is packed in a Bundle with the key "code".
+         *
+         * @param uri The response data as a Uri
+         */
+        fun receiveResponse(uri: Uri?, redirectUri: String) {
+            if (uri != null && uri.toString().startsWith(redirectUri)) {
+                buildAndDeliverResponse(
+                    code = uri.getQueryParameter("code"),
+                    userId = uri.getQueryParameter("user_id"),
+                    externalId = uri.getQueryParameter("external_id"),
+                    error = uri.getQueryParameter("error"),
+                    errorDescription = uri.getQueryParameter("error_description"),
+                    state = uri.getQueryParameter("state"),
+                    vin = uri.getQueryParameter("vin"),
+                    make = uri.getQueryParameter("make"),
+                    virtualKeyUrl = uri.getQueryParameter("virtual_key_url")
+                )
+            }
+        }
+
+        /**
+         * Receives the Connect result directly over the RPC bridge (no redirect involved) and
+         * sends it back to the calling function via the callback method.
+         *
+         * @param params The result fields Connect would otherwise have encoded into a redirect URI
+         */
+        fun receiveDirectResult(params: CompleteRequest.CompleteParams) {
+            buildAndDeliverResponse(
+                code = params.code,
+                userId = params.userId,
+                externalId = params.externalId,
+                error = params.error,
+                errorDescription = params.errorDescription,
+                state = params.state,
+                vin = params.vin,
+                make = params.make,
+                virtualKeyUrl = params.virtualKeyUrl
+            )
         }
     }
 
@@ -155,11 +208,39 @@ class SmartcarAuth {
      * @param testMode    Set to true to run Smartcar Connect in test mode
      * @param callback    Handler to a Callback for receiving the Smartcar Connect response
      */
-    constructor(applicationId: String, redirectUri: String, scope: Array<String>, testMode: Boolean, callback: SmartcarCallback) {
+    constructor(applicationId: String, redirectUri: String, scope: Array<String>, testMode: Boolean, callback: SmartcarCallback) :
+            this(applicationId, redirectUri, scope, testMode, "code", callback)
+
+    /**
+     * Constructs an instance with the given parameters.
+     *
+     * @param applicationId The application's ID
+     * @param redirectUri The application's redirect URI. Required unless [responseType] is
+     *                     "none". When provided together with `responseType = "none"`, Connect
+     *                     still redirects here, but the redirect omits `code`. When omitted
+     *                     (`null`) with `responseType = "none"`, there is no redirect at all and
+     *                     [callback] will never be invoked — correlate via `externalId` instead.
+     * @param scope       An array of authorization scopes
+     * @param testMode    Set to true to run Smartcar Connect in test mode
+     * @param responseType OAuth response type. Use "none" for redirect-less (no authorization
+     *                      code exchange) M2M flows; defaults to "code". Must be one of "code"
+     *                      or "none".
+     * @param callback    Handler to a Callback for receiving the Smartcar Connect response
+     */
+    constructor(applicationId: String, redirectUri: String?, scope: Array<String>, testMode: Boolean, responseType: String, callback: SmartcarCallback) {
+        if (!VALID_RESPONSE_TYPES.contains(responseType)) {
+            throw IllegalArgumentException(
+                "The \"responseType\" parameter must be one of: ${VALID_RESPONSE_TYPES.joinToString(", ")}"
+            )
+        }
+        if (responseType == "code" && redirectUri.isNullOrBlank()) {
+            throw IllegalArgumentException("\"redirectUri\" is required when responseType is \"code\"")
+        }
         Companion.applicationId = applicationId
         Companion.redirectUri = redirectUri
         Companion.scope = scope
         Companion.testMode = testMode
+        Companion.responseType = responseType
         Companion.callback = callback
     }
 
@@ -177,9 +258,13 @@ class SmartcarAuth {
      */
     inner class AuthUrlBuilder {
         private val uriBuilder = BASE_AUTHORIZATION_URL.toUri().buildUpon()
-                .appendQueryParameter("response_type", "code")
+                .appendQueryParameter("response_type", responseType)
                 .appendQueryParameter("application_id", applicationId)
-                .appendQueryParameter("redirect_uri", redirectUri)
+                .apply {
+                    if (redirectUri != null) {
+                        appendQueryParameter("redirect_uri", redirectUri)
+                    }
+                }
                 .appendQueryParameter("mode", if (testMode) "test" else "live")
                 .apply {
                     if (scope.isNotEmpty()) {
@@ -286,6 +371,20 @@ class SmartcarAuth {
         }
 
         /**
+         * Specify an external identifier that will be echoed back on the
+         * {@link SmartcarResponse} object passed to {@link SmartcarCallback}. Primarily
+         * useful with `responseType = "none"` flows, where no `code` is
+         * returned, to correlate the connection.
+         *
+         * @param externalId An optional external identifier passed through to Connect
+         * @return a reference to this object
+         */
+        fun setExternalId(externalId: String): AuthUrlBuilder {
+            uriBuilder.appendQueryParameter("external_id", externalId)
+            return this
+        }
+
+        /**
          * Build a Smartcar Connect authorization url.
          *
          * @return A built url which can be used in {@link SmartcarAuth#launchAuthFlow(Context, String)} or {@link SmartcarAuth#addClickHandler(Context, View, String)}
@@ -335,6 +434,13 @@ class SmartcarAuth {
      * @param authUrl Use {@link AuthUrlBuilder} to generate the authorization url
      */
     fun launchAuthFlow(context: Context, authUrl: String) {
+        if (redirectUri == null) {
+            Log.w("SmartcarAuth", "launchAuthFlow was called without a redirectUri; " +
+                    "SmartcarCallback.handleResponse will not be invoked because Connect will " +
+                    "not redirect back into the app. Use externalId to correlate the connection " +
+                    "via webhook or the /connections endpoint.")
+        }
+
         // Append sdk version query parameters if they don't already exist
 
         val uri = authUrl.toUri()

@@ -23,10 +23,12 @@ class OAuthService(
         // Register request classes
         polymorphic(JsonRpcRequest::class) {
             subclass(OAuthRequest::class)
+            subclass(CompleteRequest::class)
         }
         // Register result classes
         polymorphic(JsonRpcResult::class) {
             subclass(OAuthResult::class)
+            subclass(CompleteResult::class)
         }
     }
 ) {
@@ -48,6 +50,14 @@ class OAuthService(
                     Logger.d("OAuthCapture") { "OAuth capture successful, returnUri: $returnUri" }
                     OAuthResult(returnUri = returnUri)
                 }
+            }
+
+            is CompleteRequest -> {
+                Logger.d("OAuthCapture") { "Received complete request, delivering result and finishing Connect" }
+
+                captureBridge.deliverCompleteResult(request.params)
+                captureBridge.finishConnect()
+                CompleteResult()
             }
 
             else -> throw IllegalArgumentException("Unsupported request type")

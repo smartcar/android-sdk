@@ -48,7 +48,7 @@ import com.smartcar.sdk.SmartcarCallback;
 import com.smartcar.sdk.SmartcarResponse;
 
 SmartcarAuth smartcarAuth = new SmartcarAuth(
-    "your-application-id", // same as the former alias: client-id 
+    "your-application-id", // same as the former alias: client-id
     "your-redirect-uri",
     new String[] {"read_vehicle_info", "read_odometer"},
 
@@ -91,6 +91,37 @@ smartcarAuth.launchAuthFlow(getApplicationContext(), authUrl);
 Button connectButton = findViewById(R.id.connect_button);
 smartcarAuth.addClickHandler(getApplicationContext(), button, authUrl);
 ```
+
+## `responseType = "none"`
+
+For M2M / server-side flows where you don't need an authorization code
+exchanged in the app, pass `responseType = "none"` to the constructor along
+with an `externalId` to correlate the connection:
+
+```java
+SmartcarAuth smartcarAuth = new SmartcarAuth(
+    "your-application-id",
+    "your-redirect-uri", // optional when responseType is "none"
+    new String[] {"read_vehicle_info", "read_odometer"},
+    false, // testMode
+    "none", // responseType
+    new SmartcarCallback() {
+        @Override
+        public void handleResponse(SmartcarResponse smartcarResponse) {
+            // smartcarResponse.getCode() is null; correlate via externalId
+            Log.d("SmartcarAuth", "External ID: " + smartcarResponse.getExternalId());
+        }
+});
+
+String authUrl = smartcarAuth.authUrlBuilder()
+    .setExternalId("your-external-id")
+    .build();
+
+smartcarAuth.launchAuthFlow(getApplicationContext(), authUrl);
+```
+
+For the `response_type=none` flow,  `smartcarResponse.getCode()`
+will return `null`; correlate via `externalId` via a webhook or the `/connections` endpoint.
 
 ## Contributing
 
