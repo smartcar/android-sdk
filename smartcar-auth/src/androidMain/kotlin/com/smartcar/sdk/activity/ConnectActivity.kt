@@ -51,6 +51,17 @@ class ConnectActivity : WebViewActivity() {
         bleService = null
     }
 
+    override fun onDestroy() {
+        // If the user dismissed Connect (back press / swipe-away) the activity is finishing
+        // and no redirect was intercepted, so deliver a user_exited response. isFinishing is
+        // false for configuration changes (rotation) and while backgrounded for OEM
+        // app-to-app handoff, so this does not false-fire mid-flow.
+        if (isFinishing) {
+            SmartcarAuth.dispatchUserExitedIfNoResponse()
+        }
+        super.onDestroy()
+    }
+
     override fun onDestroyWebView(webView: WebView) {
         destroyServices()
         super.onDestroyWebView(webView)

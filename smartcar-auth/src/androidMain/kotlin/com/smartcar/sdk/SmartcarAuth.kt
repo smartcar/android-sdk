@@ -41,6 +41,9 @@ class SmartcarAuth {
         private var testMode: Boolean = false
         private lateinit var callback: SmartcarCallback
         private var responseType: String = "code"
+        // True once a response (success/error) has been delivered for the current flow.
+        // Guards the user_exited dispatch so a completed flow isn't also reported as a cancel.
+        private var responseDelivered: Boolean = false
 
         /**
          * Turns raw result fields into a [SmartcarResponse] and hands it to [callback]. Shared
@@ -66,6 +69,9 @@ class SmartcarAuth {
              * major version by migrating to the ContextBridge/Activity Results pattern.
              */
             if (!::callback.isInitialized) return
+            // Mark the flow as answered so a subsequent activity-dismissal doesn't also
+            // deliver a user_exited response.
+            responseDelivered = true
 
             val receivedCode = code != null
             val receivedError = error != null && vin == null
@@ -147,6 +153,24 @@ class SmartcarAuth {
                     virtualKeyUrl = uri.getQueryParameter("virtual_key_url")
                 )
             }
+        }
+
+        /**
+         * Delivers a `user_exited` response when Connect's activity is finishing without a
+         * result having been delivered (the user dismissed the flow via back press or swipe).
+         * Lets callers distinguish a user cancel from a hang, matching the iOS SDK's
+         * AuthorizationError.userExitedFlow. No-op when a response was already delivered
+         * (success/error arrives before the activity finishes) or the callback was lost to
+         * process death.
+         */
+        internal fun dispatchUserExitedIfNoResponse() {
+            if (!::callback.isInitialized || responseDelivered) return
+            responseDelivered = true
+            val smartcarResponse = SmartcarResponse.Builder()
+                    .error("user_exited")
+                    .errorDescription("User exited Smartcar Connect before completing the flow")
+                    .build()
+            callback.handleResponse(smartcarResponse)
         }
 
         /**
@@ -242,6 +266,7 @@ class SmartcarAuth {
         Companion.testMode = testMode
         Companion.responseType = responseType
         Companion.callback = callback
+        Companion.responseDelivered = false
     }
 
     /**
