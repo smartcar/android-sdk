@@ -714,4 +714,45 @@ class SmartcarAuthTest {
             CompleteRequest.CompleteParams(userId = "user-123", externalId = "abc123")
         )
     }
+
+    @Test
+    fun smartcarAuth_dispatchUserExitedIfNoResponse_deliversUserExited() {
+        val applicationId = "client123"
+        val redirectUri = "scclient123://test"
+        val scope = arrayOf("read_odometer", "read_vin")
+
+        var callbackCount = 0
+        SmartcarAuth(applicationId, redirectUri, scope, false, "none") { smartcarResponse ->
+            callbackCount++
+            Assert.assertEquals("user_exited", smartcarResponse!!.error)
+            Assert.assertEquals(null, smartcarResponse.code)
+            Assert.assertEquals(null, smartcarResponse.userId)
+        }
+
+        SmartcarAuth.dispatchUserExitedIfNoResponse()
+
+        Assert.assertEquals(1, callbackCount)
+    }
+
+    @Test
+    fun smartcarAuth_dispatchUserExitedIfNoResponse_noOpAfterResponseDelivered() {
+        val applicationId = "client123"
+        val redirectUri = "scclient123://test"
+        val scope = arrayOf("read_odometer", "read_vin")
+
+        var userExitedDelivered = false
+        SmartcarAuth(applicationId, redirectUri, scope) { smartcarResponse ->
+            if (smartcarResponse?.error == "user_exited") userExitedDelivered = true
+        }
+
+        // A real response arrives first (marks the flow answered)...
+        SmartcarAuth.receiveResponse(Uri.parse("$redirectUri?code=testcode123"), redirectUri)
+        // ...so a later dismissal must NOT also deliver a user_exited response.
+        SmartcarAuth.dispatchUserExitedIfNoResponse()
+
+        Assert.assertFalse(
+            "user_exited must not fire after a response was already delivered",
+            userExitedDelivered
+        )
+    }
 }

@@ -163,7 +163,7 @@ class SmartcarAuth {
          * (success/error arrives before the activity finishes) or the callback was lost to
          * process death.
          */
-        fun dispatchUserExitedIfNoResponse() {
+        internal fun dispatchUserExitedIfNoResponse() {
             if (!::callback.isInitialized || responseDelivered) return
             responseDelivered = true
             val smartcarResponse = SmartcarResponse.Builder()
