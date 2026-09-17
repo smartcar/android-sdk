@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.smartcar.sdk
 
 import android.content.Context
@@ -50,6 +52,42 @@ class SmartcarAuthTest {
 
 
         val smartcarAuth = SmartcarAuth(applicationId, redirectUri, scope, true) {}
+        val requestUri = smartcarAuth.authUrlBuilder().build()
+
+        Assert.assertEquals(expectedUri, requestUri)
+    }
+
+    @Test
+    fun smartcarAuth_authUrlBuilder_simulatedMode() {
+        val applicationId = "client123"
+        val redirectUri = "scclient123://test"
+        val redirectUriEncoded = "scclient123%3A%2F%2Ftest"
+        val scope = arrayOf("read_odometer", "read_vin")
+        val expectedUri =
+            "https://connect.smartcar.com/oauth/authorize?response_type=code" +
+                    "&application_id=" + applicationId +
+                    "&redirect_uri=" + redirectUriEncoded +
+                    "&mode=simulated&scope=read_odometer%20read_vin"
+
+        val smartcarAuth = SmartcarAuth(applicationId, redirectUri, scope, Mode.SIMULATED) {}
+        val requestUri = smartcarAuth.authUrlBuilder().build()
+
+        Assert.assertEquals(expectedUri, requestUri)
+    }
+
+    @Test
+    fun smartcarAuth_authUrlBuilder_modeTestDeprecatedStillWorks() {
+        val applicationId = "client123"
+        val redirectUri = "scclient123://test"
+        val redirectUriEncoded = "scclient123%3A%2F%2Ftest"
+        val scope = arrayOf("read_odometer", "read_vin")
+        val expectedUri =
+            "https://connect.smartcar.com/oauth/authorize?response_type=code" +
+                    "&application_id=" + applicationId +
+                    "&redirect_uri=" + redirectUriEncoded +
+                    "&mode=test&scope=read_odometer%20read_vin"
+
+        val smartcarAuth = SmartcarAuth(applicationId, redirectUri, scope, Mode.TEST) {}
         val requestUri = smartcarAuth.authUrlBuilder().build()
 
         Assert.assertEquals(expectedUri, requestUri)
