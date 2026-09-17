@@ -38,7 +38,7 @@ class SmartcarAuth {
         private lateinit var applicationId: String
         private var redirectUri: String? = null
         private var scope: Array<String> = emptyArray()
-        private var testMode: Boolean = false
+        private var mode: Mode = Mode.LIVE
         private lateinit var callback: SmartcarCallback
         private var responseType: String = "code"
         // True once a response (success/error) has been delivered for the current flow.
@@ -201,7 +201,7 @@ class SmartcarAuth {
         * @param redirectUri The application's redirect URI
      * @param callback    Handler to a Callback for receiving the Smartcar Connect response
      */
-    constructor(applicationId: String, redirectUri: String, callback: SmartcarCallback) : this(applicationId, redirectUri, emptyArray(), false, callback)
+    constructor(applicationId: String, redirectUri: String, callback: SmartcarCallback) : this(applicationId, redirectUri, emptyArray(), Mode.LIVE, callback)
 
     /**
      * Constructs an instance with the given parameters.
@@ -211,7 +211,24 @@ class SmartcarAuth {
      * @param testMode    Set to true to run Smartcar Connect in test mode
      * @param callback    Handler to a Callback for receiving the Smartcar Connect response
      */
-    constructor(applicationId: String, redirectUri: String, testMode: Boolean, callback: SmartcarCallback) : this(applicationId, redirectUri, emptyArray(), testMode, callback)
+    @Deprecated(
+        "testMode is deprecated. Use the Mode-based constructor instead.",
+        ReplaceWith("SmartcarAuth(applicationId, redirectUri, if (testMode) Mode.TEST else Mode.LIVE, callback)")
+    )
+    @Suppress("DEPRECATION")
+    constructor(applicationId: String, redirectUri: String, testMode: Boolean, callback: SmartcarCallback) :
+            this(applicationId, redirectUri, emptyArray(), if (testMode) Mode.TEST else Mode.LIVE, callback)
+
+    /**
+     * Constructs an instance with the given parameters.
+     *
+        * @param applicationId The application's ID
+        * @param redirectUri The application's redirect URI
+     * @param mode        The mode to launch Smartcar Connect in. Defaults to [Mode.LIVE].
+     * @param callback    Handler to a Callback for receiving the Smartcar Connect response
+     */
+    constructor(applicationId: String, redirectUri: String, mode: Mode, callback: SmartcarCallback) :
+            this(applicationId, redirectUri, emptyArray(), mode, callback)
 
     /**
      * Constructs an instance with the given parameters.
@@ -221,7 +238,7 @@ class SmartcarAuth {
      * @param scope       An array of authorization scopes
      * @param callback    Handler to a Callback for receiving the Smartcar Connect response
      */
-    constructor(applicationId: String, redirectUri: String, scope: Array<String>, callback: SmartcarCallback) : this(applicationId, redirectUri, scope, false, callback)
+    constructor(applicationId: String, redirectUri: String, scope: Array<String>, callback: SmartcarCallback) : this(applicationId, redirectUri, scope, Mode.LIVE, callback)
 
     /**
      * Constructs an instance with the given parameters.
@@ -232,8 +249,25 @@ class SmartcarAuth {
      * @param testMode    Set to true to run Smartcar Connect in test mode
      * @param callback    Handler to a Callback for receiving the Smartcar Connect response
      */
+    @Deprecated(
+        "testMode is deprecated. Use the Mode-based constructor instead.",
+        ReplaceWith("SmartcarAuth(applicationId, redirectUri, scope, if (testMode) Mode.TEST else Mode.LIVE, callback)")
+    )
+    @Suppress("DEPRECATION")
     constructor(applicationId: String, redirectUri: String, scope: Array<String>, testMode: Boolean, callback: SmartcarCallback) :
-            this(applicationId, redirectUri, scope, testMode, "code", callback)
+            this(applicationId, redirectUri, scope, if (testMode) Mode.TEST else Mode.LIVE, "code", callback)
+
+    /**
+     * Constructs an instance with the given parameters.
+     *
+     * @param applicationId The application's ID
+     * @param redirectUri The application's redirect URI
+     * @param scope       An array of authorization scopes
+     * @param mode        The mode to launch Smartcar Connect in. Defaults to [Mode.LIVE].
+     * @param callback    Handler to a Callback for receiving the Smartcar Connect response
+     */
+    constructor(applicationId: String, redirectUri: String, scope: Array<String>, mode: Mode, callback: SmartcarCallback) :
+            this(applicationId, redirectUri, scope, mode, "code", callback)
 
     /**
      * Constructs an instance with the given parameters.
@@ -251,7 +285,32 @@ class SmartcarAuth {
      *                      or "none".
      * @param callback    Handler to a Callback for receiving the Smartcar Connect response
      */
-    constructor(applicationId: String, redirectUri: String?, scope: Array<String>, testMode: Boolean, responseType: String, callback: SmartcarCallback) {
+    @Deprecated(
+        "testMode is deprecated. Use the Mode-based constructor instead.",
+        ReplaceWith("SmartcarAuth(applicationId, redirectUri, scope, if (testMode) Mode.TEST else Mode.LIVE, responseType, callback)")
+    )
+    @Suppress("DEPRECATION")
+    constructor(applicationId: String, redirectUri: String?, scope: Array<String>, testMode: Boolean, responseType: String, callback: SmartcarCallback) :
+            this(applicationId, redirectUri, scope, if (testMode) Mode.TEST else Mode.LIVE, responseType, callback)
+
+    /**
+     * Constructs an instance with the given parameters.
+     *
+     * @param applicationId The application's ID
+     * @param redirectUri The application's redirect URI. Required unless [responseType] is
+     *                     "none". When provided together with `responseType = "none"`, Connect
+     *                     still redirects here, but the redirect omits `code`. When omitted
+     *                     (`null`) with `responseType = "none"`, there is no redirect at all and
+     *                     [callback] will never be invoked — correlate via `externalId` instead.
+     * @param scope       An array of authorization scopes
+     * @param mode        The mode to launch Smartcar Connect in. Defaults to [Mode.LIVE]. [Mode.TEST]
+     *                     is deprecated in favor of [Mode.SIMULATED].
+     * @param responseType OAuth response type. Use "none" for redirect-less (no authorization
+     *                      code exchange) M2M flows; defaults to "code". Must be one of "code"
+     *                      or "none".
+     * @param callback    Handler to a Callback for receiving the Smartcar Connect response
+     */
+    constructor(applicationId: String, redirectUri: String?, scope: Array<String>, mode: Mode, responseType: String, callback: SmartcarCallback) {
         if (!VALID_RESPONSE_TYPES.contains(responseType)) {
             throw IllegalArgumentException(
                 "The \"responseType\" parameter must be one of: ${VALID_RESPONSE_TYPES.joinToString(", ")}"
@@ -263,7 +322,7 @@ class SmartcarAuth {
         Companion.applicationId = applicationId
         Companion.redirectUri = redirectUri
         Companion.scope = scope
-        Companion.testMode = testMode
+        Companion.mode = mode
         Companion.responseType = responseType
         Companion.callback = callback
         Companion.responseDelivered = false
@@ -290,7 +349,7 @@ class SmartcarAuth {
                         appendQueryParameter("redirect_uri", redirectUri)
                     }
                 }
-                .appendQueryParameter("mode", if (testMode) "test" else "live")
+                .appendQueryParameter("mode", mode.value)
                 .apply {
                     if (scope.isNotEmpty()) {
                         appendQueryParameter("scope", TextUtils.join(" ", scope))
